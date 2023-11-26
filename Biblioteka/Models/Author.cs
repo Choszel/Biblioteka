@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace Biblioteka.Models
 {
@@ -31,7 +32,7 @@ namespace Biblioteka.Models
             DisplayName("Data urodzenia"),
             DataType(DataType.Date, ErrorMessage ="Pole musi posiadać format daty"),
             Required(ErrorMessage = "Pole \"Data urodzenia\" jest wymagane!")]
-        public DateOnly? date { get; set; }
+        public DateTime? date { get; set; }
 
         [BindProperty(SupportsGet = true),
             DisplayName("Pseudonim")]

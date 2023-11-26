@@ -1,4 +1,17 @@
+using Microsoft.EntityFrameworkCore;
+using Biblioteka.Models;
+
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContextPool<MyDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MyCS"));
+});
+
+builder.Services.AddDbContext<MyDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MyCS"))
+);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
