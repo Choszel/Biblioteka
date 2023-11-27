@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Biblioteka.Models;
 //using System.Data.Entity;
 
 
@@ -21,5 +22,7 @@ namespace Biblioteka.Models
 
             modelBuilder.Entity<Author>().ToTable("Authors");      // <- nie działa idk why
         }
+
+        public DbSet<Book> Book { get; set; }
     }
 }

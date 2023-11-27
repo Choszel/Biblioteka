@@ -10,7 +10,7 @@ namespace Biblioteka.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Display(Name ="Id")]
+        [Display(Name ="Id autora")]
         public int id { get; set; }
 
         [BindProperty(SupportsGet = true),
@@ -37,6 +37,10 @@ namespace Biblioteka.Models
         [BindProperty(SupportsGet = true),
             DisplayName("Pseudonim")]
         public string? alias { get; set; }
+
+        [ForeignKey("Book"),
+            Display(Name = "Książki")]
+        public List<Book>? books { get; set; }
 
     }
 }
