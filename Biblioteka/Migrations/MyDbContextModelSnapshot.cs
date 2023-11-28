@@ -34,7 +34,7 @@ namespace Biblioteka.Migrations
 
                     b.HasIndex("Book");
 
-                    b.ToTable("AuthorBook");
+                    b.ToTable("AuthorBook", (string)null);
                 });
 
             modelBuilder.Entity("Biblioteka.Models.Author", b =>
@@ -95,7 +95,7 @@ namespace Biblioteka.Migrations
 
                     b.HasKey("bookId");
 
-                    b.ToTable("Book");
+                    b.ToTable("Book", (string)null);
                 });
 
             modelBuilder.Entity("AuthorBook", b =>

@@ -70,6 +70,7 @@ namespace Biblioteka.Controllers
             if (ModelState.IsValid)
             {
                 _context.Add(book);
+                //Request.Form
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
