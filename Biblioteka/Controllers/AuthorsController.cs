@@ -136,7 +136,7 @@ namespace Biblioteka.Controllers
             return View(author);
         }
 
-        // POST: Authors/Delete/5
+        // POST: Authors/Delete/5//
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
