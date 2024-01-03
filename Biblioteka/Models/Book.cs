@@ -42,5 +42,11 @@ namespace Biblioteka.Models
         [ForeignKey("Author"),
             Display(Name = "Autorzy")]
         public List<Author>? authors { get; set; }
+
+        [BindProperty(SupportsGet = true),
+            Required,
+            Display(Name = "Stan magazynowy"),
+            Range(0, 99999999, ErrorMessage = "Stan magazynowy musi być większy od zera oraz mniejszy niż 99999999")]
+        public int stockLevel { get; set; }
     }
 }

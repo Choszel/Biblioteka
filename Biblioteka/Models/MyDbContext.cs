@@ -24,5 +24,9 @@ namespace Biblioteka.Models
         }
 
         public DbSet<Book> Book { get; set; }
+
+        public DbSet<Rental> Rental { get; set; }
+        public DbSet<Tag> Tag { get; set; }
+        public DbSet<TagBook> TagBook { get; set; }
     }
 }
