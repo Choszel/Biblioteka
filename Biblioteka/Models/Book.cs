@@ -48,5 +48,9 @@ namespace Biblioteka.Models
             Display(Name = "Stan magazynowy"),
             Range(0, 99999999, ErrorMessage = "Stan magazynowy musi być większy od zera oraz mniejszy niż 99999999")]
         public int stockLevel { get; set; }
+
+        [BindProperty(SupportsGet = true),       
+            Display(Name = "Zdjęcie (wklej adres URL)")]
+        public string? bookPhoto { get; set; }
     }
 }

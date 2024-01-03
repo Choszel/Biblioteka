@@ -38,6 +38,10 @@ namespace Biblioteka.Models
             DisplayName("Pseudonim")]
         public string? alias { get; set; }
 
+        [BindProperty(SupportsGet = true),
+           Display(Name = "Zdjęcie (wklej adres URL)")]
+        public string? authorPhoto { get; set; }
+
         [ForeignKey("Book"),
             Display(Name = "Książki")]
         public List<Book>? books { get; set; }

@@ -12,9 +12,7 @@ namespace Biblioteka.Models
 
         }
 
-        //public MyDbContext() : base("MyCS") { }
-
-        public DbSet<Author> Authors { get; set; }
+        //public MyDbContext() : base("MyCS") { }      
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -22,11 +20,13 @@ namespace Biblioteka.Models
 
             modelBuilder.Entity<Author>().ToTable("Authors");      // <- nie działa idk why
         }
-
+        public DbSet<Author> Authors { get; set; }
+        
         public DbSet<Book> Book { get; set; }
-
+       
         public DbSet<Rental> Rental { get; set; }
         public DbSet<Tag> Tag { get; set; }
         public DbSet<TagBook> TagBook { get; set; }
+        public DbSet<RentalBook> RentalBook { get; set; }
     }
 }

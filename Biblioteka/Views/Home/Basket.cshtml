@@ -1,0 +1,362 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Tytuł Twojej Strony";
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <div id="out">
+    </div>
+    <br>
+    <br>
+    <br>
+    <button id="but1" style="margin-left: 230px">Dodaj produkt</button>
+    <button id="but2" style="margin-left: 20 px;" onclick="clearAll()">Usuń wszystko</button>
+    <dialog id="dialog1">
+        <h2>Dodaj produkt</h2>
+        <hr>
+        <p>Podaj dane:</p>
+        <form id="form1" method="dialog">
+            <div>
+                <input type="text" name="name" placeholder="Nazwa">
+                <input type="text" name="count" placeholder="Ilość">
+                <input type="text" name="price" placeholder="Cena">
+                <input type="submit" value="Dodaj">
+                <input type="reset" value="Anuluj">
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="dialog2">
+        <h4>
+            Czy na pewno chcesz usunąć wszystkie produkty?</h2>
+            <form id="form2" method="dialog">
+                <input type="submit" value="Usuń">
+                <input type="reset" value="Anuluj">
+            </form>
+    </dialog>
+
+    <dialog id="dialog3">
+        <h2>
+            Edytuj produkt</h4>
+            <hr>
+            <p>Podaj dane:</p>
+            <form id="form3">
+                <input type="text" name="name" placeholder="Nazwa">
+                <input type="text" name="count" placeholder="Ilość">
+                <input type="text" name="price" placeholder="Cena">
+                <input type="submit" value="Zapisz">
+                <input type="reset" value="Anuluj">
+            </form>
+    </dialog>
+
+    <dialog id="dialog4">
+        <h2>
+            Usuń produkt</h4>
+            <hr>
+            <p>Czy napewno chcesz usunąć ten produkt?</p>
+            <form id="form4">
+                <input type="submit" value="Usuń">
+                <input type="reset" value="Anuluj">
+            </form>
+    </dialog>
+
+    <p id="lol"></p>
+</body>
+</html>
+
+<script>
+
+    const out = document.getElementById("out");
+
+    const table = document.createElement("TABLE");
+
+    let index = localStorage.length - 1;
+    let modif;
+    if (JSON.parse(localStorage.getItem(-1)) != null) {
+        const indexnegative = JSON.parse(localStorage.getItem(-1));
+        modif = indexnegative.modif;
+    }
+    else {
+        modif = 0;
+        localStorage.setItem((-1).toString(),
+            JSON.stringify(
+                {
+                    modif: modif
+                }));
+    }
+    let x = 0;
+
+    table.appendChild(addCaption());
+    table.appendChild(addHeader());
+    table.appendChild(addBody());
+    table.appendChild(addFooter());
+
+    colorRow();
+
+    out.appendChild(table);
+
+    const lowermessage = document.getElementById("lol");
+
+    const btn = document.getElementById("but1");
+    const form = document.getElementById("form1");
+    const dlg = document.getElementById("dialog1");
+
+    const btn2 = document.getElementById("but2");
+    const form2 = document.getElementById("form2");
+    const dlg2 = document.getElementById("dialog2");
+
+    const form3 = document.getElementById("form3");
+    const dlg3 = document.getElementById("dialog3");
+
+    const form4 = document.getElementById("form4");
+    const dlg4 = document.getElementById("dialog4");
+
+    btn.onclick = () => {
+        form.reset();
+        dlg.showModal();
+    }
+
+    form.onsubmit = () => {
+        if (form.count.value <= 0) {
+            lowermessage.innerHTML = "Ilość musi być większa od zera!";
+            return;
+        }
+        if (form.price.value <= 0) {
+            lowermessage.innerHTML = "Cena musi być większa od zera!";
+            return;
+        }
+        window.localStorage.setItem(index.toString(),
+            JSON.stringify(
+                {
+                    name: `${form.name.value}`,
+                    count: `${form.count.value}`,
+                    price: `${form.price.value}`
+                }));
+
+        lowermessage.innerHTML = " ";
+        index++;
+
+        modif++;
+        localStorage.setItem((-1).toString(),
+            JSON.stringify(
+                {
+                    modif: modif
+                }));
+
+        location.reload();
+    }
+
+    form.onreset = () => {
+        dlg.close();
+    }
+
+    btn2.onclick = () => {
+        form2.reset();
+        dlg2.showModal();
+    }
+
+    form2.onsubmit = () => {
+        modif = 0;
+        localStorage.clear();
+        localStorage.setItem((-1).toString(),
+            JSON.stringify(
+                {
+                    modif: modif
+                }));
+        location.reload();
+    }
+
+    form2.onreset = () => {
+        dlg2.close();
+    }
+
+    form3.onsubmit = () => {
+        let name = form3.name.value;
+        let count = form3.count.value;
+        let price = form3.price.value;
+        const pr = JSON.parse(localStorage.getItem(x));
+        if (count <= 0) {
+            if (count.length != 0) {
+                lowermessage.innerHTML = "Ilość musi być większa od zera!";
+                return;
+            }
+            count = parseFloat(pr.count).toFixed(2);
+        }
+        else count = parseFloat(count).toFixed(2);
+        if (price <= 0) {
+            if (price.length != 0) {
+                lowermessage.innerHTML = "Cena musi być większa od zera!";
+                return;
+            }
+            price = parseFloat(pr.price).toFixed(2);
+        }
+        else price = parseFloat(price).toFixed(2);
+        if (name.length == 0) {
+            name = pr.name;
+        }
+
+        localStorage.setItem(x.toString(),
+            JSON.stringify(
+                {
+                    name: name,
+                    count: count,
+                    price: price
+                }));
+
+        modif++;
+        localStorage.setItem((-1).toString(),
+            JSON.stringify(
+                {
+                    modif: modif
+                }));
+
+        lowermessage.innerHTML = " ";
+    }
+
+    form3.onreset = () => {
+        dlg3.close();
+    }
+
+    form4.onsubmit = () => {
+        removeProduct();
+
+        modif++;
+        localStorage.setItem((-1).toString(),
+            JSON.stringify(
+                {
+                    modif: modif
+                }));
+    }
+
+    form4.onreset = () => {
+        dlg4.close();
+    }
+
+    function removeProduct() {
+        for (let i = x; i < localStorage.length - 1; i++) {
+            if (i == localStorage.length - 2) localStorage.removeItem(i);
+            else {
+                const product2 = JSON.parse(localStorage.getItem(i + 1));
+
+                localStorage.setItem(i.toString(),
+                    JSON.stringify(
+                        {
+                            name: product2.name,
+                            count: product2.count,
+                            price: product2.price
+                        }));
+            }
+        }
+    }
+
+    function addCaption() {
+        const caption = document.createElement("CAPTION");
+        let today = new Date();
+        caption.innerHTML = "PARAGON " + today.getDate() + "-" + (today.getMonth() + 1) + "-" + (today.getFullYear() % 100) + "/" + String(modif).padStart(3, '0');
+        return caption;
+    }
+
+    function addHeader() {
+        const thead = document.createElement("THEAD");
+        const headerRow = thead.insertRow();
+        const headers = ["LP", "NAZWA", "ILOŚĆ", "CENA", "SUMA"];
+
+        for (let i = 0; i < headers.length; ++i) {
+            let th = document.createElement("TH");
+            if (i == 1) {
+                th.style.textAlign = "left";
+            }
+            if (i == 2) {
+                th.style.textAlign = "right";
+            }
+            th.style.width = "100px";
+            th.innerHTML = headers[i];
+            headerRow.appendChild(th);
+        }
+
+        return thead;
+    }
+
+    function addBody() {
+        const tbody = document.createElement("TBODY");
+
+        for (let i = 0; i < localStorage.length - 1; i++) {
+            const product = JSON.parse(localStorage.getItem(i));
+            const headerRow = tbody.insertRow();
+            let td = document.createElement("TD");
+            td.innerHTML = i + 1;
+            headerRow.appendChild(td);
+            td = document.createElement("TD");
+            td.style.textAlign = "left";
+            td.innerHTML = product.name;
+            headerRow.appendChild(td);
+            td = document.createElement("TD");
+            td.style.textAlign = "right";
+            td.innerHTML = product.count;
+            headerRow.appendChild(td);
+            td = document.createElement("TD");
+            td.innerHTML = (parseFloat(product.price)).toFixed(2) + " zł";
+            headerRow.appendChild(td);
+            td = document.createElement("TD");
+            td.innerHTML = (Math.round(product.price * product.count * 100) / 100).toFixed(2) + " zł";
+            headerRow.appendChild(td);
+            const but2 = document.createElement("BUTTON");
+            but2.innerHTML = "Edytuj";
+            but2.id = "be" + i;
+            but2.onclick = function () {
+                x = i;
+                form3.reset();
+                dlg3.showModal();
+            };
+            const but3 = document.createElement("BUTTON");
+            but3.innerHTML = "Usuń";
+            but3.id = "bu" + i;
+            but3.onclick = function () {
+                x = i;
+                form4.reset();
+                dlg4.showModal();
+            };
+            but2.style = but3.style = "margin-top: 15px; margin-left: 5px;";
+            headerRow.appendChild(but2);
+            headerRow.appendChild(but3);
+        }
+
+        return tbody;
+    }
+
+    function addFooter() {
+        const tfoot = document.createElement("TFOOT");
+        const footerRow = tfoot.insertRow();
+        let remainingCell = document.createElement("TH");
+        remainingCell.colSpan = 3;
+        footerRow.appendChild(remainingCell);
+
+        for (let i = 0; i < 2; ++i) {
+            let th = document.createElement("TH");
+            if (i == 0) th.innerHTML = "RAZEM";
+            else {
+                let sum = 0;
+                for (let j = 1; j < table.rows.length; j++) {
+                    sum += parseFloat(table.rows[j].cells[4].innerHTML);
+                }
+                th.innerHTML = sum.toFixed(2) + " zł";
+            }
+            footerRow.appendChild(th);
+        }
+
+        return tfoot;
+    }
+
+    function colorRow() {
+        for (let i = 0; i < table.rows.length; i++) {
+            if (i % 2 != 0) table.rows[i].style = "background-color:whitesmoke;";
+        }
+    }
+</script>

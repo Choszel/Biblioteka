@@ -4,6 +4,7 @@ using Biblioteka.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Biblioteka.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240103130656_mig2")]
+    partial class mig2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,9 +49,6 @@ namespace Biblioteka.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<string>("alias")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("authorPhoto")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("country")
@@ -85,9 +85,6 @@ namespace Biblioteka.Migrations
 
                     b.Property<long>("ISBN")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("bookPhoto")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("description")
                         .IsRequired()
@@ -149,21 +146,6 @@ namespace Biblioteka.Migrations
                     b.ToTable("Rental");
                 });
 
-            modelBuilder.Entity("Biblioteka.Models.RentalBook", b =>
-                {
-                    b.Property<int>("bookId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("rentalId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("bookId");
-
-                    b.HasIndex("rentalId");
-
-                    b.ToTable("RentalBook");
-                });
-
             modelBuilder.Entity("Biblioteka.Models.Tag", b =>
                 {
                     b.Property<int>("tagId")
@@ -217,25 +199,6 @@ namespace Biblioteka.Migrations
                     b.HasOne("Biblioteka.Models.Rental", null)
                         .WithMany("book")
                         .HasForeignKey("Book");
-                });
-
-            modelBuilder.Entity("Biblioteka.Models.RentalBook", b =>
-                {
-                    b.HasOne("Biblioteka.Models.Book", "book")
-                        .WithMany()
-                        .HasForeignKey("bookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Biblioteka.Models.Rental", "rental")
-                        .WithMany()
-                        .HasForeignKey("rentalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("book");
-
-                    b.Navigation("rental");
                 });
 
             modelBuilder.Entity("Biblioteka.Models.TagBook", b =>

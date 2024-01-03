@@ -30,9 +30,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.rentalStreet)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.book)
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -56,9 +53,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.rentalStreet)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.book.description)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.rentalId">Edit</a> |

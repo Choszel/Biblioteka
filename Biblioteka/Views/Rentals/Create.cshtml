@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Create";
+    var bookList = (List<SelectListItem>)ViewData["bookList"];
 }
 
 <h1>Create</h1>
@@ -16,10 +17,6 @@
                 <label asp-for="userId" class="control-label"></label>
                 <input asp-for="userId" class="form-control" />
                 <span asp-validation-for="userId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="bookId" class="control-label"></label>
-                <select asp-for="bookId" class ="form-control" asp-items="ViewBag.bookId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="rentalDate" class="control-label"></label>
@@ -45,6 +42,14 @@
                 <label asp-for="rentalStreet" class="control-label"></label>
                 <input asp-for="rentalStreet" class="form-control" />
                 <span asp-validation-for="rentalStreet" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-1">
+                <label asp-for="book" class="control-label col-sm2"></label>
+                <div class="col-sm-6">
+                    <fieldset>
+                        <select asp-for="@Model.book" asp-items="bookList"></select>
+                    </fieldset>
+                </div>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

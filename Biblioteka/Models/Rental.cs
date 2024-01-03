@@ -15,11 +15,6 @@ namespace Biblioteka.Models
         [DisplayName("Id użytkownika")]
         public int userId { get; set; }
 
-        [DataType(DataType.Text)]
-        [DisplayName("Id książki")]
-        //[Required(ErrorMessage = "Pole \"Id książki\" jest wymagane!")]
-        public int bookId { get; set; }
-
         [BindProperty(SupportsGet = true),
             DisplayName("Data wypożyczenia"),
             Required(ErrorMessage = "Pole \"Data wypożyczenia\" jest wymagane!")]
@@ -52,7 +47,9 @@ namespace Biblioteka.Models
         //[ForeignKey("userId")]
         //public virtual ??? user { get; set; }
 
-        [ForeignKey("bookId")]
-        public virtual Book book { get; set; }
+        [ForeignKey("Book"),
+            Display(Name = "Książki"),
+            BindProperty]
+        public List<Book>? book { get; set; }
     }
 }
