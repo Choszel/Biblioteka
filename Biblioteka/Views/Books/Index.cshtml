@@ -13,6 +13,9 @@
     <thead>
         <tr>
             <th>
+                @Html.DisplayNameFor(model => model.bookPhoto)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.title)
             </th>
             <th>
@@ -24,12 +27,18 @@
             <th>
                 @Html.DisplayNameFor(model => model.releaseDate)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.stockLevel)
+            </th>            
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>
+                <img src=@item.bookPhoto />
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.title)
             </td>
@@ -43,26 +52,14 @@
                 @Html.DisplayFor(modelItem => item.releaseDate)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.bookId">Edytuj</a> |
-                <a asp-action="Details" asp-route-id="@item.bookId">Szczegóły</a> |
-                <a asp-action="Delete" asp-route-id="@item.bookId">Usuń</a> |
-                <button id="toBasket" onclick="addProduct(@item.bookId)" >Dodaj do koszyka</button>
+                @Html.DisplayFor(modelItem => item.stockLevel)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.bookId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.bookId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.bookId">Delete</a>
             </td>
         </tr>
 }
     </tbody>
 </table>
-
-<script>
-    function addProduct(bookId)
-    {
-        location.reload();
-        // window.localStorage.setItem(index.toString(),
-        //     JSON.stringify(
-        //         {
-        //             name: `${form.name.value}`,
-        //             count: `${form.count.value}`,
-        //             price: `${form.price.value}`
-        //         }));
-    }
-</script>

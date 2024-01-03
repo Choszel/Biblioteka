@@ -35,6 +35,18 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.releaseDate)
         </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.stockLevel)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.stockLevel)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.bookPhoto)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.bookPhoto)
+        </dd>
     </dl>
     
     <form asp-action="Delete">

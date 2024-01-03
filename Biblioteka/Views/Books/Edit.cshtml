@@ -34,6 +34,16 @@
                 <span asp-validation-for="releaseDate" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="stockLevel" class="control-label"></label>
+                <input asp-for="stockLevel" class="form-control" />
+                <span asp-validation-for="stockLevel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="bookPhoto" class="control-label"></label>
+                <input asp-for="bookPhoto" class="form-control" />
+                <span asp-validation-for="bookPhoto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>

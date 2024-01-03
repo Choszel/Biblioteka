@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Biblioteka.Models;
-using Microsoft.Extensions.Options;
 
 namespace Biblioteka.Controllers
 {
@@ -56,7 +55,7 @@ namespace Biblioteka.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,name,surname,country,date,alias")] Author author)
+        public async Task<IActionResult> Create([Bind("id,name,surname,country,date,alias,authorPhoto")] Author author)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +87,7 @@ namespace Biblioteka.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("id,name,surname,country,date,alias")] Author author)
+        public async Task<IActionResult> Edit(int id, [Bind("id,name,surname,country,date,alias,authorPhoto")] Author author)
         {
             if (id != author.id)
             {
@@ -136,7 +135,7 @@ namespace Biblioteka.Controllers
             return View(author);
         }
 
-        // POST: Authors/Delete/5//
+        // POST: Authors/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

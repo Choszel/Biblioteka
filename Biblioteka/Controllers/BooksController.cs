@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Principal;
 using System.Threading.Tasks;
-using Biblioteka.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+using Biblioteka.Models;
 
 namespace Biblioteka.Controllers
 {
     public class BooksController : Controller
     {
         private readonly MyDbContext _context;
-        public List<SelectListItem> options { get; set; }
 
         public BooksController(MyDbContext context)
         {
@@ -24,9 +21,9 @@ namespace Biblioteka.Controllers
         // GET: Books
         public async Task<IActionResult> Index()
         {
-            return _context.Book != null ?
-                        View(await _context.Book.ToListAsync()) :
-                        Problem("Entity set 'MyDbContext.Book'  is null.");
+              return _context.Book != null ? 
+                          View(await _context.Book.ToListAsync()) :
+                          Problem("Entity set 'MyDbContext.Book'  is null.");
         }
 
         // GET: Books/Details/5
@@ -50,7 +47,6 @@ namespace Biblioteka.Controllers
         // GET: Books/Create
         public IActionResult Create()
         {
-            ViewData["AuthorList"] = _context.Authors.Select(c => new SelectListItem { Value = c.id.ToString(), Text = c.name }).ToList();
             return View();
         }
 
@@ -59,19 +55,11 @@ namespace Biblioteka.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("bookId,title,ISBN,description,releaseDate")] Book book)
+        public async Task<IActionResult> Create([Bind("bookId,title,ISBN,description,releaseDate,stockLevel,bookPhoto")] Book book)
         {
-            //book.authors = new List<Author>();
-            //var authorList = (List<Author>) ViewData["authorList"];
-            //foreach (var item in authorList)
-            //{
-            //    book.authors.Add(item);
-            //}
-
             if (ModelState.IsValid)
             {
                 _context.Add(book);
-               // Request.Form[5]
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -99,7 +87,7 @@ namespace Biblioteka.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("bookId,title,ISBN,description,releaseDate")] Book book)
+        public async Task<IActionResult> Edit(int id, [Bind("bookId,title,ISBN,description,releaseDate,stockLevel,bookPhoto")] Book book)
         {
             if (id != book.bookId)
             {
@@ -161,14 +149,14 @@ namespace Biblioteka.Controllers
             {
                 _context.Book.Remove(book);
             }
-
+            
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool BookExists(int id)
         {
-            return (_context.Book?.Any(e => e.bookId == id)).GetValueOrDefault();
+          return (_context.Book?.Any(e => e.bookId == id)).GetValueOrDefault();
         }
     }
 }
