@@ -1,7 +1,52 @@
 ﻿@{
     Layout = "_Layout";
-    ViewData["Title"] = "Tytuł Twojej Strony";
+    ViewData["Title"] = "Koszyk";
 }
+
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    table {
+        padding-top: 50px;
+        border-collapse: collapse;
+    }
+
+    thead {
+        color: gray;
+        font-weight: bold;
+        padding: 5px;
+        border-bottom: 1px black solid;
+    }
+
+    tr, td, th {
+        padding: 5px;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        text-align: center;
+    }
+
+    th {
+        font-weight: normal;
+    }
+
+    caption {
+        margin-top: 30px;
+        margin-bottom: 50px;
+        border-top: thin black solid;
+        border-bottom: thin black solid;
+        font-weight: bold;
+        padding: 5px;
+        font-size: 30px;
+        color: dimgray;
+        font-weight: normal;
+    }
+
+    tfoot {
+        border-top: 1.5px black solid;
+    }
+</style>
 
 
 <!DOCTYPE html>
@@ -16,22 +61,7 @@
     <br>
     <br>
     <br>
-    <button id="but1" style="margin-left: 230px">Dodaj produkt</button>
-    <button id="but2" style="margin-left: 20 px;" onclick="clearAll()">Usuń wszystko</button>
-    <dialog id="dialog1">
-        <h2>Dodaj produkt</h2>
-        <hr>
-        <p>Podaj dane:</p>
-        <form id="form1" method="dialog">
-            <div>
-                <input type="text" name="name" placeholder="Nazwa">
-                <input type="text" name="count" placeholder="Ilość">
-                <input type="text" name="price" placeholder="Cena">
-                <input type="submit" value="Dodaj">
-                <input type="reset" value="Anuluj">
-            </div>
-        </form>
-    </dialog>
+    <button id="but2" style="margin-left: 20 px;" onclick="clearAll()">Opróżnij koszyk</button>
 
     <dialog id="dialog2">
         <h4>
@@ -42,36 +72,23 @@
             </form>
     </dialog>
 
-    <dialog id="dialog3">
-        <h2>
-            Edytuj produkt</h4>
-            <hr>
-            <p>Podaj dane:</p>
-            <form id="form3">
-                <input type="text" name="name" placeholder="Nazwa">
-                <input type="text" name="count" placeholder="Ilość">
-                <input type="text" name="price" placeholder="Cena">
-                <input type="submit" value="Zapisz">
-                <input type="reset" value="Anuluj">
-            </form>
-    </dialog>
-
     <dialog id="dialog4">
         <h2>
             Usuń produkt</h4>
             <hr>
-            <p>Czy napewno chcesz usunąć ten produkt?</p>
+            <p>Czy napewno chcesz usunąć ten produkt z koszyka?</p>
             <form id="form4">
                 <input type="submit" value="Usuń">
                 <input type="reset" value="Anuluj">
             </form>
     </dialog>
-
-    <p id="lol"></p>
+    <p id="low"></p>
 </body>
 </html>
 
 <script>
+
+    var bookList = @Html.Raw(Json.Serialize(ViewData["bookList"]));
 
     const out = document.getElementById("out");
 
@@ -102,11 +119,7 @@
 
     out.appendChild(table);
 
-    const lowermessage = document.getElementById("lol");
-
-    const btn = document.getElementById("but1");
-    const form = document.getElementById("form1");
-    const dlg = document.getElementById("dialog1");
+    const lowermessage = document.getElementById("low");
 
     const btn2 = document.getElementById("but2");
     const form2 = document.getElementById("form2");
@@ -117,45 +130,6 @@
 
     const form4 = document.getElementById("form4");
     const dlg4 = document.getElementById("dialog4");
-
-    btn.onclick = () => {
-        form.reset();
-        dlg.showModal();
-    }
-
-    form.onsubmit = () => {
-        if (form.count.value <= 0) {
-            lowermessage.innerHTML = "Ilość musi być większa od zera!";
-            return;
-        }
-        if (form.price.value <= 0) {
-            lowermessage.innerHTML = "Cena musi być większa od zera!";
-            return;
-        }
-        window.localStorage.setItem(index.toString(),
-            JSON.stringify(
-                {
-                    name: `${form.name.value}`,
-                    count: `${form.count.value}`,
-                    price: `${form.price.value}`
-                }));
-
-        lowermessage.innerHTML = " ";
-        index++;
-
-        modif++;
-        localStorage.setItem((-1).toString(),
-            JSON.stringify(
-                {
-                    modif: modif
-                }));
-
-        location.reload();
-    }
-
-    form.onreset = () => {
-        dlg.close();
-    }
 
     btn2.onclick = () => {
         form2.reset();
@@ -177,53 +151,6 @@
         dlg2.close();
     }
 
-    form3.onsubmit = () => {
-        let name = form3.name.value;
-        let count = form3.count.value;
-        let price = form3.price.value;
-        const pr = JSON.parse(localStorage.getItem(x));
-        if (count <= 0) {
-            if (count.length != 0) {
-                lowermessage.innerHTML = "Ilość musi być większa od zera!";
-                return;
-            }
-            count = parseFloat(pr.count).toFixed(2);
-        }
-        else count = parseFloat(count).toFixed(2);
-        if (price <= 0) {
-            if (price.length != 0) {
-                lowermessage.innerHTML = "Cena musi być większa od zera!";
-                return;
-            }
-            price = parseFloat(pr.price).toFixed(2);
-        }
-        else price = parseFloat(price).toFixed(2);
-        if (name.length == 0) {
-            name = pr.name;
-        }
-
-        localStorage.setItem(x.toString(),
-            JSON.stringify(
-                {
-                    name: name,
-                    count: count,
-                    price: price
-                }));
-
-        modif++;
-        localStorage.setItem((-1).toString(),
-            JSON.stringify(
-                {
-                    modif: modif
-                }));
-
-        lowermessage.innerHTML = " ";
-    }
-
-    form3.onreset = () => {
-        dlg3.close();
-    }
-
     form4.onsubmit = () => {
         removeProduct();
 
@@ -240,26 +167,21 @@
     }
 
     function removeProduct() {
-        for (let i = x; i < localStorage.length - 1; i++) {
-            if (i == localStorage.length - 2) localStorage.removeItem(i);
-            else {
-                const product2 = JSON.parse(localStorage.getItem(i + 1));
+        var storedBooks = localStorage.getItem("books");
+        var books = {};
 
-                localStorage.setItem(i.toString(),
-                    JSON.stringify(
-                        {
-                            name: product2.name,
-                            count: product2.count,
-                            price: product2.price
-                        }));
-            }
-        }
+        if (storedBooks) books = JSON.parse(storedBooks);
+     
+        delete books[x];
+
+        localStorage.setItem("books", JSON.stringify(books));   
+        location.reload();
     }
 
     function addCaption() {
         const caption = document.createElement("CAPTION");
         let today = new Date();
-        caption.innerHTML = "PARAGON " + today.getDate() + "-" + (today.getMonth() + 1) + "-" + (today.getFullYear() % 100) + "/" + String(modif).padStart(3, '0');
+        caption.innerHTML = "KOSZYK " + today.getDate() + "-" + (today.getMonth() + 1) + "-" + (today.getFullYear() % 100) + "/" + String(modif).padStart(3, '0');
         return caption;
     }
 
@@ -287,47 +209,107 @@
     function addBody() {
         const tbody = document.createElement("TBODY");
 
-        for (let i = 0; i < localStorage.length - 1; i++) {
-            const product = JSON.parse(localStorage.getItem(i));
-            const headerRow = tbody.insertRow();
-            let td = document.createElement("TD");
-            td.innerHTML = i + 1;
-            headerRow.appendChild(td);
-            td = document.createElement("TD");
-            td.style.textAlign = "left";
-            td.innerHTML = product.name;
-            headerRow.appendChild(td);
-            td = document.createElement("TD");
-            td.style.textAlign = "right";
-            td.innerHTML = product.count;
-            headerRow.appendChild(td);
-            td = document.createElement("TD");
-            td.innerHTML = (parseFloat(product.price)).toFixed(2) + " zł";
-            headerRow.appendChild(td);
-            td = document.createElement("TD");
-            td.innerHTML = (Math.round(product.price * product.count * 100) / 100).toFixed(2) + " zł";
-            headerRow.appendChild(td);
-            const but2 = document.createElement("BUTTON");
-            but2.innerHTML = "Edytuj";
-            but2.id = "be" + i;
-            but2.onclick = function () {
-                x = i;
-                form3.reset();
-                dlg3.showModal();
-            };
-            const but3 = document.createElement("BUTTON");
-            but3.innerHTML = "Usuń";
-            but3.id = "bu" + i;
-            but3.onclick = function () {
-                x = i;
-                form4.reset();
-                dlg4.showModal();
-            };
-            but2.style = but3.style = "margin-top: 15px; margin-left: 5px;";
-            headerRow.appendChild(but2);
-            headerRow.appendChild(but3);
-        }
+        var storedBooks = localStorage.getItem("books");
 
+        if (storedBooks) {
+            var books = JSON.parse(storedBooks);
+
+            for (var bookId in books) {
+                if (books.hasOwnProperty(bookId)) {
+                    let obj = new Object();
+                    for (const element of bookList) {
+                        if (element.bookId == bookId) {
+                            obj = element;
+                            break;
+                        }
+                        else;
+                    }
+
+                    var quantity = books[bookId];
+
+                    const headerRow = tbody.insertRow();
+                    let td = document.createElement("TD");
+                    let img = document.createElement("img");
+                    img.src = obj.bookPhoto;
+                    td.appendChild(img);
+                    headerRow.appendChild(td);
+
+                    td = document.createElement("TD");
+                    td.style.textAlign = "left";
+                    td.innerHTML = obj.title;                   
+                    headerRow.appendChild(td);
+                    
+                    td = document.createElement("TD"); //ilość
+                    td.style.textAlign = "right";
+
+                    const div =  document.createElement("div");
+                    const but4 = document.createElement("BUTTON");
+                    but4.innerHTML = "+";
+                    but4.id = "ba" + bookId; //ButtonAdd
+                    but4.onclick = function () {
+                        x = obj.bookId;
+                        var storedBooks = localStorage.getItem("books");
+                        var books = {};
+
+                        if (storedBooks) books = JSON.parse(storedBooks);
+                        books[obj.bookId] = books[obj.bookId] + 1;                      
+                        localStorage.setItem("books", JSON.stringify(books));
+
+                        let modif = (localStorage.getItem(-1).modif) + 1;
+                        localStorage.setItem((-1).toString(),
+                            JSON.stringify(
+                                {
+                                    modif: modif
+                                }));
+                        location.reload();
+                    };                 
+
+                    const but3 = document.createElement("BUTTON");
+                    but3.innerHTML = "-";
+                    but3.id = "bd" + bookId;
+                    but3.onclick = function () {
+                        x = obj.bookId;
+                        var storedBooks = localStorage.getItem("books");
+                        var books = {};
+
+                        if (storedBooks) books = JSON.parse(storedBooks);
+                        if (books[obj.bookId] == 1) {
+                            form4.reset();
+                            dlg4.showModal();
+                        }
+                        else {
+                            books[obj.bookId] = books[obj.bookId] - 1;
+                            localStorage.setItem("books", JSON.stringify(books));
+                        
+
+                            let modif = (localStorage.getItem(-1).modif) + 1;
+                            localStorage.setItem((-1).toString(),
+                                JSON.stringify(
+                                    {
+                                        modif: modif
+                                    }));
+                            location.reload();
+                            }                        
+                    };
+                    but3.style = but4.style = "margin-top: 15px; margin-left: 5px; margin-right: 5px;";
+
+                    div.innerHTML += quantity;
+                    div.appendChild(but3);                   
+                    div.appendChild(but4);                   
+
+                    td.appendChild(div);
+                    headerRow.appendChild(td);
+
+                    td = document.createElement("TD");
+                    td.innerHTML = (parseFloat(obj.price)).toFixed(2) + " zł";
+                    headerRow.appendChild(td);
+
+                    td = document.createElement("TD");
+                    td.innerHTML = (Math.round(obj.price * quantity * 100) / 100).toFixed(2) + " zł";
+                    headerRow.appendChild(td);                    
+                }
+            }
+        }     
         return tbody;
     }
 

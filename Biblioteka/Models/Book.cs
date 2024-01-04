@@ -52,5 +52,11 @@ namespace Biblioteka.Models
         [BindProperty(SupportsGet = true),       
             Display(Name = "Zdjęcie (wklej adres URL)")]
         public string? bookPhoto { get; set; }
+
+        [BindProperty(SupportsGet = true),
+            Required(ErrorMessage = "Cena jest obowiązkowa!"),
+            Display(Name = "Cena"),
+            Range(0, 9999999999999, ErrorMessage = "Cena musi być większa od zera")]
+        public decimal? price { get; set; }
     }
 }
