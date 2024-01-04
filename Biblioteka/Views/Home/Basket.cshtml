@@ -4,13 +4,10 @@
 }
 
 <style>
-    body {
-        font-family: Arial, Helvetica, sans-serif;
-    }
-
     table {
         padding-top: 50px;
         border-collapse: collapse;
+        font-family: Arial, Helvetica, sans-serif;
     }
 
     thead {
@@ -62,6 +59,22 @@
     <br>
     <br>
     <button id="but2" style="margin-left: 20 px;" onclick="clearAll()">Opróżnij koszyk</button>
+    <button id="but1" style="margin-left: 20 px;">Złóż zamówienie</button>
+
+    <dialog id="dialog1">
+        <h2>Dodaj produkt</h2>
+        <hr>
+        <p>Podaj dane:</p>
+        <form id="form1" method="dialog">
+            <div>
+                <input type="text" name="city" placeholder="Miasto">
+                <input type="text" name="street" placeholder="Ulica i numer domu">
+                <input type="submit" value="Dodaj">
+                <input type="reset" value="Anuluj">
+            </div>
+            <p id="messagedialog"></p>
+        </form>
+    </dialog>
 
     <dialog id="dialog2">
         <h4>
@@ -87,12 +100,43 @@
 </html>
 
 <script>
-
     var bookList = @Html.Raw(Json.Serialize(ViewData["bookList"]));
 
     const out = document.getElementById("out");
 
     const table = document.createElement("TABLE");
+
+    const btn = document.getElementById("but1");
+    const form = document.getElementById("form1");
+    const dlg = document.getElementById("dialog1");
+    btn.onclick = () => {
+        form.reset();
+        dlg.showModal();
+    }
+
+    form.onsubmit = () => {
+        const mess = document.getElementById("messagedialog");
+        if (form.city.value ==="") {
+            mess.innerHTML = "Proszę podać miasto";
+            event.preventDefault();
+            dlg.showModal();
+        }
+        if (form.street.value === "") {
+            mess.innerHTML = "Proszę podać ulicę";
+            event.preventDefault();
+            dlg.showModal();
+        }
+        
+
+        //zapisanie zamówienia do bazy ze sprawdzeniem, czy jest wystarczająco elementów w magazynie
+        //dodanie widoku dla płatności tylko po to żeby wyglądał i była strona na kck
+    }
+
+    form.onreset = () => {
+        const mess = document.getElementById("messagedialog");
+        mess.innerHTML = "";
+        dlg.close();
+    }
 
     let index = localStorage.length - 1;
     let modif;
@@ -257,7 +301,8 @@
                         books[obj.bookId] = books[obj.bookId] + 1;                      
                         localStorage.setItem("books", JSON.stringify(books));
 
-                        let modif = (localStorage.getItem(-1).modif) + 1;
+                        const indexnegative = JSON.parse(localStorage.getItem(-1));
+                        let modif = indexnegative.modif + 1;
                         localStorage.setItem((-1).toString(),
                             JSON.stringify(
                                 {
@@ -283,8 +328,8 @@
                             books[obj.bookId] = books[obj.bookId] - 1;
                             localStorage.setItem("books", JSON.stringify(books));
                         
-
-                            let modif = (localStorage.getItem(-1).modif) + 1;
+                            const indexnegative = JSON.parse(localStorage.getItem(-1));
+                            let modif = indexnegative.modif + 1;
                             localStorage.setItem((-1).toString(),
                                 JSON.stringify(
                                     {

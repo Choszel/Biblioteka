@@ -1,0 +1,14 @@
+{
+  "products": [
+    {
+      "id": -1,
+      "modif": 3
+    },
+    {
+      "name": "dsds",
+      "count": "3.00",
+      "price": "3.00",
+      "id": 0
+    }
+  ]
+}

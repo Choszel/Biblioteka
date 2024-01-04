@@ -39,5 +39,11 @@ namespace Biblioteka.Controllers
             ViewData["BookList"] = await _context.Book.ToListAsync();
             return View();
         }
+
+        public IActionResult Opinion()
+        {
+            //ViewData["userId"] = ;
+            return View();
+        }
     }
 }

@@ -119,7 +119,8 @@
 
             localStorage.setItem("books", JSON.stringify(books));
 
-            let modif = (localStorage.getItem(-1).modif) + 1;
+            const indexnegative = JSON.parse(localStorage.getItem(-1));
+            let modif = indexnegative.modif + 1;            
             localStorage.setItem((-1).toString(),
                 JSON.stringify(
                     {
