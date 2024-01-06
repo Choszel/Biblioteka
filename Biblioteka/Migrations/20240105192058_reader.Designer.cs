@@ -4,6 +4,7 @@ using Biblioteka.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Biblioteka.Migrations
 {
     [DbContext(typeof(BibContext))]
-    partial class BibContextModelSnapshot : ModelSnapshot
+    [Migration("20240105192058_reader")]
+    partial class reader
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,59 +170,6 @@ namespace Biblioteka.Migrations
                     b.HasKey("bookId");
 
                     b.ToTable("Books");
-                });
-
-            modelBuilder.Entity("Biblioteka.Models.Employee", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<DateTime?>("birthDate")
-                        .IsRequired()
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("dateOfEmployment")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("email")
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)");
-
-                    b.Property<decimal?>("houseNumber")
-                        .HasColumnType("NUMERIC(3)");
-
-                    b.Property<string>("name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("pesel")
-                        .HasColumnType("NUMERIC(11)");
-
-                    b.Property<string>("street")
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)");
-
-                    b.Property<string>("surname")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("town")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("zipCode")
-                        .IsRequired()
-                        .HasMaxLength(6)
-                        .HasColumnType("nvarchar(6)");
-
-                    b.HasKey("id");
-
-                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("Biblioteka.Models.Reader", b =>

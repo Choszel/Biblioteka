@@ -10,6 +10,9 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using Biblioteka.Areas.Identity.Data;
+using Biblioteka.Context;
+using Biblioteka.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -18,24 +21,28 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Biblioteka.Areas.Identity.Pages.Account
 {
-    public class RegisterModel : PageModel
+    public class ReaderRegisterModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly IUserStore<IdentityUser> _userStore;
-        private readonly IUserEmailStore<IdentityUser> _emailStore;
-        private readonly ILogger<RegisterModel> _logger;
+        private readonly SignInManager<BibUser> _signInManager;
+        private readonly UserManager<BibUser> _userManager;
+        private readonly IUserStore<BibUser> _userStore;
+        private readonly IUserEmailStore<BibUser> _emailStore;
+        private readonly ILogger<ReaderRegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
-        public RegisterModel(
-            UserManager<IdentityUser> userManager,
-            IUserStore<IdentityUser> userStore,
-            SignInManager<IdentityUser> signInManager,
-            ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+        private readonly BibContext _context;
+
+        public ReaderRegisterModel(
+            UserManager<BibUser> userManager,
+            IUserStore<BibUser> userStore,
+            SignInManager<BibUser> signInManager,
+            ILogger<ReaderRegisterModel> logger,
+            IEmailSender emailSender,
+            BibContext context)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -43,6 +50,7 @@ namespace Biblioteka.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _context = context;
         }
 
         /// <summary>
@@ -68,13 +76,26 @@ namespace Biblioteka.Areas.Identity.Pages.Account
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
-        public class InputModel
+        public class InputModel : IValidatableObject
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
-            [Required]
+			[Required(ErrorMessage = "Imię jest wymagane."),
+				Display(Name = "Imię"),
+				StringLength(20, ErrorMessage = "Imię nie może zawierać więcej niż 20 znaków.")]
+			public string name { get; set; }
+
+			[Required(ErrorMessage = "Nazwisko jest wymagane."),
+				Display(Name = "Nazwisko"),
+				StringLength(40, ErrorMessage = "Nazwisko nie może zawierać więcej niż 40 znaków")]
+			public string surname { get; set; }
+
+			[Display(Name = "Data urodzenia")]
+			public DateTime? birthDate { get; set; }
+
+			/// <summary>
+			///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+			///     directly from your code. This API may change or be removed in future releases.
+			/// </summary>
+			[Required]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
@@ -97,6 +118,14 @@ namespace Biblioteka.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+            {
+                if (birthDate >= DateTime.Today)
+                {
+                    yield return new ValidationResult("Data urodzenia nie może być z przyszłości!", new[] { "BirthDate" });
+                }
+            }
         }
 
 
@@ -114,12 +143,19 @@ namespace Biblioteka.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
+                user.name = Input.name;
+                user.surname = Input.surname;
+                user.birthDate = Input.birthDate;
+
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {
+                    await _userManager.AddToRoleAsync(user, "Reader");
+                    CreateReader(user);
+
                     _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
@@ -154,27 +190,39 @@ namespace Biblioteka.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private IdentityUser CreateUser()
+        private BibUser CreateUser()
         {
             try
             {
-                return Activator.CreateInstance<IdentityUser>();
+                return Activator.CreateInstance<BibUser>();
             }
             catch
             {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(IdentityUser)}'. " +
-                    $"Ensure that '{nameof(IdentityUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(BibUser)}'. " +
+                    $"Ensure that '{nameof(BibUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
                     $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
             }
         }
 
-        private IUserEmailStore<IdentityUser> GetEmailStore()
+        private IUserEmailStore<BibUser> GetEmailStore()
         {
             if (!_userManager.SupportsUserEmail)
             {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
-            return (IUserEmailStore<IdentityUser>)_userStore;
+            return (IUserEmailStore<BibUser>)_userStore;
+        }
+
+        private void CreateReader(BibUser user)
+        {
+            Reader reader = new Reader();
+            reader.name = Input.name;
+            reader.surname = Input.surname;
+            reader.email = Input.Email;
+            reader.birthDate = Input.birthDate;
+
+            _context.Readers.Add(reader);
+            _context.SaveChanges();
         }
     }
 }
