@@ -6,13 +6,10 @@
 <!DOCTYPE html>
 
 <style>
-    body {
-        font-family: Arial, Helvetica, sans-serif;
-    }
-
     table {
         padding-top: 50px;
         border-collapse: collapse;
+        font-family: Arial, Helvetica, sans-serif;
     }
 
     thead {
@@ -76,6 +73,7 @@
                 <input type="submit" value="Dodaj">
                 <input type="reset" value="Anuluj">
             </div>
+            <p id="messagedialog"></p>
         </form>
     </dialog>
 
@@ -113,30 +111,41 @@
             </form>
     </dialog>
 
-    <p id="lol"></p>
+    <p id="low"></p>
 </body>
 </html>
 
 
 <script>
+    var userId = @Html.Raw(Json.Serialize(ViewData["userId"]));
+    const lowermessage = document.getElementById("low");
+    lowermessage.innerHTML = userId;
+
     var jsonFilePath = '../../opinions.json';
-    let modif = 0;
-    fetch(jsonFilePath, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Błąd sieci: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            modif = parseInt(data.products[0].modif);
-        })
-        .catch (error => console.error('Błąd:', error));
+
+    // fetch(jsonFilePath, {
+    //     method: 'GET',
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //     },
+    // })
+    //     .then(response => {
+    //         if (!response.ok) {
+    //             throw new Error(`Błąd sieci: ${response.status}`);
+    //         }
+    //         return response.json();
+    //     })
+    //     .then(data => {
+    //         if (data && data.users) {
+    //             const user = data.users.find(u => u.userId === parseInt(userId));
+    //             if (user) {
+    //                 modif = parseInt(user.products[0].modif);
+    //             } else {
+    //                 console.error('Użytkownik o podanym userId nie znaleziony.');
+    //             }
+    //         }
+    //     })
+    //     .catch (error => console.error('Błąd:', error));
 
     let x = 0;
 
@@ -152,7 +161,6 @@
     colorRow();
 
     out.appendChild(table);
-    const lowermessage = document.getElementById("lol");
 
     const btn = document.getElementById("but1");
     const form = document.getElementById("form1");
@@ -174,52 +182,62 @@
     }
 
     form.onsubmit = (event) => {
-        event.preventDefault();
-        if (form.count.value <= 0) {
-            lowermessage.innerHTML = "Ilość musi być większa od zera!";
-            dlg.close();
+        const mess = document.getElementById("messagedialog");
+        if (form.count.value === "" || !Number.isInteger(Number(form.count.value)) || Number(form.count.value) <= 0) {
+            mess.innerHTML = "Ilość musi być większa od zera";
+            event.preventDefault();
+            dlg.showModal();
             return;
         }
-        if (form.price.value <= 0) {
-            lowermessage.innerHTML = "Cena musi być większa od zera!";
-            dlg.close();
+        if (form.price.value === "" || !Number.isInteger(Number(form.price.value)) || Number(form.price.value) <= 0) {
+            mess.innerHTML = "Cena musi być większa od zera";
+            event.preventDefault();
+            dlg.showModal();
             return;
         }
+        if(form.name.value === "")
+        {
+            mess.innerHTML = "Proszę podać nazwę";
+            event.preventDefault();
+            dlg.showModal();
+            return;
+        }
+        const newOpinion =
+        {
+            name: form.name.value,
+            count: form.count.value,
+            price: form.price.value
+        };
 
-        modif++;
-        lowermessage.innerHTML = " ";
+        console.log(newOpinion.name);
 
-        fetch(jsonFilePath, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(
-                {
-                    name: `${form.name.value}`,
-                    count: `${form.count.value}`,
-                    price: `${form.price.value}`
+        fetch(jsonFilePath)
+            .then(response => { 
+                return response.json(); 
+            })
+            .then(data => {
+                const user = data.users.find(u => u.userId === parseInt(userId));
+                if (user) {
+                    console.log("fetch");
+                    return fetch(jsonFilePath, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(newOpinion)
+                    })
+                    .catch(error => console.error('Błąd:', error));
+                    console.log("po f");
                 }
-            )
-        })
-            .then(response => response.json())
-            .then(data => { });
-
-        fetch(jsonFilePath, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(
-                {
-                    modif: modif
-                }
-            )
-        })
-            .then(response => response.json())
-            .then(data => { })
-
-        location.reload();
+                console.log("reject");
+                return Promise.reject(new Error('Nie znaleziono użytkownika')); 
+            })
+            .then(response => {
+                //location.reload();
+            })
+            .then(() => {                
+            })
+            .catch(error => console.error('Błąd:', error));
     }
 
     form.onreset = () => {
@@ -233,32 +251,15 @@
 
     form2.onsubmit = (event) => {
         event.preventDefault();
-        modif = 0;
-        fetch(url)
+        fetch(jsonFilePath)
             .then(response => response.json())
             .then(data => {
-                for (let product of data) {
-                    if (product.id == -1) {
-                        fetch(jsonFilePath, {
-                            method: 'PATCH',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify(
-                                {
-                                    modif: modif
-                                })
-                        })
-                            .then(response => response.json())
-                            .then(data => { })
-                    }
-                    else {
+                for (let product of data.products) {                   
                         fetch(jsonFilePath, {
                             method: 'DELETE',
                         })
                             .then(response => response.json())
-                            .then(data => { })
-                    }
+                            .then(data => { })                   
                 }
             })
             .then(() => { location.reload(); });
@@ -320,21 +321,7 @@
         })
             .then(response => response.json())
             .then(data => { });
-
-        modif++;
-        fetch(jsonFilePath, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(
-                {
-                    modif: modif
-                })
-        })
-            .then(response => response.json())
-            .then(data => { });
-
+       
         lowermessage.innerHTML = " ";
     }
 
@@ -347,22 +334,7 @@
             method: 'DELETE',
         })
             .then(response => response.json())
-            .then(data => { })
-
-        modif++;
-
-        fetch(jsonFilePath, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(
-                {
-                    modif: modif
-                })
-        })
-            .then(response => response.json())
-            .then(data => { })
+            .then(data => { })      
     }
 
     form4.onreset = () => {
@@ -373,16 +345,9 @@
         const caption = document.createElement("CAPTION");
         let today = new Date();
 
-        fetch(jsonFilePath, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                caption.innerHTML = "PARAGON " + today.getDate() + "-" + (today.getMonth() + 1) + "-" + (today.getFullYear() % 100) + "/" + String(data.modif).padStart(3, '0');
-            });
+        
+        caption.innerHTML = "PARAGON " + today.getDate() + "-" + (today.getMonth() + 1) + "-" + (today.getFullYear() % 100) + "/";
+                  
         return caption;
     }
 
@@ -413,47 +378,53 @@
         fetch(jsonFilePath)
             .then(response => response.json())
             .then(data => {
-                for (let product of data.products) {
-                    if (product.id == -1) continue;
-                    const headerRow = tbody.insertRow();
-                    if ((table.rows.length - 1) % 2 == 0) headerRow.style = "background-color:whitesmoke;";
-                    let td = document.createElement("TD");
-                    td.innerHTML = i + 1;
-                    headerRow.appendChild(td);
-                    td = document.createElement("TD");
-                    td.style.textAlign = "left";
-                    td.innerHTML = product.name;
-                    headerRow.appendChild(td);
-                    td = document.createElement("TD");
-                    td.style.textAlign = "right";
-                    td.innerHTML = product.count;
-                    headerRow.appendChild(td);
-                    td = document.createElement("TD");
-                    td.innerHTML = (parseFloat(product.price)).toFixed(2) + " zł";
-                    headerRow.appendChild(td);
-                    td = document.createElement("TD");
-                    td.innerHTML = (Math.round(product.price * product.count * 100) / 100).toFixed(2) + " zł";
-                    headerRow.appendChild(td);
-                    const but2 = document.createElement("BUTTON");
-                    but2.innerHTML = "Edytuj";
-                    but2.id = "be" + i;
-                    but2.onclick = function () {
-                        x = product.id;
-                        form3.reset();
-                        dlg3.showModal();
-                    };
-                    const but3 = document.createElement("BUTTON");
-                    but3.innerHTML = "Usuń";
-                    but3.id = "bu" + i;
-                    but3.onclick = function () {
-                        x = product.id;
-                        form4.reset();
-                        dlg4.showModal();
-                    };
-                    but2.style = but3.style = "margin-top: 15px; margin-left: 5px;";
-                    headerRow.appendChild(but2);
-                    headerRow.appendChild(but3);
-                    i++;
+                if (data && data.users) {
+                    const user = data.users.find(u => u.userId === parseInt(userId));
+                    if (user) {
+                        for (let product of user.products) {
+                            const headerRow = tbody.insertRow();
+                            if ((table.rows.length - 1) % 2 == 0) headerRow.style = "background-color:whitesmoke;";
+                            let td = document.createElement("TD");
+                            td.innerHTML = i + 1;
+                            headerRow.appendChild(td);
+                            td = document.createElement("TD");
+                            td.style.textAlign = "left";
+                            td.innerHTML = product.name;
+                            headerRow.appendChild(td);
+                            td = document.createElement("TD");
+                            td.style.textAlign = "right";
+                            td.innerHTML = product.count;
+                            headerRow.appendChild(td);
+                            td = document.createElement("TD");
+                            td.innerHTML = (parseFloat(product.price)).toFixed(2) + " zł";
+                            headerRow.appendChild(td);
+                            td = document.createElement("TD");
+                            td.innerHTML = (Math.round(product.price * product.count * 100) / 100).toFixed(2) + " zł";
+                            headerRow.appendChild(td);
+                            const but2 = document.createElement("BUTTON");
+                            but2.innerHTML = "Edytuj";
+                            but2.id = "be" + i;
+                            but2.onclick = function () {
+                                x = product.id;
+                                form3.reset();
+                                dlg3.showModal();
+                            };
+                            const but3 = document.createElement("BUTTON");
+                            but3.innerHTML = "Usuń";
+                            but3.id = "bu" + i;
+                            but3.onclick = function () {
+                                x = product.id;
+                                form4.reset();
+                                dlg4.showModal();
+                            };
+                            but2.style = but3.style = "margin-top: 15px; margin-left: 5px;";
+                            headerRow.appendChild(but2);
+                            headerRow.appendChild(but3);
+                            i++;
+                        }
+                    } else {
+                        console.error('Użytkownik o podanym userId nie został znaleziony.');
+                    }
                 }
             })
 
@@ -474,12 +445,18 @@
                 let sum = 0;
                 fetch(jsonFilePath)
                     .then(response => response.json())
-                    .then(data => {
-                        for (let product of data) {
-                            if (product.id == -1) continue;
-                            sum += (Math.round(parseFloat(product.price) * parseFloat(product.count) * 100) / 100);
+                    .then(data => {    
+                        if (data && data.users) {
+                            const user = data.users.find(u => u.userId === parseInt(userId));
+                            if (user) {
+                                for (let product of user.products) {
+                                    sum += (Math.round(parseFloat(product.price) * parseFloat(product.count) * 100) / 100);
+                                }
+                                th.innerHTML = sum.toFixed(2) + " zł";
+                            } else {
+                                console.error('Użytkownik o podanym userId nie został znaleziony.');
+                            }
                         }
-                        th.innerHTML = sum.toFixed(2) + " zł";
                     })
             }
             footerRow.appendChild(th);

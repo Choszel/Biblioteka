@@ -42,8 +42,8 @@ namespace Biblioteka.Controllers
 
         public IActionResult Opinion()
         {
-            //ViewData["userId"] = ;
+            ViewData["userId"] = 1;
             return View();
-        }
+        }   
     }
 }

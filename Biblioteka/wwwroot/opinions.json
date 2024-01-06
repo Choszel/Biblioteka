@@ -1,14 +1,26 @@
 {
-  "products": [
+  "users": [
     {
-      "id": -1,
-      "modif": 3
+      "userId": 1,
+      "products": [
+        {
+          "name": "dsds",
+          "count": "3.00",
+          "price": "3.00",
+          "id": 0
+        }
+      ]
     },
     {
-      "name": "dsds",
-      "count": "3.00",
-      "price": "3.00",
-      "id": 0
+      "userId": 2,
+      "products": [
+        {
+          "name": "example",
+          "count": "5.00",
+          "price": "10.00",
+          "id": 1
+        }
+      ]
     }
   ]
 }
