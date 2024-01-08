@@ -56,7 +56,7 @@ namespace Biblioteka.Models
         [BindProperty(SupportsGet = true),
             Required(ErrorMessage = "Cena jest obowiązkowa!"),
             Display(Name = "Cena"),
-            Range(0, 9999999999999, ErrorMessage = "Cena musi być większa od zera")]
+            Range(0.99, 9999999999999.99, ErrorMessage = "Cena musi być większa od zera")]
         public decimal? price { get; set; }
     }
 }

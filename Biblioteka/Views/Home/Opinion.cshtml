@@ -216,24 +216,34 @@
                 return response.json(); 
             })
             .then(data => {
-                const user = data.users.find(u => u.userId === parseInt(userId));
+                const user = data.users.find(u => u.userId === parseInt(userId));                
                 if (user) {
                     console.log("fetch");
+                    console.log(user);
+                    console.log(user['userId']);
+                    console.log(user['products']);
+                    user['products'].push(newOpinion);
+                    console.log(user['products']);
+                    console.log(user['products'][1].name);
+
                     return fetch(jsonFilePath, {
-                        method: 'POST',
+                        method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify(newOpinion)
-                    })
-                    .catch(error => console.error('Błąd:', error));
-                    console.log("po f");
+                        body: JSON.stringify(data)
+                    });
                 }
                 console.log("reject");
-                return Promise.reject(new Error('Nie znaleziono użytkownika')); 
+                return Promise.reject(new Error('Nie znaleziono użytkownika'));
             })
             .then(response => {
-                //location.reload();
+                if (response.ok) {
+                    console.log('Dodano nową opinię');
+                    location.reload();
+                } else {
+                    console.error('Błąd podczas dodawania nowej opinii: ' + response.statusText);
+                }
             })
             .then(() => {                
             })

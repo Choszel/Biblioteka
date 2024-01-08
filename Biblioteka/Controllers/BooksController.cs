@@ -57,9 +57,8 @@ namespace Biblioteka.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("bookId,title,ISBN,description,releaseDate,stockLevel,bookPhoto,price")] Book book)
+        public async Task<IActionResult> Create([Bind("bookId,title,ISBN,description,releaseDate,stockLevel,bookPhoto")] Book book)
         {
-            book.price = book.price / 1;
             if (ModelState.IsValid)
             {
                 _context.Add(book);

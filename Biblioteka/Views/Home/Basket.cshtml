@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Biblioteka.Models.Rental
+
+@{
     Layout = "_Layout";
     ViewData["Title"] = "Koszyk";
 }
@@ -126,10 +128,9 @@
             event.preventDefault();
             dlg.showModal();
         }
-        
-
+      
         //zapisanie zamówienia do bazy ze sprawdzeniem, czy jest wystarczająco elementów w magazynie
-        //dodanie widoku dla płatności tylko po to żeby wyglądał i była strona na kck
+        //dodanie widoku dla płatności tylko po to żeby wyglądała i była strona na kck
     }
 
     form.onreset = () => {

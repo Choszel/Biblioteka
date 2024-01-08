@@ -20,3 +20,19 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.okienko {
+    padding: 5px;
+    width: 20%;
+    margin: 1%;
+    display: inline-block;
+    /*background-color: lightcyan;*/
+    border-radius: 15px;
+    text-align: center;
+    border: 4px /*outset cyan*/;
+}
+
+    .okienko > a > img {
+        border-radius: inherit;
+        width: 100%;
+    }

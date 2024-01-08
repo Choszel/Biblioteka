@@ -18,9 +18,11 @@ namespace Biblioteka.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            return _context.Book != null ?
+                        View(await _context.Book.ToListAsync()) :
+                        Problem("Entity set 'MyDbContext.Book'  is null.");
         }
 
         public IActionResult Privacy()
@@ -44,6 +46,6 @@ namespace Biblioteka.Controllers
         {
             ViewData["userId"] = 1;
             return View();
-        }   
+        }     
     }
 }

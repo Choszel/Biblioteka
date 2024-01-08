@@ -64,20 +64,20 @@ namespace Biblioteka.Controllers
                 //    rental.book.Add(item);
                 //}
 
-                if (ViewData.TryGetValue("bookList", out var bookListObject) && bookListObject != null)
-                {
-                    var bookList = (List<Book>)bookListObject;
-                    foreach (var item in bookList)
-                    {
-                        //_context.RentalBook.Add(new RentalBook(rental.rentalId, item.bookId));
-                        rental.book.Add(item);
-                    }
-                }
-                else
-                {
-                    ViewData["BookList"] = _context.Book.Select(c => new SelectListItem { Value = c.bookId.ToString(), Text = c.title }).ToList();
-                    return View(rental);
-                }
+                //if (ViewData.TryGetValue("bookList", out var bookListObject) && bookListObject != null)
+                //{
+                //    var bookList = (List<Book>)bookListObject;
+                //    foreach (var item in bookList)
+                //    {
+                //        //_context.RentalBook.Add(new RentalBook(rental.rentalId, item.bookId));
+                //        rental.book.Add(item);
+                //    }
+                //}
+                //else
+                //{
+                //    ViewData["BookList"] = _context.Book.Select(c => new SelectListItem { Value = c.bookId.ToString(), Text = c.title }).ToList();
+                //    return View(rental);
+                //}
 
                 _context.Add(rental);
                 await _context.SaveChangesAsync();
@@ -85,6 +85,39 @@ namespace Biblioteka.Controllers
             }
             ViewData["BookList"] = _context.Book.Select(c => new SelectListItem { Value = c.bookId.ToString(), Text = c.title }).ToList();
             return View(rental);
+        }
+
+        public async void Create(Rental? rental, List<int> books)
+        {
+            if (ModelState.IsValid)
+            {
+                //rental.book = new List<Book>();
+                //var bookList = (List<Book>)ViewData["bookList"];
+                //foreach (var item in bookList)
+                //{
+                //    //_context.RentalBook.Add(new RentalBook(rental.rentalId, item.bookId));
+                //    rental.book.Add(item);
+                //}
+
+                //if (ViewData.TryGetValue("bookList", out var bookListObject) && bookListObject != null)
+                //{
+                //    var bookList = (List<Book>)bookListObject;
+                //    foreach (var item in bookList)
+                //    {
+                //        //_context.RentalBook.Add(new RentalBook(rental.rentalId, item.bookId));
+                //        rental.book.Add(item);
+                //    }
+                //}
+                //else
+                //{
+                //    ViewData["BookList"] = _context.Book.Select(c => new SelectListItem { Value = c.bookId.ToString(), Text = c.title }).ToList();
+                //    return View(rental);
+                //}
+
+                _context.Add(rental);
+                await _context.SaveChangesAsync();
+            }
+            return;
         }
 
         // GET: Rentals/Edit/5

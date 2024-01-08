@@ -4,56 +4,31 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>@Html.DisplayFor(model => model.title)</h1>
 
 <div>
-    <h4>Book</h4>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ISBN)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ISBN)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.releaseDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.releaseDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.stockLevel)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.stockLevel)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.bookPhoto)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.bookPhoto)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.price)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.price)
-        </dd>
-    </dl>
+    <div class="row">
+        <div class="col-md-3">
+            <img src="@Html.DisplayFor(model => model.bookPhoto)" class="img-fluid" />
+        </div>
+
+        <div class="col-md-9">
+            <dl class="row">
+                <dt class="col-sm-3">Autorzy:</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.authors)</dd>
+
+                <dt class="col-sm-3">Data wydania:</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.releaseDate)</dd>              
+            </dl>           
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <dt>Opis:</dt>
+        <dd>@Html.DisplayFor(model => model.description)</dd>
+    </div>
 </div>
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.bookId">Edit</a> |
     <a asp-action="Index">Back to List</a>

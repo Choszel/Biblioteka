@@ -48,8 +48,7 @@ namespace Biblioteka.Models
         //public virtual ??? user { get; set; }
 
         [ForeignKey("Book"),
-            Display(Name = "Książki"),
-            BindProperty]
+            Display(Name = "Książki")]        
         public List<Book>? book { get; set; }
     }
 }
