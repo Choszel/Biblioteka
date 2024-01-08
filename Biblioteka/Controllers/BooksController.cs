@@ -7,14 +7,18 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Biblioteka.Models;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Biblioteka.Context;
 
 namespace Biblioteka.Controllers
 {
     public class BooksController : Controller
     {
-        private readonly MyDbContext _context;
+        private readonly BibContext _context;
 
-        public BooksController(MyDbContext context)
+        [BindProperty]
+        public string[] AuthorIds { get; set; }
+
+        public BooksController(BibContext context)
         {
             _context = context;
         }
@@ -24,7 +28,7 @@ namespace Biblioteka.Controllers
         {
               return _context.Book != null ? 
                           View(await _context.Book.ToListAsync()) :
-                          Problem("Entity set 'MyDbContext.Book'  is null.");
+                          Problem("Entity set 'BibContext.Book'  is null.");
         }
 
         // GET: Books/Details/5
@@ -144,7 +148,7 @@ namespace Biblioteka.Controllers
         {
             if (_context.Book == null)
             {
-                return Problem("Entity set 'MyDbContext.Book'  is null.");
+                return Problem("Entity set 'BibContext.Book'  is null.");
             }
             var book = await _context.Book.FindAsync(id);
             if (book != null)

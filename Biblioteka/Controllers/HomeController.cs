@@ -1,4 +1,5 @@
-﻿using Biblioteka.Models;
+﻿using Biblioteka.Context;
+using Biblioteka.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -8,11 +9,11 @@ namespace Biblioteka.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly MyDbContext _context;
+        private readonly BibContext _context;
 
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger, MyDbContext context)
+        public HomeController(ILogger<HomeController> logger, BibContext context)
         {
             _logger = logger;
             _context = context;
@@ -22,7 +23,7 @@ namespace Biblioteka.Controllers
         {
             return _context.Book != null ?
                         View(await _context.Book.ToListAsync()) :
-                        Problem("Entity set 'MyDbContext.Book'  is null.");
+                        Problem("Entity set 'BibContext.Book'  is null.");
         }
 
         public IActionResult Privacy()

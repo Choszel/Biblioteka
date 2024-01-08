@@ -6,14 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Biblioteka.Models;
+using Biblioteka.Context;
 
 namespace Biblioteka.Controllers
 {
     public class TagsController : Controller
     {
-        private readonly MyDbContext _context;
+        private readonly BibContext _context;
 
-        public TagsController(MyDbContext context)
+        public TagsController(BibContext context)
         {
             _context = context;
         }
@@ -23,7 +24,7 @@ namespace Biblioteka.Controllers
         {
               return _context.Tag != null ? 
                           View(await _context.Tag.ToListAsync()) :
-                          Problem("Entity set 'MyDbContext.Tag'  is null.");
+                          Problem("Entity set 'BibContext.Tag'  is null.");
         }
 
         // GET: Tags/Details/5
@@ -142,7 +143,7 @@ namespace Biblioteka.Controllers
         {
             if (_context.Tag == null)
             {
-                return Problem("Entity set 'MyDbContext.Tag'  is null.");
+                return Problem("Entity set 'BibContext.Tag'  is null.");
             }
             var tag = await _context.Tag.FindAsync(id);
             if (tag != null)

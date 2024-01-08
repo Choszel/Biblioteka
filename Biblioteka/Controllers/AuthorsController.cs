@@ -6,14 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Biblioteka.Models;
+using Biblioteka.Context;
 
 namespace Biblioteka.Controllers
 {
     public class AuthorsController : Controller
     {
-        private readonly MyDbContext _context;
+        private readonly BibContext _context;
 
-        public AuthorsController(MyDbContext context)
+        public AuthorsController(BibContext context)
         {
             _context = context;
         }
@@ -23,7 +24,7 @@ namespace Biblioteka.Controllers
         {
               return _context.Authors != null ? 
                           View(await _context.Authors.ToListAsync()) :
-                          Problem("Entity set 'MyDbContext.Authors'  is null.");
+                          Problem("Entity set 'BibContext.Authors'  is null.");
         }
 
         // GET: Authors/Details/5
@@ -142,7 +143,7 @@ namespace Biblioteka.Controllers
         {
             if (_context.Authors == null)
             {
-                return Problem("Entity set 'MyDbContext.Authors'  is null.");
+                return Problem("Entity set 'BibContext.Authors'  is null.");
             }
             var author = await _context.Authors.FindAsync(id);
             if (author != null)

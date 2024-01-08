@@ -1,4 +1,5 @@
-﻿using Biblioteka.Models;
+﻿using Biblioteka.Context;
+using Biblioteka.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -7,9 +8,9 @@ namespace Biblioteka.Controllers
 {
     public class RentalsController : Controller
     {
-        private readonly MyDbContext _context;
+        private readonly BibContext _context;
 
-        public RentalsController(MyDbContext context)
+        public RentalsController(BibContext context)
         {
             _context = context;
         }
@@ -19,7 +20,7 @@ namespace Biblioteka.Controllers
         {
             return _context.Rental != null ?
                         View(await _context.Rental.ToListAsync()) :
-                        Problem("Entity set 'MyDbContext.Rental'  is null.");
+                        Problem("Entity set 'BibContext.Rental'  is null.");
         }
 
         // GET: Rentals/Details/5
@@ -196,7 +197,7 @@ namespace Biblioteka.Controllers
         {
             if (_context.Rental == null)
             {
-                return Problem("Entity set 'MyDbContext.Rental'  is null.");
+                return Problem("Entity set 'BibContext.Rental'  is null.");
             }
             var rental = await _context.Rental.FindAsync(id);
             if (rental != null)
