@@ -15,7 +15,7 @@
             <input type="hidden" asp-for="rentalId" />
             <div class="form-group">
                 <label asp-for="userId" class="control-label"></label>
-                <input asp-for="userId" class="form-control" />
+                <select asp-for="userId" class="form-control" asp-items="ViewBag.userId"></select>
                 <span asp-validation-for="userId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -42,6 +42,16 @@
                 <label asp-for="rentalStreet" class="control-label"></label>
                 <input asp-for="rentalStreet" class="form-control" />
                 <span asp-validation-for="rentalStreet" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="houseNumber" class="control-label"></label>
+                <input asp-for="houseNumber" class="form-control" />
+                <span asp-validation-for="houseNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="zipCode" class="control-label"></label>
+                <input asp-for="zipCode" class="form-control" />
+                <span asp-validation-for="zipCode" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

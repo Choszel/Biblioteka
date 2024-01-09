@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Biblioteka.Migrations
 {
     [DbContext(typeof(BibContext))]
-    [Migration("20240108220411_mig")]
-    partial class mig
+    [Migration("20240109145817_mig2")]
+    partial class mig2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -164,24 +164,27 @@ namespace Biblioteka.Migrations
                     b.Property<int?>("Book")
                         .HasColumnType("int");
 
-                    b.Property<long>("ISBN")
+                    b.Property<long?>("ISBN")
+                        .IsRequired()
                         .HasColumnType("bigint");
-
-                    b.Property<string>("bookCategory")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("bookPhoto")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("catId")
+                        .HasColumnType("int");
 
                     b.Property<string>("description")
                         .IsRequired()
                         .HasMaxLength(400)
                         .HasColumnType("nvarchar(400)");
 
-                    b.Property<DateTime>("releaseDate")
+                    b.Property<DateTime?>("releaseDate")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("stockLevel")
+                    b.Property<int?>("stockLevel")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("title")
@@ -193,7 +196,27 @@ namespace Biblioteka.Migrations
 
                     b.HasIndex("Book");
 
+                    b.HasIndex("catId");
+
                     b.ToTable("Book");
+                });
+
+            modelBuilder.Entity("Biblioteka.Models.Category", b =>
+                {
+                    b.Property<int>("catId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("catId"));
+
+                    b.Property<string>("catName")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("catId");
+
+                    b.ToTable("Category");
                 });
 
             modelBuilder.Entity("Biblioteka.Models.Employee", b =>
@@ -212,6 +235,7 @@ namespace Biblioteka.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("email")
+                        .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
 
@@ -262,6 +286,7 @@ namespace Biblioteka.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("email")
+                        .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
 
@@ -286,12 +311,19 @@ namespace Biblioteka.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("rentalId"));
 
+                    b.Property<int>("email")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("houseNumber")
+                        .HasColumnType("NUMERIC(3)");
+
                     b.Property<string>("rentalCity")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
-                    b.Property<DateTime>("rentalDate")
+                    b.Property<DateTime?>("rentalDate")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("rentalState")
@@ -301,16 +333,26 @@ namespace Biblioteka.Migrations
 
                     b.Property<string>("rentalStreet")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
 
-                    b.Property<DateTime>("stateDate")
+                    b.Property<DateTime?>("stateDate")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("userId")
-                        .HasColumnType("int");
+                    b.Property<string>("userE_mail")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("zipCode")
+                        .IsRequired()
+                        .HasMaxLength(6)
+                        .HasColumnType("nvarchar(6)");
 
                     b.HasKey("rentalId");
+
+                    b.HasIndex("email");
 
                     b.ToTable("Rental");
                 });
@@ -318,6 +360,10 @@ namespace Biblioteka.Migrations
             modelBuilder.Entity("Biblioteka.Models.RentalBook", b =>
                 {
                     b.Property<int>("bookId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("quantity")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int>("rentalId")
@@ -525,6 +571,25 @@ namespace Biblioteka.Migrations
                     b.HasOne("Biblioteka.Models.Rental", null)
                         .WithMany("book")
                         .HasForeignKey("Book");
+
+                    b.HasOne("Biblioteka.Models.Category", "category")
+                        .WithMany()
+                        .HasForeignKey("catId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("category");
+                });
+
+            modelBuilder.Entity("Biblioteka.Models.Rental", b =>
+                {
+                    b.HasOne("Biblioteka.Models.Reader", "user")
+                        .WithMany()
+                        .HasForeignKey("email")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("Biblioteka.Models.RentalBook", b =>

@@ -25,7 +25,8 @@ namespace Biblioteka.Models
         [BindProperty(SupportsGet = true),
             Display(Name = "Adres e-mail"),
             EmailAddress,
-            MaxLength(40, ErrorMessage = "E-mail nie może zawierać więcej niż 40 znaków")]
+            MaxLength(40, ErrorMessage = "E-mail nie może zawierać więcej niż 40 znaków"),
+			Required(ErrorMessage = "Pole \"Adres e-mail\" jest wymagane!")]
         public string? email { get; set; }
 
         [BindProperty(SupportsGet = true),

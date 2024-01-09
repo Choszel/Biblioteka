@@ -34,6 +34,9 @@ namespace Biblioteka.Context
 
             modelBuilder.Entity<Author>().ToTable("Authors");      // <- nie działa idk why
         }
+
+
+        public DbSet<Biblioteka.Models.Category> Category { get; set; } = default!;
     }
 
 }

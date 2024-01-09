@@ -1,4 +1,4 @@
-﻿@model Biblioteka.Models.Rental
+﻿@model Biblioteka.Models.Employee
 
 @{
     ViewData["Title"] = "Delete";
@@ -8,38 +8,44 @@
 
 <h3>Are you sure you want to delete this?</h3>
 <div>
-    <h4>Rental</h4>
+    <h4>Employee</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.rentalDate)
+            @Html.DisplayNameFor(model => model.name)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.rentalDate)
+            @Html.DisplayFor(model => model.name)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.rentalState)
+            @Html.DisplayNameFor(model => model.surname)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.rentalState)
+            @Html.DisplayFor(model => model.surname)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.stateDate)
+            @Html.DisplayNameFor(model => model.email)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.stateDate)
+            @Html.DisplayFor(model => model.email)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.rentalCity)
+            @Html.DisplayNameFor(model => model.birthDate)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.rentalCity)
+            @Html.DisplayFor(model => model.birthDate)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.rentalStreet)
+            @Html.DisplayNameFor(model => model.pesel)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.rentalStreet)
+            @Html.DisplayFor(model => model.pesel)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.street)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.street)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.houseNumber)
@@ -48,21 +54,27 @@
             @Html.DisplayFor(model => model.houseNumber)
         </dd>
         <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.town)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.town)
+        </dd>
+        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.zipCode)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.zipCode)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.user)
+            @Html.DisplayNameFor(model => model.dateOfEmployment)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.user.email)
+            @Html.DisplayFor(model => model.dateOfEmployment)
         </dd>
     </dl>
     
     <form asp-action="Delete">
-        <input type="hidden" asp-for="rentalId" />
+        <input type="hidden" asp-for="id" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>
     </form>

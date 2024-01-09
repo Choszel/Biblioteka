@@ -10,87 +10,87 @@ using Biblioteka.Models;
 
 namespace Biblioteka.Controllers
 {
-    public class TagsController : Controller
+    public class CategoriesController : Controller
     {
         private readonly BibContext _context;
 
-        public TagsController(BibContext context)
+        public CategoriesController(BibContext context)
         {
             _context = context;
         }
 
-        // GET: Tags
+        // GET: Categories
         public async Task<IActionResult> Index()
         {
-              return _context.Tag != null ? 
-                          View(await _context.Tag.ToListAsync()) :
-                          Problem("Entity set 'BibContext.Tag'  is null.");
+              return _context.Category != null ? 
+                          View(await _context.Category.ToListAsync()) :
+                          Problem("Entity set 'BibContext.Category'  is null.");
         }
 
-        // GET: Tags/Details/5
+        // GET: Categories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Tag == null)
+            if (id == null || _context.Category == null)
             {
                 return NotFound();
             }
 
-            var tag = await _context.Tag
-                .FirstOrDefaultAsync(m => m.tagId == id);
-            if (tag == null)
+            var category = await _context.Category
+                .FirstOrDefaultAsync(m => m.catId == id);
+            if (category == null)
             {
                 return NotFound();
             }
 
-            return View(tag);
+            return View(category);
         }
 
-        // GET: Tags/Create
+        // GET: Categories/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Tags/Create
+        // POST: Categories/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("tagId,tagName")] Tag tag)
+        public async Task<IActionResult> Create([Bind("catId,catName")] Category category)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(tag);
+                _context.Add(category);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(tag);
+            return View(category);
         }
 
-        // GET: Tags/Edit/5
+        // GET: Categories/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Tag == null)
+            if (id == null || _context.Category == null)
             {
                 return NotFound();
             }
 
-            var tag = await _context.Tag.FindAsync(id);
-            if (tag == null)
+            var category = await _context.Category.FindAsync(id);
+            if (category == null)
             {
                 return NotFound();
             }
-            return View(tag);
+            return View(category);
         }
 
-        // POST: Tags/Edit/5
+        // POST: Categories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("tagId,tagName")] Tag tag)
+        public async Task<IActionResult> Edit(int id, [Bind("catId,catName")] Category category)
         {
-            if (id != tag.tagId)
+            if (id != category.catId)
             {
                 return NotFound();
             }
@@ -99,12 +99,12 @@ namespace Biblioteka.Controllers
             {
                 try
                 {
-                    _context.Update(tag);
+                    _context.Update(category);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TagExists(tag.tagId))
+                    if (!CategoryExists(category.catId))
                     {
                         return NotFound();
                     }
@@ -115,49 +115,49 @@ namespace Biblioteka.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(tag);
+            return View(category);
         }
 
-        // GET: Tags/Delete/5
+        // GET: Categories/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Tag == null)
+            if (id == null || _context.Category == null)
             {
                 return NotFound();
             }
 
-            var tag = await _context.Tag
-                .FirstOrDefaultAsync(m => m.tagId == id);
-            if (tag == null)
+            var category = await _context.Category
+                .FirstOrDefaultAsync(m => m.catId == id);
+            if (category == null)
             {
                 return NotFound();
             }
 
-            return View(tag);
+            return View(category);
         }
 
-        // POST: Tags/Delete/5
+        // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Tag == null)
+            if (_context.Category == null)
             {
-                return Problem("Entity set 'BibContext.Tag'  is null.");
+                return Problem("Entity set 'BibContext.Category'  is null.");
             }
-            var tag = await _context.Tag.FindAsync(id);
-            if (tag != null)
+            var category = await _context.Category.FindAsync(id);
+            if (category != null)
             {
-                _context.Tag.Remove(tag);
+                _context.Category.Remove(category);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TagExists(int id)
+        private bool CategoryExists(int id)
         {
-          return (_context.Tag?.Any(e => e.tagId == id)).GetValueOrDefault();
+          return (_context.Category?.Any(e => e.catId == id)).GetValueOrDefault();
         }
     }
 }

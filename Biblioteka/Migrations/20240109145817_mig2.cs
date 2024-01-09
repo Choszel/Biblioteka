@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Biblioteka.Migrations
 {
     /// <inheritdoc />
-    public partial class mig : Migration
+    public partial class mig2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -72,6 +72,19 @@ namespace Biblioteka.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Category",
+                columns: table => new
+                {
+                    catId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    catName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Category", x => x.catId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Employees",
                 columns: table => new
                 {
@@ -79,7 +92,7 @@ namespace Biblioteka.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    email = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: true),
+                    email = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
                     birthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     pesel = table.Column<decimal>(type: "NUMERIC(11,0)", nullable: false),
                     street = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
@@ -101,30 +114,12 @@ namespace Biblioteka.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    email = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: true),
+                    email = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
                     birthDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Readers", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Rental",
-                columns: table => new
-                {
-                    rentalId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    userId = table.Column<int>(type: "int", nullable: false),
-                    rentalDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    rentalState = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
-                    stateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    rentalCity = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    rentalStreet = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Rental", x => x.rentalId);
                 });
 
             migrationBuilder.CreateTable(
@@ -234,6 +229,33 @@ namespace Biblioteka.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Rental",
+                columns: table => new
+                {
+                    rentalId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    userE_mail = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    rentalDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    rentalState = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    stateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    rentalCity = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    rentalStreet = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    houseNumber = table.Column<decimal>(type: "NUMERIC(3,0)", nullable: true),
+                    zipCode = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: false),
+                    email = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Rental", x => x.rentalId);
+                    table.ForeignKey(
+                        name: "FK_Rental_Readers_email",
+                        column: x => x.email,
+                        principalTable: "Readers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Book",
                 columns: table => new
                 {
@@ -245,12 +267,18 @@ namespace Biblioteka.Migrations
                     releaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     stockLevel = table.Column<int>(type: "int", nullable: false),
                     bookPhoto = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    bookCategory = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    catId = table.Column<int>(type: "int", nullable: false),
                     Book = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Book", x => x.bookId);
+                    table.ForeignKey(
+                        name: "FK_Book_Category_catId",
+                        column: x => x.catId,
+                        principalTable: "Category",
+                        principalColumn: "catId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Book_Rental_Book",
                         column: x => x.Book,
@@ -287,7 +315,8 @@ namespace Biblioteka.Migrations
                 columns: table => new
                 {
                     rentalId = table.Column<int>(type: "int", nullable: false),
-                    bookId = table.Column<int>(type: "int", nullable: false)
+                    bookId = table.Column<int>(type: "int", nullable: false),
+                    quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -397,6 +426,16 @@ namespace Biblioteka.Migrations
                 column: "Book");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Book_catId",
+                table: "Book",
+                column: "catId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rental_email",
+                table: "Rental",
+                column: "email");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RentalBook_bookId",
                 table: "RentalBook",
                 column: "bookId");
@@ -447,9 +486,6 @@ namespace Biblioteka.Migrations
                 name: "Employees");
 
             migrationBuilder.DropTable(
-                name: "Readers");
-
-            migrationBuilder.DropTable(
                 name: "RentalBook");
 
             migrationBuilder.DropTable(
@@ -471,7 +507,13 @@ namespace Biblioteka.Migrations
                 name: "Book");
 
             migrationBuilder.DropTable(
+                name: "Category");
+
+            migrationBuilder.DropTable(
                 name: "Rental");
+
+            migrationBuilder.DropTable(
+                name: "Readers");
         }
     }
 }

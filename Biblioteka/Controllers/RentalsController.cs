@@ -1,9 +1,13 @@
-﻿using Biblioteka.Context;
-using Biblioteka.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Biblioteka.Context;
+using Biblioteka.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Biblioteka.Controllers
 {
@@ -19,9 +23,8 @@ namespace Biblioteka.Controllers
         // GET: Rentals
         public async Task<IActionResult> Index()
         {
-            return _context.Rental != null ?
-                        View(await _context.Rental.ToListAsync()) :
-                        Problem("Entity set 'BibContext.Rental'  is null.");
+            var bibContext = _context.Rental.Include(r => r.user);
+            return View(await bibContext.ToListAsync());
         }
 
         // GET: Rentals/Details/5
@@ -33,6 +36,7 @@ namespace Biblioteka.Controllers
             }
 
             var rental = await _context.Rental
+                .Include(r => r.user)
                 .FirstOrDefaultAsync(m => m.rentalId == id);
             if (rental == null)
             {
@@ -45,7 +49,7 @@ namespace Biblioteka.Controllers
         // GET: Rentals/Create
         public IActionResult Create()
         {
-            ViewData["BookList"] = _context.Book.Select(c => new SelectListItem { Value = c.bookId.ToString(), Text = c.title }).ToList();
+            ViewData["userId"] = new SelectList(_context.Readers, "id", "email");
             return View();
         }
 
@@ -54,38 +58,15 @@ namespace Biblioteka.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("rentalId,userId,rentalDate,rentalState,stateDate,rentalCity,rentalStreet")] Rental rental)
+        public async Task<IActionResult> Create([Bind("rentalId,userId,rentalDate,rentalState,stateDate,rentalCity,rentalStreet,houseNumber,zipCode")] Rental rental)
         {
             if (ModelState.IsValid)
             {
-                //rental.book = new List<Book>();
-                //var bookList = (List<Book>)ViewData["bookList"];
-                //foreach (var item in bookList)
-                //{
-                //    //_context.RentalBook.Add(new RentalBook(rental.rentalId, item.bookId));
-                //    rental.book.Add(item);
-                //}
-
-                //if (ViewData.TryGetValue("bookList", out var bookListObject) && bookListObject != null)
-                //{
-                //    var bookList = (List<Book>)bookListObject;
-                //    foreach (var item in bookList)
-                //    {
-                //        //_context.RentalBook.Add(new RentalBook(rental.rentalId, item.bookId));
-                //        rental.book.Add(item);
-                //    }
-                //}
-                //else
-                //{
-                //    ViewData["BookList"] = _context.Book.Select(c => new SelectListItem { Value = c.bookId.ToString(), Text = c.title }).ToList();
-                //    return View(rental);
-                //}
-
                 _context.Add(rental);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BookList"] = _context.Book.Select(c => new SelectListItem { Value = c.bookId.ToString(), Text = c.title }).ToList();
+            ViewData["userId"] = new SelectList(_context.Readers, "id", "email", rental.userId);
             return View(rental);
         }
 
@@ -103,78 +84,18 @@ namespace Biblioteka.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Place([Bind("rentalId,rentalCity,rentalStreet")] Rental rental)
+        public async Task<IActionResult> Place([Bind("rentalId,userE_mail,rentalDate,rentalState,stateDate,rentalCity,rentalStreet,houseNumber,zipCode")] Rental rental)
         {
             rental.userId = 1;
-            rental.rentalState = "Przyjęte do realizacji";
+            rental.rentalState = "Przyjęte";
             rental.rentalDate = DateTime.Now;
             rental.stateDate = DateTime.Now;
-            System.Diagnostics.Debug.WriteLine("\nRental : " + rental.userId + " " + rental.rentalState + "\n");
-            if (ModelState.IsValid)
-            {
-                //rental.book = new List<Book>();
-                //var bookList = (List<Book>)ViewData["bookList"];
-                //foreach (var item in bookList)
-                //{
-                //    //_context.RentalBook.Add(new RentalBook(rental.rentalId, item.bookId));
-                //    rental.book.Add(item);
-                //}
+            System.Diagnostics.Debug.WriteLine("\nRental : " + rental.userId + " " + rental.rentalState + " " + rental.rentalDate + " " + rental.stateDate + " " + rental.rentalCity + " " + rental.rentalStreet + "\n");
 
-                //if (ViewData.TryGetValue("bookList", out var bookListObject) && bookListObject != null)
-                //{
-                //    var bookList = (List<Book>)bookListObject;
-                //    foreach (var item in bookList)
-                //    {
-                //        //_context.RentalBook.Add(new RentalBook(rental.rentalId, item.bookId));
-                //        rental.book.Add(item);
-                //    }
-                //}
-                //else
-                //{
-                //    ViewData["BookList"] = _context.Book.Select(c => new SelectListItem { Value = c.bookId.ToString(), Text = c.title }).ToList();
-                //    return View(rental);
-                //}
-
-                _context.Add(rental);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["BookList"] = _context.Book.Select(c => new SelectListItem { Value = c.bookId.ToString(), Text = c.title }).ToList();
-            return View(rental);
+            _context.Add(rental);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
-
-        //public async void Create(Rental? rental, List<int> books)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        //rental.book = new List<Book>();
-        //        //var bookList = (List<Book>)ViewData["bookList"];
-        //        //foreach (var item in bookList)
-        //        //{
-        //        //    //_context.RentalBook.Add(new RentalBook(rental.rentalId, item.bookId));
-        //        //    rental.book.Add(item);
-        //        //}
-
-        //        //if (ViewData.TryGetValue("bookList", out var bookListObject) && bookListObject != null)
-        //        //{
-        //        //    var bookList = (List<Book>)bookListObject;
-        //        //    foreach (var item in bookList)
-        //        //    {
-        //        //        //_context.RentalBook.Add(new RentalBook(rental.rentalId, item.bookId));
-        //        //        rental.book.Add(item);
-        //        //    }
-        //        //}
-        //        //else
-        //        //{
-        //        //    ViewData["BookList"] = _context.Book.Select(c => new SelectListItem { Value = c.bookId.ToString(), Text = c.title }).ToList();
-        //        //    return View(rental);
-        //        //}
-
-        //        _context.Add(rental);
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    return;
-        //}
 
         // GET: Rentals/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -189,6 +110,7 @@ namespace Biblioteka.Controllers
             {
                 return NotFound();
             }
+            ViewData["userId"] = new SelectList(_context.Readers, "id", "email", rental.userId);
             return View(rental);
         }
 
@@ -197,7 +119,7 @@ namespace Biblioteka.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("rentalId,userId,rentalDate,rentalState,stateDate,rentalCity,rentalStreet")] Rental rental)
+        public async Task<IActionResult> Edit(int id, [Bind("rentalId,userId,rentalDate,rentalState,stateDate,rentalCity,rentalStreet,houseNumber,zipCode")] Rental rental)
         {
             if (id != rental.rentalId)
             {
@@ -224,6 +146,7 @@ namespace Biblioteka.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["userId"] = new SelectList(_context.Readers, "id", "email", rental.userId);
             return View(rental);
         }
 
@@ -236,6 +159,7 @@ namespace Biblioteka.Controllers
             }
 
             var rental = await _context.Rental
+                .Include(r => r.user)
                 .FirstOrDefaultAsync(m => m.rentalId == id);
             if (rental == null)
             {
@@ -259,14 +183,14 @@ namespace Biblioteka.Controllers
             {
                 _context.Rental.Remove(rental);
             }
-
+            
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool RentalExists(int id)
         {
-            return (_context.Rental?.Any(e => e.rentalId == id)).GetValueOrDefault();
+          return (_context.Rental?.Any(e => e.rentalId == id)).GetValueOrDefault();
         }
     }
 }

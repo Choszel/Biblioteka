@@ -19,7 +19,8 @@
             <dl class="row">
                 <dt class="col-sm-3">Autorzy:</dt>
                 <dd class="col-sm-9">@Html.DisplayFor(model => model.authors)</dd>
-
+                <dt class="col-sm-3">Kategoria:</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.category.catName)</dd>
                 <dt class="col-sm-3">Data wydania:</dt>
                 <dd class="col-sm-9">@Html.DisplayFor(model => model.releaseDate)</dd>
             </dl>

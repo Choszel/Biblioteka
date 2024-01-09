@@ -13,9 +13,6 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.userId)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.rentalDate)
             </th>
             <th>
@@ -30,15 +27,21 @@
             <th>
                 @Html.DisplayNameFor(model => model.rentalStreet)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.houseNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.zipCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.user)
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.userId)
-            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.rentalDate)
             </td>
@@ -53,6 +56,15 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.rentalStreet)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.houseNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.zipCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.user.email)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.rentalId">Edit</a> |

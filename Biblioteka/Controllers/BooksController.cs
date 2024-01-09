@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Biblioteka.Context;
 using Biblioteka.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Biblioteka.Controllers
 {
@@ -22,9 +23,8 @@ namespace Biblioteka.Controllers
         // GET: Books
         public async Task<IActionResult> Index()
         {
-              return _context.Books != null ? 
-                          View(await _context.Books.ToListAsync()) :
-                          Problem("Entity set 'BibContext.Books'  is null.");
+            var bibContext = _context.Books.Include(b => b.category);
+            return View(await bibContext.ToListAsync());
         }
 
         // GET: Books/Details/5
@@ -36,6 +36,7 @@ namespace Biblioteka.Controllers
             }
 
             var book = await _context.Books
+                .Include(b => b.category)
                 .FirstOrDefaultAsync(m => m.bookId == id);
             if (book == null)
             {
@@ -48,9 +49,9 @@ namespace Biblioteka.Controllers
         // GET: Books/Create
         public IActionResult Create()
         {
-            //ViewData["AuthorList"] = _context.Authors.Select(c => new SelectListItem { Value = c.id.ToString(), Text = c.name }).ToList();
             ViewBag.AuthorList = new MultiSelectList(_context.Authors, "id", "name");
             ViewBag.TagList = new MultiSelectList(_context.Tag, "tagId", "tagName");
+            ViewData["catId"] = new SelectList(_context.Set<Category>(), "catId", "catName");
             return View();
         }
 
@@ -59,7 +60,7 @@ namespace Biblioteka.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("bookId,title,ISBN,description,releaseDate,authors,tags,stockLevel,bookPhoto,bookCategory")] Book book)
+        public async Task<IActionResult> Create([Bind("bookId,title,ISBN,description,releaseDate,authors,tags,stockLevel,bookPhoto,catId")] Book book)
         {
             System.Diagnostics.Debug.WriteLine("\nIlość authors: " + (book.authors?.Count) + "\n");
             foreach (var authorId in book.authors)
@@ -77,9 +78,23 @@ namespace Biblioteka.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
+            if (!ModelState.IsValid)
+            {
+                foreach (var modelStateKey in ModelState.Keys)
+                {
+                    var modelStateVal = ModelState[modelStateKey];
+                    if (modelStateVal.Errors.Count > 0)
+                    {
+                        foreach (var error in modelStateVal.Errors)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"{modelStateKey}: {error.ErrorMessage}");
+                        }
+                    }
+                }
+            }
             ViewBag.AuthorList = new MultiSelectList(_context.Authors, "id", "name", book.authors);
             ViewBag.TagList = new MultiSelectList(_context.Tag, "tagId", "tagName", book.tags);
+            ViewData["catId"] = new SelectList(_context.Set<Category>(), "catId", "catName", book.catId);
             return View(book);
         }
 
@@ -96,6 +111,9 @@ namespace Biblioteka.Controllers
             {
                 return NotFound();
             }
+            ViewBag.AuthorList = new MultiSelectList(_context.Authors, "id", "name", book.authors);
+            ViewBag.TagList = new MultiSelectList(_context.Tag, "tagId", "tagName", book.tags);
+            ViewData["catId"] = new SelectList(_context.Set<Category>(), "catId", "catName", book.catId);
             return View(book);
         }
 
@@ -104,7 +122,7 @@ namespace Biblioteka.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("bookId,title,ISBN,description,releaseDate,stockLevel,bookPhoto,bookCategory")] Book book)
+        public async Task<IActionResult> Edit(int id, [Bind("bookId,title,ISBN,description,releaseDate,stockLevel,bookPhoto,catId")] Book book)
         {
             if (id != book.bookId)
             {
@@ -131,6 +149,7 @@ namespace Biblioteka.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["catId"] = new SelectList(_context.Set<Category>(), "catId", "catName", book.catId);
             return View(book);
         }
 
@@ -143,6 +162,7 @@ namespace Biblioteka.Controllers
             }
 
             var book = await _context.Books
+                .Include(b => b.category)
                 .FirstOrDefaultAsync(m => m.bookId == id);
             if (book == null)
             {

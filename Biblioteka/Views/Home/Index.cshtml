@@ -18,6 +18,7 @@
                     <img src="@item.bookPhoto" alt="Book Photo" />
                 </a><br />
                 @Html.DisplayFor(modelItem => item.title)<br />
+                @Html.DisplayFor(modelItem => item.category.catName)<br />
                 @Html.DisplayFor(modelItem => item.authors)<br />
                 @* @Html.DisplayFor(modelItem => item.rating)<br /> *@
                @*  @if (role > 1)

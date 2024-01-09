@@ -1,5 +1,6 @@
 ﻿using Biblioteka.Context;
 using Biblioteka.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -21,9 +22,8 @@ namespace Biblioteka.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return _context.Book != null ?
-                        View(await _context.Book.ToListAsync()) :
-                        Problem("Entity set 'BibContext.Book'  is null.");
+            var bibContext = _context.Books.Include(b => b.category);
+            return View(await bibContext.ToListAsync());
         }
 
         public IActionResult Privacy()
@@ -47,6 +47,6 @@ namespace Biblioteka.Controllers
         {
             ViewData["userId"] = 1;
             return View();
-        }     
+        }            
     }
 }

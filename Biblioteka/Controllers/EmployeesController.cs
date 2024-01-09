@@ -10,87 +10,87 @@ using Biblioteka.Models;
 
 namespace Biblioteka.Controllers
 {
-    public class TagsController : Controller
+    public class EmployeesController : Controller
     {
         private readonly BibContext _context;
 
-        public TagsController(BibContext context)
+        public EmployeesController(BibContext context)
         {
             _context = context;
         }
 
-        // GET: Tags
+        // GET: Employees
         public async Task<IActionResult> Index()
         {
-              return _context.Tag != null ? 
-                          View(await _context.Tag.ToListAsync()) :
-                          Problem("Entity set 'BibContext.Tag'  is null.");
+              return _context.Employees != null ? 
+                          View(await _context.Employees.ToListAsync()) :
+                          Problem("Entity set 'BibContext.Employees'  is null.");
         }
 
-        // GET: Tags/Details/5
+        // GET: Employees/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Tag == null)
+            if (id == null || _context.Employees == null)
             {
                 return NotFound();
             }
 
-            var tag = await _context.Tag
-                .FirstOrDefaultAsync(m => m.tagId == id);
-            if (tag == null)
+            var employee = await _context.Employees
+                .FirstOrDefaultAsync(m => m.id == id);
+            if (employee == null)
             {
                 return NotFound();
             }
 
-            return View(tag);
+            return View(employee);
         }
 
-        // GET: Tags/Create
+        // GET: Employees/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Tags/Create
+        // POST: Employees/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("tagId,tagName")] Tag tag)
+        public async Task<IActionResult> Create([Bind("id,name,surname,email,birthDate,pesel,street,houseNumber,town,zipCode,dateOfEmployment")] Employee employee)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(tag);
+                _context.Add(employee);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(tag);
+            return View(employee);
         }
 
-        // GET: Tags/Edit/5
+        // GET: Employees/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Tag == null)
+            if (id == null || _context.Employees == null)
             {
                 return NotFound();
             }
 
-            var tag = await _context.Tag.FindAsync(id);
-            if (tag == null)
+            var employee = await _context.Employees.FindAsync(id);
+            if (employee == null)
             {
                 return NotFound();
             }
-            return View(tag);
+            return View(employee);
         }
 
-        // POST: Tags/Edit/5
+        // POST: Employees/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("tagId,tagName")] Tag tag)
+        public async Task<IActionResult> Edit(int id, [Bind("id,name,surname,email,birthDate,pesel,street,houseNumber,town,zipCode,dateOfEmployment")] Employee employee)
         {
-            if (id != tag.tagId)
+            if (id != employee.id)
             {
                 return NotFound();
             }
@@ -99,12 +99,12 @@ namespace Biblioteka.Controllers
             {
                 try
                 {
-                    _context.Update(tag);
+                    _context.Update(employee);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TagExists(tag.tagId))
+                    if (!EmployeeExists(employee.id))
                     {
                         return NotFound();
                     }
@@ -115,49 +115,49 @@ namespace Biblioteka.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(tag);
+            return View(employee);
         }
 
-        // GET: Tags/Delete/5
+        // GET: Employees/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Tag == null)
+            if (id == null || _context.Employees == null)
             {
                 return NotFound();
             }
 
-            var tag = await _context.Tag
-                .FirstOrDefaultAsync(m => m.tagId == id);
-            if (tag == null)
+            var employee = await _context.Employees
+                .FirstOrDefaultAsync(m => m.id == id);
+            if (employee == null)
             {
                 return NotFound();
             }
 
-            return View(tag);
+            return View(employee);
         }
 
-        // POST: Tags/Delete/5
+        // POST: Employees/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Tag == null)
+            if (_context.Employees == null)
             {
-                return Problem("Entity set 'BibContext.Tag'  is null.");
+                return Problem("Entity set 'BibContext.Employees'  is null.");
             }
-            var tag = await _context.Tag.FindAsync(id);
-            if (tag != null)
+            var employee = await _context.Employees.FindAsync(id);
+            if (employee != null)
             {
-                _context.Tag.Remove(tag);
+                _context.Employees.Remove(employee);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TagExists(int id)
+        private bool EmployeeExists(int id)
         {
-          return (_context.Tag?.Any(e => e.tagId == id)).GetValueOrDefault();
+          return (_context.Employees?.Any(e => e.id == id)).GetValueOrDefault();
         }
     }
 }

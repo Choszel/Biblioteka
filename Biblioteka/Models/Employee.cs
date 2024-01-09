@@ -25,7 +25,8 @@ namespace Biblioteka.Models
         [BindProperty(SupportsGet = true),
             Display(Name = "Adres e-mail"),
             EmailAddress,
-            MaxLength(40, ErrorMessage = "E-mail nie może zawierać więcej niż 40 znaków")]
+            MaxLength(40, ErrorMessage = "E-mail nie może zawierać więcej niż 40 znaków"),
+            Required(ErrorMessage = "Pole \"Adres e-mail\" jest wymagane!")]
         public string? email { get; set; }
 
         [BindProperty(SupportsGet = true),
@@ -36,16 +37,16 @@ namespace Biblioteka.Models
 
         [BindProperty(SupportsGet = true),
             Column(TypeName = "NUMERIC(11)"),
-            Required,
+            Required(ErrorMessage = "Pole \"PESEL\" jest wymagane!"),
             Display(Name = "PESEL"),
             Range(10000000000, 99999999999, ErrorMessage = "PESEL składa się z 11 cyfr"),]
         public long? pesel { get; set; }
 
         [BindProperty(SupportsGet = true),
-            Required,
+            Required(ErrorMessage = "Pole \"Ulica\" jest wymagane!"),
             Display(Name = "Ulica"),
             MaxLength(40, ErrorMessage = "Ulica nie może zaweirać więcej niż 40 znaków")]
-        public string street { get; set; }
+        public string? street { get; set; }
 
         [BindProperty(SupportsGet = true),
             Column(TypeName = "NUMERIC(3)"),
@@ -54,16 +55,16 @@ namespace Biblioteka.Models
         public int? houseNumber { get; set; }
 
         [BindProperty(SupportsGet = true),
-            Required,
+            Required(ErrorMessage = "Pole \"Miasto\" jest wymagane!"),
             Display(Name = "Miasto"),
             MaxLength(30, ErrorMessage = "Miasto nie może zawierać więcej niż 30 znaków")]
-        public string town { get; set; }
+        public string? town { get; set; }
 
         [BindProperty(SupportsGet = true),
-            Required,
+            Required(ErrorMessage = "Pole \"Kod pocztowy\" jest wymagane!"),
             Display(Name = "Kod pocztowy"),
             MaxLength(6, ErrorMessage = "Kod pocztowy nie może zawierać więcej niż 6 znaków")]
-        public string zipCode { get; set; }
+        public string? zipCode { get; set; }
 
         //[BindProperty(SupportsGet = true),
         //    Phone,
@@ -74,7 +75,7 @@ namespace Biblioteka.Models
         //public string phoneNumber { get; set; }
 
         [BindProperty(SupportsGet = true),
-            Required,
+            Required(ErrorMessage = "Pole \"Data zatrudnienia\" jest wymagane!"),
             Display(Name = "Data zatrudnienia")]
         public DateTime dateOfEmployment { get; set; }
     }

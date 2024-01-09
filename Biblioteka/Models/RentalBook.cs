@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Biblioteka.Models
@@ -20,5 +22,11 @@ namespace Biblioteka.Models
         
         [ForeignKey("bookId")]
         public virtual Book book { get; set; }
+
+        [BindProperty(SupportsGet = true),
+            Required,
+            Display(Name = "Ilość"),
+            Range(0, 99999999, ErrorMessage = "Ilość musi być większa od zera oraz mniejsza niż 99999999")]
+        public int? quantity { get; set; }
     }
 }
