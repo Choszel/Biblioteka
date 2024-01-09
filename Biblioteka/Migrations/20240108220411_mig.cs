@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Biblioteka.Migrations
 {
     /// <inheritdoc />
-    public partial class aasd : Migration
+    public partial class mig : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -128,19 +128,6 @@ namespace Biblioteka.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tag",
-                columns: table => new
-                {
-                    tagId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    tagName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tag", x => x.tagId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -258,7 +245,7 @@ namespace Biblioteka.Migrations
                     releaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     stockLevel = table.Column<int>(type: "int", nullable: false),
                     bookPhoto = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    bookCategory = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Book = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -316,6 +303,25 @@ namespace Biblioteka.Migrations
                         principalTable: "Rental",
                         principalColumn: "rentalId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tag",
+                columns: table => new
+                {
+                    tagId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    tagName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Tag = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tag", x => x.tagId);
+                    table.ForeignKey(
+                        name: "FK_Tag_Book_Tag",
+                        column: x => x.Tag,
+                        principalTable: "Book",
+                        principalColumn: "bookId");
                 });
 
             migrationBuilder.CreateTable(
@@ -401,6 +407,11 @@ namespace Biblioteka.Migrations
                 column: "rentalId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Tag_Tag",
+                table: "Tag",
+                column: "Tag");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TagBook_bookId",
                 table: "TagBook",
                 column: "bookId");
@@ -454,10 +465,10 @@ namespace Biblioteka.Migrations
                 name: "Authors");
 
             migrationBuilder.DropTable(
-                name: "Book");
+                name: "Tag");
 
             migrationBuilder.DropTable(
-                name: "Tag");
+                name: "Book");
 
             migrationBuilder.DropTable(
                 name: "Rental");

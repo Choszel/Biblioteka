@@ -6,6 +6,8 @@
 
 <h1>@Html.DisplayFor(model => model.title)</h1>
 
+<h4>Numer ISBN @Html.DisplayFor(model => model.ISBN)</h4>
+
 <div>
     <hr />
     <div class="row">
@@ -19,8 +21,8 @@
                 <dd class="col-sm-9">@Html.DisplayFor(model => model.authors)</dd>
 
                 <dt class="col-sm-3">Data wydania:</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.releaseDate)</dd>             
-            </dl>           
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.releaseDate)</dd>
+            </dl>
         </div>
     </div>
     <div class="col-sm-12">

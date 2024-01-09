@@ -1,5 +1,6 @@
 ﻿using Biblioteka.Context;
 using Biblioteka.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -88,8 +89,27 @@ namespace Biblioteka.Controllers
             return View(rental);
         }
 
-        public async void Create(Rental? rental, List<int> books)
+        // GET: Rentals/Create
+        [Authorize]
+        public IActionResult Place()
         {
+            ViewData["BookList"] = _context.Book.Select(c => new SelectListItem { Value = c.bookId.ToString(), Text = c.title }).ToList();
+            return View();
+        }
+
+        // POST: Rentals/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> Place([Bind("rentalId,rentalCity,rentalStreet")] Rental rental)
+        {
+            rental.userId = 1;
+            rental.rentalState = "Przyjęte do realizacji";
+            rental.rentalDate = DateTime.Now;
+            rental.stateDate = DateTime.Now;
+            System.Diagnostics.Debug.WriteLine("\nRental : " + rental.userId + " " + rental.rentalState + "\n");
             if (ModelState.IsValid)
             {
                 //rental.book = new List<Book>();
@@ -117,9 +137,44 @@ namespace Biblioteka.Controllers
 
                 _context.Add(rental);
                 await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            return;
+            ViewData["BookList"] = _context.Book.Select(c => new SelectListItem { Value = c.bookId.ToString(), Text = c.title }).ToList();
+            return View(rental);
         }
+
+        //public async void Create(Rental? rental, List<int> books)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        //rental.book = new List<Book>();
+        //        //var bookList = (List<Book>)ViewData["bookList"];
+        //        //foreach (var item in bookList)
+        //        //{
+        //        //    //_context.RentalBook.Add(new RentalBook(rental.rentalId, item.bookId));
+        //        //    rental.book.Add(item);
+        //        //}
+
+        //        //if (ViewData.TryGetValue("bookList", out var bookListObject) && bookListObject != null)
+        //        //{
+        //        //    var bookList = (List<Book>)bookListObject;
+        //        //    foreach (var item in bookList)
+        //        //    {
+        //        //        //_context.RentalBook.Add(new RentalBook(rental.rentalId, item.bookId));
+        //        //        rental.book.Add(item);
+        //        //    }
+        //        //}
+        //        //else
+        //        //{
+        //        //    ViewData["BookList"] = _context.Book.Select(c => new SelectListItem { Value = c.bookId.ToString(), Text = c.title }).ToList();
+        //        //    return View(rental);
+        //        //}
+
+        //        _context.Add(rental);
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    return;
+        //}
 
         // GET: Rentals/Edit/5
         public async Task<IActionResult> Edit(int? id)

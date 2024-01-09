@@ -13,9 +13,6 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.bookPhoto)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.title)
             </th>
             <th>
@@ -29,9 +26,12 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.stockLevel)
-            </th>           
+            </th>
             <th>
-                @Html.DisplayNameFor(model => model.price)
+                @Html.DisplayNameFor(model => model.bookPhoto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.bookCategory)
             </th>
             <th></th>
         </tr>
@@ -39,9 +39,6 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
-                <img src=@item.bookPhoto style="width: 120px; height: 155px;" />
-            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.title)
             </td>
@@ -58,78 +55,17 @@
                 @Html.DisplayFor(modelItem => item.stockLevel)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.price)
+                @Html.DisplayFor(modelItem => item.bookPhoto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.bookCategory)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.bookId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.bookId">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.bookId">Delete</a>
-                    <button id="toBasket" onclick="addProduct(@item.bookId, @item.stockLevel)">Dodaj do koszyka</button>
-                </td>
-            </tr>
-        }
+            </td>
+        </tr>
+}
     </tbody>
 </table>
-
-<dialog id="dialog1">
-    <p>Produkt został dodany do koszyka</p>
-    <form id="form1" method="dialog">
-        <div>
-            <input type="submit" value="OK">
-        </div>
-    </form>
-</dialog>
-
-<dialog id="dialog2">
-    <p>Produkt jest niedostępny</p>
-    <form id="form2" method="dialog">
-        <div>
-            <input type="submit" value="OK">
-        </div>
-    </form>
-</dialog>
-
-<script>
-    const form = document.getElementById("form1");
-    const dlg = document.getElementById("dialog1"); 
-    const form2 = document.getElementById("form2");
-    const dlg2 = document.getElementById("dialog2");
-
-    form.onsubmit = () => {
-        dlg.close();
-    }
-
-    form2.onsubmit = () => {
-        dlg2.close();
-    }
-
-    function addProduct(bookId, stockLevel) {
-        if (parseInt(stockLevel) < 1) {
-            form2.reset();
-            dlg2.showModal();
-        }
-        else {
-            var storedBooks = localStorage.getItem("books");
-            var books = {};
-
-            if (storedBooks) books = JSON.parse(storedBooks);
-
-            if (books[bookId] != null) books[bookId] = books[bookId] + 1;
-            else books[bookId] = 1;
-
-            localStorage.setItem("books", JSON.stringify(books));
-
-            const indexnegative = JSON.parse(localStorage.getItem(-1));
-            let modif = indexnegative.modif + 1;            
-            localStorage.setItem((-1).toString(),
-                JSON.stringify(
-                    {
-                        modif: modif
-                    }));
-
-            form.reset();
-            dlg.showModal();
-        }          
-    }
-</script>
-

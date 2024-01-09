@@ -43,6 +43,10 @@ namespace Biblioteka.Models
             Display(Name = "Autorzy")]
         public List<Author>? authors { get; set; }
 
+        [ForeignKey("Tag"),
+            Display(Name = "Tagi")]
+        public List<Tag>? tags { get; set; }
+
         [BindProperty(SupportsGet = true),
             Required,
             Display(Name = "Stan magazynowy"),
@@ -54,9 +58,8 @@ namespace Biblioteka.Models
         public string? bookPhoto { get; set; }
 
         [BindProperty(SupportsGet = true),
-            Required(ErrorMessage = "Cena jest obowiązkowa!"),
-            Display(Name = "Cena"),
-            Range(0.99, 9999999999999.99, ErrorMessage = "Cena musi być większa od zera")]
-        public decimal? price { get; set; }
+            Required,
+            Display(Name = "Kategoria")]
+        public string? bookCategory { get; set; }
     }
 }

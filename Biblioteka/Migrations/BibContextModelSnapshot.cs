@@ -164,6 +164,9 @@ namespace Biblioteka.Migrations
                     b.Property<long>("ISBN")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("bookCategory")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("bookPhoto")
                         .HasColumnType("nvarchar(max)");
 
@@ -171,10 +174,6 @@ namespace Biblioteka.Migrations
                         .IsRequired()
                         .HasMaxLength(400)
                         .HasColumnType("nvarchar(400)");
-
-                    b.Property<decimal?>("price")
-                        .IsRequired()
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("releaseDate")
                         .HasColumnType("datetime2");
@@ -336,12 +335,17 @@ namespace Biblioteka.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("tagId"));
 
+                    b.Property<int?>("Tag")
+                        .HasColumnType("int");
+
                     b.Property<string>("tagName")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
                     b.HasKey("tagId");
+
+                    b.HasIndex("Tag");
 
                     b.ToTable("Tag");
                 });
@@ -539,6 +543,13 @@ namespace Biblioteka.Migrations
                     b.Navigation("rental");
                 });
 
+            modelBuilder.Entity("Biblioteka.Models.Tag", b =>
+                {
+                    b.HasOne("Biblioteka.Models.Book", null)
+                        .WithMany("tags")
+                        .HasForeignKey("Tag");
+                });
+
             modelBuilder.Entity("Biblioteka.Models.TagBook", b =>
                 {
                     b.HasOne("Biblioteka.Models.Book", "book")
@@ -607,6 +618,11 @@ namespace Biblioteka.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Biblioteka.Models.Book", b =>
+                {
+                    b.Navigation("tags");
                 });
 
             modelBuilder.Entity("Biblioteka.Models.Rental", b =>
