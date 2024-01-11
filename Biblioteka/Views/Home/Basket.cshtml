@@ -63,7 +63,7 @@
     <button id="but2" style="margin-left: 20 px;" onclick="clearAll()">Opróżnij koszyk</button>
     <button id="but1" style="margin-left: 20 px;">Złóż zamówienie</button>
 
-    <dialog id="dialog1">
+    @* <dialog id="dialog1">
         <h2>Dodaj produkt</h2>
         <hr>
         <p>Podaj dane:</p>
@@ -76,7 +76,7 @@
             </div>
             <p id="messagedialog"></p>
         </form>
-    </dialog>
+    </dialog> *@
 
     <dialog id="dialog2">
         <h4>
@@ -109,38 +109,39 @@
     const table = document.createElement("TABLE");
 
     const btn = document.getElementById("but1");
-    const form = document.getElementById("form1");
-    const dlg = document.getElementById("dialog1");
+    // const form = document.getElementById("form1");
+    // const dlg = document.getElementById("dialog1");
     btn.onclick = () => {
-        form.reset();
-        dlg.showModal();
-    }
-
-    form.onsubmit = () => {
-        const mess = document.getElementById("messagedialog");
-        if (form.city.value ==="") {
-            mess.innerHTML = "Proszę podać miasto";
-            event.preventDefault();
-            dlg.showModal();
-        }
-        if (form.street.value === "") {
-            mess.innerHTML = "Proszę podać ulicę";
-            event.preventDefault();
-            dlg.showModal();
-        }
-
+        // form.reset();
+        // dlg.showModal();
         window.location.href = "/Rentals/Place";
-
-        //@Url.Action("Create", "Rentals", new { });
-        //zapisanie zamówienia do bazy ze sprawdzeniem, czy jest wystarczająco elementów w magazynie
-        //dodanie widoku dla płatności tylko po to żeby wyglądała i była strona na kck
     }
 
-    form.onreset = () => {
-        const mess = document.getElementById("messagedialog");
-        mess.innerHTML = "";
-        dlg.close();
-    }
+    // form.onsubmit = () => {
+    //     // const mess = document.getElementById("messagedialog");
+    //     // if (form.city.value ==="") {
+    //     //     mess.innerHTML = "Proszę podać miasto";
+    //     //     event.preventDefault();
+    //     //     dlg.showModal();
+    //     // }
+    //     // if (form.street.value === "") {
+    //     //     mess.innerHTML = "Proszę podać ulicę";
+    //     //     event.preventDefault();
+    //     //     dlg.showModal();
+    //     // }
+
+    //     window.location.href = "/Rentals/Place";
+
+    //     //@Url.Action("Create", "Rentals", new { });
+    //     //zapisanie zamówienia do bazy ze sprawdzeniem, czy jest wystarczająco elementów w magazynie
+    //     //dodanie widoku dla płatności tylko po to żeby wyglądała i była strona na kck
+    // }
+
+    // form.onreset = () => {
+    //     const mess = document.getElementById("messagedialog");
+    //     mess.innerHTML = "";
+    //     dlg.close();
+    // }
 
     let index = localStorage.length - 1;
     let modif;
