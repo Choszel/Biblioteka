@@ -22,6 +22,7 @@ namespace Biblioteka.Controllers
 
         public async Task<IActionResult> Index()
         {
+            ViewBag.BooksList = new LinkedList<SelectListItem>();
             var bibContext = _context.Books.Include(b => b.category);
             return View(await bibContext.ToListAsync());
         }
@@ -47,6 +48,20 @@ namespace Biblioteka.Controllers
         {
             ViewData["userId"] = 1;
             return View();
-        }            
+        }
+
+        public JsonResult GetBooks()
+        {
+            return Json(_context.Books.ToList());
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _context.Dispose();
+            }
+            base.Dispose(disposing);
+        }
     }
 }

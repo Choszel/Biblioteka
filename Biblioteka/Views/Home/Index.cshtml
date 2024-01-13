@@ -6,10 +6,59 @@
 
 @* <script src="js/jquery3.js"></script> *@
 
+
+<div class="control-group">
+    <label for="select-state">States:</label>
+    <select id="select-state" multiple name="state[]" class="demo-default">
+        <option value="">Select a state...</option>
+        <option value="AL">Alabama</option>
+        ***
+        <option value="WY" selected>Wyoming</option>
+    </select>
+</div>
+
+<script type="text/javascript">
+
+    var eventHandler = function (name) {
+        return function () {
+            console.log(name, arguments);
+            $('#log').append('<div><span class="name">' + name + '</span></div>');
+        };
+    };
+    var $select = $('#select-state').selectize({
+        create: true,
+        onChange: eventHandler('onChange'),
+        onItemAdd: eventHandler('onItemAdd'),
+        onItemRemove: eventHandler('onItemRemove'),
+        onOptionAdd: eventHandler('onOptionAdd'),
+        onOptionRemove: eventHandler('onOptionRemove'),
+        onDropdownOpen: eventHandler('onDropdownOpen'),
+        onDropdownClose: eventHandler('onDropdownClose'),
+        onFocus: eventHandler('onFocus'),
+        onBlur: eventHandler('onBlur'),
+        onInitialize: eventHandler('onInitialize'),
+    });
+</script>
+
+
+
 <div class="text-center">
     <h1 class="display-4">Witamy</h1>
 @*     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
- *@   
+ *@
+
+
+    <div class="row">
+        <div class="col-md-4">
+            @Html.DropDownList("BooksList")
+        </div>
+
+        <div class="col-md-8">
+            <a href="#" id="Search" class="btn btn-dark">Szukaj</a>
+        </div>
+    </div>
+
+
     <div style="width: 90%; margin: auto;">
         @foreach (var item in Model)
         {
@@ -37,3 +86,93 @@
 
     <a class="navbar-brand" asp-area="" asp-controller="Authors" asp-action="Index">Autorzy</a>
 </div>
+
+@section scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/lib/bootstrap/dist/js/selectize.js"></script>
+
+    <script type="text/javascript">
+        var $select;
+
+        $(document).ready(function () {
+            $select = $('#BooksList').selectize({
+                valueField: 'bookId',
+                labelField: 'title',
+                searchField: ['title', 'authors', 'releaseDate'],
+                sortField: 'title',
+                onInitialize: function () {
+                    loadBooksAJAX();
+                },
+                render: {
+                    option: function (item, escape) {
+                        return '<div class="selectDiv">' +
+                            '<span class="mainName">' + escape(item.title) + '</span><br />' +
+                            '<span class="subLabel">Autor: </span>' + '<span class="subValue">' + escape(item.authors) + '</span>' +
+                            '<span class="subLabel">Rok: </span>' + '<span class="subValue">' + escape(item.releaseDate) + '</span>' +
+                            '</div>'
+                    }
+                }
+            });
+
+            $('#Search').click(function () {
+                loadBooksAJAX();
+            })
+        });
+
+        function loadBooksAJAX() {
+            $.ajax({
+                url: '/Home/GetBooks',
+                type: 'POST',
+                success: function (data) {
+                    for (var i = 0; i < data.length; i++)
+                        $select[0].selectize.addOption(data[i]);
+                },
+                error: function (response) {
+                    alert('Błąd: ' + response)
+                }
+            });
+        }
+
+    </script>
+}
+
+
+@section css {
+    <script src="~/lib/bootstrap/dist/css/selectize.bootstrap3.css"></script>
+    @* @Styles.Render("~/Content/selectize.bootstrap3.css") *@
+
+    <style type="text/css">
+        .selectize-dropdown .active {
+            background-color: #428BCA;
+            color: #FFFFFF;
+        }
+
+        div.selectDiv {
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .mainName {
+            font-size: 12px;
+        }
+
+        .subLabel {
+            font-size: 10px;
+            font-weight: bolder;
+            padding-left: 10px;
+        }
+
+        .subValue {
+            font-size: 10px;
+        }
+
+
+        .mainRow {
+        }
+
+        .selectizeFormGroup {
+        }
+    </style>
+}
+

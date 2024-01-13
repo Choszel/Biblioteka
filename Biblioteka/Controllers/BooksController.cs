@@ -62,18 +62,35 @@ namespace Biblioteka.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("bookId,title,ISBN,description,releaseDate,authors,tags,stockLevel,bookPhoto,catId")] Book book)
         {
-            System.Diagnostics.Debug.WriteLine("\nIlość authors: " + (book.authors?.Count) + "\n");
-            foreach (var authorId in book.authors)
-            {
-                var author = await _context.Authors.FindAsync(authorId);
-                if (author != null)
-                {
-                    System.Diagnostics.Debug.WriteLine("Selected author: " + author.name);
-                }
-            }
+            var authors = Request.Form["authors"];
+            var tags = Request.Form["tags"];
+            System.Diagnostics.Debug.WriteLine("\nIlość authors: " + (authors.Count) + "\n");
+            System.Diagnostics.Debug.WriteLine("\nIlość tagów: " + (tags.Count) + "\n");           
 
             if (ModelState.IsValid)
             {
+                foreach (var authorId in authors)
+                {
+                    var author = await _context.Authors.FindAsync(int.Parse(authorId));
+                    string name = author.name;
+                    if (author != null)
+                    {
+                        book.authors.Add(author);
+                    }
+                }
+
+                foreach (var tagId in tags)
+                {
+                    var tag = await _context.Tag.FindAsync(int.Parse(tagId));
+                    if (tag != null)
+                    {
+                        TagBook tagBook = new TagBook();
+                        tagBook.bookId = book.bookId;
+                        tagBook.tagId = tag.tagId;
+                        //_context.TagBook.Add(tagBook);
+                        book.tags.Add(tag);
+                    }
+                }
                 _context.Add(book);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
