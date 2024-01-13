@@ -87,6 +87,14 @@
             </form>
     </dialog>
 
+    <dialog id="dialog3">
+        <h4>
+            Twój koszyk jest pusty</h2>
+            <form id="form3" method="dialog">
+                <input type="submit" value="OK">          
+            </form>
+    </dialog>
+
     <dialog id="dialog4">
         <h2>
             Usuń produkt</h4>
@@ -96,6 +104,15 @@
                 <input type="submit" value="Usuń">
                 <input type="reset" value="Anuluj">
             </form>
+    </dialog>
+
+    <dialog id="dialog5">
+        <p>Przykro nam, można jednocześnie wypożyczyć max. 6 książek</p>
+        <form id="form5" method="dialog">
+            <div>
+                <input type="submit" value="OK">
+            </div>
+        </form>
     </dialog>
     <p id="low"></p>
 </body>
@@ -111,10 +128,25 @@
     const btn = document.getElementById("but1");
     // const form = document.getElementById("form1");
     // const dlg = document.getElementById("dialog1");
+
+    const form3 = document.getElementById("form3");
+    const dlg3 = document.getElementById("dialog3");
+    const form5 = document.getElementById("form5");
+    const dlg5 = document.getElementById("dialog5");
+
     btn.onclick = () => {
         // form.reset();
         // dlg.showModal();
-        window.location.href = "/Rentals/Place";
+        var storedBooks = localStorage.getItem("books");
+        if (localStorage.length == 1 || storedBooks) {
+            form3.reset();
+            dlg3.showModal();
+        }
+        else window.location.href = "/Rentals/Place";
+    }
+
+    form3.onsubmit = () => {
+        dlg3.close();
     }
 
     // form.onsubmit = () => {
@@ -173,10 +205,6 @@
     const btn2 = document.getElementById("but2");
     const form2 = document.getElementById("form2");
     const dlg2 = document.getElementById("dialog2");
-
-    const form3 = document.getElementById("form3");
-    const dlg3 = document.getElementById("dialog3");
-
     const form4 = document.getElementById("form4");
     const dlg4 = document.getElementById("dialog4");
 
@@ -303,17 +331,35 @@
                         var books = {};
 
                         if (storedBooks) books = JSON.parse(storedBooks);
-                        books[obj.bookId] = books[obj.bookId] + 1;                      
-                        localStorage.setItem("books", JSON.stringify(books));
+                      
+                        var sum = 0;
 
-                        const indexnegative = JSON.parse(localStorage.getItem(-1));
-                        let modif = indexnegative.modif + 1;
-                        localStorage.setItem((-1).toString(),
-                            JSON.stringify(
-                                {
-                                    modif: modif
-                                }));
-                        location.reload();
+                        if (storedBooks) {
+                            Object.keys(books).forEach(function (key) {
+                                sum += books[key];
+                            });
+
+                            console.log("Sum of values:", sum);
+                        }
+
+                        if (sum >= 6) {
+                            form5.reset();
+                            dlg5.showModal();
+                        }
+                        else
+                        {
+                            books[obj.bookId] = books[obj.bookId] + 1;
+                            localStorage.setItem("books", JSON.stringify(books));
+
+                            const indexnegative = JSON.parse(localStorage.getItem(-1));
+                            let modif = indexnegative.modif + 1;
+                            localStorage.setItem((-1).toString(),
+                                JSON.stringify(
+                                    {
+                                        modif: modif
+                                    }));
+                            location.reload();
+                        }                      
                     };                 
 
                     const but3 = document.createElement("BUTTON");

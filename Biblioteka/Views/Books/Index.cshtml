@@ -97,11 +97,23 @@
     </form>
 </dialog>
 
+<dialog id="dialog3">
+    <p>Przykro nam, można jednocześnie wypożyczyć max. 6 książek</p>
+    <form id="form3" method="dialog">
+        <div>
+            <input type="submit" value="OK">
+        </div>
+    </form>
+</dialog>
+
 <script>
     const form = document.getElementById("form1");
     const dlg = document.getElementById("dialog1");
     const form2 = document.getElementById("form2");
     const dlg2 = document.getElementById("dialog2");
+    const form3 = document.getElementById("form3");
+    const dlg3 = document.getElementById("dialog3");
+
 
     form.onsubmit = () => {
         dlg.close();
@@ -116,26 +128,42 @@
             form2.reset();
             dlg2.showModal();
         }
+
         else {
             var storedBooks = localStorage.getItem("books");
             var books = {};
-
             if (storedBooks) books = JSON.parse(storedBooks);
+            var sum = 0;
+      
+            if (storedBooks)
+            {               
+                Object.keys(books).forEach(function (key) {
+                    sum += books[key];
+                });
 
-            if (books[bookId] != null) books[bookId] = books[bookId] + 1;
-            else books[bookId] = 1;
+                console.log("Sum of values:", sum);
+            }
+                       
+            if (sum >= 6) {
+                form3.reset();
+                dlg3.showModal();
+            }
+            else { 
+                if (books[bookId] != null) books[bookId] = books[bookId] + 1;
+                else books[bookId] = 1;
 
-            localStorage.setItem("books", JSON.stringify(books));
+                localStorage.setItem("books", JSON.stringify(books));
 
-            let modif = (localStorage.getItem(-1).modif) + 1;
-            localStorage.setItem((-1).toString(),
-                JSON.stringify(
-                    {
-                        modif: modif
-                    }));
+                let modif = (localStorage.getItem(-1).modif) + 1;
+                localStorage.setItem((-1).toString(),
+                    JSON.stringify(
+                        {
+                            modif: modif
+                        }));
 
-            form.reset();
-            dlg.showModal();
-        }
+                form.reset();
+                dlg.showModal();
+            }           
+        }            
     }
 </script>

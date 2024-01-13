@@ -70,15 +70,11 @@
                 @Html.DisplayFor(modelItem => item.category.catName)<br />
                 @Html.DisplayFor(modelItem => item.authors)<br />
                 @* @Html.DisplayFor(modelItem => item.rating)<br /> *@
-               @*  @if (role > 1)
+                @if (User.IsInRole("Admin"))
                 {
-                    <a asp-page="./Admin/Edit" asp-route-id="@item.id">Edytuj</a> <span>|</span>
-                }
-                <a asp-page="./Details" asp-route-id="@item.id">Szczegóły</a>
-                @if (role > 1)
-                {
-                    <span>|</span> <a asp-page="./Admin/Delete" asp-route-id="@item.id"> Usuń </a>
-                } *@
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Books" asp-action="Edit" asp-route-id="@item.bookId">Edytuj</a>
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Books" asp-action="Delete" asp-route-id="@item.bookId">Usuń</a>
+                }               
             </div>
         }
     </div>
