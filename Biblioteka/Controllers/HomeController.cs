@@ -45,8 +45,12 @@ namespace Biblioteka.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Index(List<int> selectedBooks)
-        {           
+        {
+            System.Diagnostics.Debug.WriteLine("\nIlość ksiazek: " + (selectedBooks.Count) + "\n");
+
             var bibContext = _context.Books.Include(b => b.category);
+            if (selectedBooks.Count<0) return View(await bibContext.ToListAsync());     
+                                    
             var result = bibContext.Where(p => selectedBooks.Contains(p.bookId));
             return View(await result.ToListAsync());
         }
