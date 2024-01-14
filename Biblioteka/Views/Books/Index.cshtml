@@ -71,7 +71,10 @@
                 <a asp-action="Edit" asp-route-id="@item.bookId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.bookId">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.bookId">Delete</a>
-                <button id="toBasket" onclick="addProduct(@item.bookId, @item.stockLevel)">Dodaj do koszyka</button>
+                @if (!User.IsInRole("Admin") && !User.IsInRole("Employee"))
+                {
+                    <button id="toBasket" onclick="addProduct(@item.bookId, @item.stockLevel)">Dodaj do koszyka</button>
+                }
 
             </td>
         </tr>
@@ -89,7 +92,7 @@
 </dialog>
 
 <dialog id="dialog2">
-    <p>Produkt jest niedostępny</p>
+    <p>Zostałeś dodany na listę oczekujących słodziaku UwU</p>
     <form id="form2" method="dialog">
         <div>
             <input type="submit" value="OK">
@@ -125,8 +128,41 @@
 
     function addProduct(bookId, stockLevel) {
         if (parseInt(stockLevel) < 1) {
-            form2.reset();
-            dlg2.showModal();
+            // Dodaj do kolejki
+            var data = {
+                bookId: parseInt(bookId),
+                userId: parseInt(1),
+                quantity: 1 // Załóżmy, że dodajemy jedną pozycję do kolejki
+            };
+            console.log(data);
+            fetch('/Queue/AddToQueue', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    if (data.success) {
+                        form2.reset();
+                        dlg2.showModal();
+                    } else {
+                        console.error(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch Error:', error);
+                });
+
+            //form2.reset();
+            //dlg2.showModal();
         }
 
         else {
