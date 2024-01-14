@@ -12,6 +12,22 @@ namespace Biblioteka.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "AdminSettings",
+                columns: table => new
+                {
+                    adminSettingsId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    limitTaken = table.Column<int>(type: "int", nullable: false),
+                    limitWaiting = table.Column<int>(type: "int", nullable: false),
+                    limitTimeTaken = table.Column<int>(type: "int", nullable: false),
+                    limitTimeWaiting = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AdminSettings", x => x.adminSettingsId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
@@ -120,6 +136,32 @@ namespace Biblioteka.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Readers", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TodoItems",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsComplete = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TodoItems", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -252,6 +294,25 @@ namespace Biblioteka.Migrations
                         principalTable: "Readers",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Product",
+                columns: table => new
+                {
+                    productId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    quantity = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Product", x => x.productId);
+                    table.ForeignKey(
+                        name: "FK_Product_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -430,6 +491,11 @@ namespace Biblioteka.Migrations
                 column: "catId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Product_UserId",
+                table: "Product",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Rental_userId",
                 table: "Rental",
                 column: "userId");
@@ -464,6 +530,9 @@ namespace Biblioteka.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AdminSettings");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
             migrationBuilder.DropTable(
@@ -485,10 +554,16 @@ namespace Biblioteka.Migrations
                 name: "Employees");
 
             migrationBuilder.DropTable(
+                name: "Product");
+
+            migrationBuilder.DropTable(
                 name: "RentalBook");
 
             migrationBuilder.DropTable(
                 name: "TagBook");
+
+            migrationBuilder.DropTable(
+                name: "TodoItems");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -498,6 +573,9 @@ namespace Biblioteka.Migrations
 
             migrationBuilder.DropTable(
                 name: "Authors");
+
+            migrationBuilder.DropTable(
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Tag");

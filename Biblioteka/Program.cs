@@ -2,6 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Biblioteka.Context;
 using Biblioteka.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
+using JsonApiDotNetCore.Configuration;
+using System;
+using Biblioteka.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +36,13 @@ builder.Services.AddDefaultIdentity<BibUser>(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+builder.Services.AddJsonApi<BibContext>(options =>
+{
+    options.UseRelativeLinks = true;
+    options.AllowUnknownQueryStringParameters = true;
+    options.SerializerOptions.WriteIndented = true;
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -50,12 +60,14 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.UseJsonApi();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
-//Tworzenie ról i przuk³aowych kont
+//Tworzenie ról i przyk³aowych kont
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -104,7 +116,29 @@ using (var scope = app.Services.CreateScope())
         await userManager.CreateAsync(user, password);
 
         await userManager.AddToRoleAsync(user, "Employee");
-    }
+    }   
 }
 
+await CreateDatabaseAsync(app.Services);
+
 app.Run();
+
+static async Task CreateDatabaseAsync(IServiceProvider serviceProvider)
+{
+    await using AsyncServiceScope scope = serviceProvider.CreateAsyncScope();
+
+    var dbContext = scope.ServiceProvider.GetRequiredService<BibContext>();
+    await dbContext.Database.EnsureCreatedAsync();
+
+    if (!dbContext.Users.Any())
+    {
+        dbContext.Users.Add(new User
+        {
+            products = new List<Product> { 
+                //new Product(1,1)                
+            },
+        });
+
+        await dbContext.SaveChangesAsync();
+    }
+}

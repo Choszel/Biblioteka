@@ -23,6 +23,7 @@ namespace Biblioteka.Controllers
         // GET: Books
         public async Task<IActionResult> Index()
         {
+            ViewData["limits"] = await _context.AdminSettings.ToListAsync();
             var bibContext = _context.Books.Include(b => b.category);
             return View(await bibContext.ToListAsync());
         }

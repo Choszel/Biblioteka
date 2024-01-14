@@ -1,10 +1,13 @@
-﻿using Biblioteka.Context;
+﻿using Biblioteka.Areas.Identity.Data;
+using Biblioteka.Context;
 using Biblioteka.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Web.Helpers;
 
 namespace Biblioteka.Controllers
 {
@@ -22,6 +25,18 @@ namespace Biblioteka.Controllers
 
         public async Task<IActionResult> Index()
         {
+            if (_context.AdminSettings.Find(1) == null)
+            {
+                var adminSettings = new AdminSettings();
+
+                adminSettings.limitTaken = 6;
+                adminSettings.limitTimeTaken = 4;
+                adminSettings.limitWaiting = 6;
+                adminSettings.limitTimeWaiting = 1;
+
+                _context.Add(adminSettings);
+                await _context.SaveChangesAsync();               
+            }
             ViewBag.BooksList = new LinkedList<SelectListItem>();
             var bibContext = _context.Books.Include(b => b.category);
             return View(await bibContext.ToListAsync());
@@ -41,6 +56,7 @@ namespace Biblioteka.Controllers
         public async Task<IActionResult> Basket()
         {
             ViewData["BookList"] = await _context.Book.ToListAsync();
+            ViewData["limits"] = await _context.AdminSettings.ToListAsync(); 
             return View();
         }
 

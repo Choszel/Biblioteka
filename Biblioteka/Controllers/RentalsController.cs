@@ -21,10 +21,19 @@ namespace Biblioteka.Controllers
         }
 
         // GET: Rentals
+        [Authorize]
         public async Task<IActionResult> Index()
-        {
-            var bibContext = _context.Rental.Include(r => r.user);
-            return View(await bibContext.ToListAsync());
+        {           
+            if (User.IsInRole("Admin"))
+            {
+                var bibContext = _context.Rental;
+                return View(await bibContext.ToListAsync());
+            }
+            else
+            {
+                var bibContext = _context.Rental.Include(r => r.user);
+                return View(await bibContext.ToListAsync());
+            }
         }
 
         // GET: Rentals/Details/5

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Biblioteka.Migrations
 {
     [DbContext(typeof(BibContext))]
-    [Migration("20240113171708_mig")]
+    [Migration("20240114152803_mig")]
     partial class mig
     {
         /// <inheritdoc />
@@ -116,6 +116,35 @@ namespace Biblioteka.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Biblioteka.Models.AdminSettings", b =>
+                {
+                    b.Property<int>("adminSettingsId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("adminSettingsId"));
+
+                    b.Property<int?>("limitTaken")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("limitTimeTaken")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("limitTimeWaiting")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("limitWaiting")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.HasKey("adminSettingsId");
+
+                    b.ToTable("AdminSettings");
                 });
 
             modelBuilder.Entity("Biblioteka.Models.Author", b =>
@@ -273,6 +302,27 @@ namespace Biblioteka.Migrations
                     b.ToTable("Employees");
                 });
 
+            modelBuilder.Entity("Biblioteka.Models.Product", b =>
+                {
+                    b.Property<int>("productId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("productId"));
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("productId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Product");
+                });
+
             modelBuilder.Entity("Biblioteka.Models.Reader", b =>
                 {
                     b.Property<int>("id")
@@ -408,6 +458,38 @@ namespace Biblioteka.Migrations
                     b.HasIndex("tagId");
 
                     b.ToTable("TagBook");
+                });
+
+            modelBuilder.Entity("Biblioteka.Models.TodoItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("IsComplete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TodoItems");
+                });
+
+            modelBuilder.Entity("Biblioteka.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -577,6 +659,13 @@ namespace Biblioteka.Migrations
                     b.Navigation("category");
                 });
 
+            modelBuilder.Entity("Biblioteka.Models.Product", b =>
+                {
+                    b.HasOne("Biblioteka.Models.User", null)
+                        .WithMany("products")
+                        .HasForeignKey("UserId");
+                });
+
             modelBuilder.Entity("Biblioteka.Models.Rental", b =>
                 {
                     b.HasOne("Biblioteka.Models.Reader", "user")
@@ -692,6 +781,11 @@ namespace Biblioteka.Migrations
             modelBuilder.Entity("Biblioteka.Models.Rental", b =>
                 {
                     b.Navigation("book");
+                });
+
+            modelBuilder.Entity("Biblioteka.Models.User", b =>
+                {
+                    b.Navigation("products");
                 });
 #pragma warning restore 612, 618
         }

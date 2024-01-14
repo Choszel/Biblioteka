@@ -22,6 +22,11 @@ namespace Biblioteka.Context
         public DbSet<RentalBook> RentalBook { get; set; }
         public DbSet<Reader> Readers { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<AdminSettings> AdminSettings { get; set; }
+
+
+        public DbSet<User> Users => Set<User>();
+        public DbSet<TodoItem> TodoItems { get; set; } = null!;
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
