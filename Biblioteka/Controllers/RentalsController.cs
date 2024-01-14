@@ -24,7 +24,7 @@ namespace Biblioteka.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {           
-            if (User.IsInRole("Admin"))
+            if (User.IsInRole("Admin") || User.IsInRole("Employee"))
             {
                 var bibContext = _context.Rental;
                 return View(await bibContext.ToListAsync());

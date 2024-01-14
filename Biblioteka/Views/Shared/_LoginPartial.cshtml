@@ -5,9 +5,13 @@
 @inject UserManager<BibUser> UserManager
 
 <ul class="navbar-nav">
+@if (!User.IsInRole("Admin") && !User.IsInRole("Employee"))
+{
     <li class="nav-item">
         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Basket">Koszyk</a>
     </li>
+}
+   
 @if (User.IsInRole("Admin"))
 {
     <li class="nav-item">

@@ -6,57 +6,52 @@
 
 @* <script src="js/jquery3.js"></script> *@
 
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
-<div class="control-group">
-    <label for="select-state">States:</label>
-    <select id="select-state" multiple name="state[]" class="demo-default">
-        <option value="">Select a state...</option>
-        <option value="AL">Alabama</option>
-        ***
-        <option value="WY" selected>Wyoming</option>
-    </select>
-</div>
+    <!-- Selectize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.bootstrap2.css">
 
-<script type="text/javascript">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 
-    var eventHandler = function (name) {
-        return function () {
-            console.log(name, arguments);
-            $('#log').append('<div><span class="name">' + name + '</span></div>');
-        };
-    };
-    var $select = $('#select-state').selectize({
-        create: true,
-        onChange: eventHandler('onChange'),
-        onItemAdd: eventHandler('onItemAdd'),
-        onItemRemove: eventHandler('onItemRemove'),
-        onOptionAdd: eventHandler('onOptionAdd'),
-        onOptionRemove: eventHandler('onOptionRemove'),
-        onDropdownOpen: eventHandler('onDropdownOpen'),
-        onDropdownClose: eventHandler('onDropdownClose'),
-        onFocus: eventHandler('onFocus'),
-        onBlur: eventHandler('onBlur'),
-        onInitialize: eventHandler('onInitialize'),
-    });
-</script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
-
+    <!-- Selectize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+</head>
 
 <div class="text-center">
     <h1 class="display-4">Witamy</h1>
-@*     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
- *@
 
-
-    <div class="row">
-        <div class="col-md-4">
-            @Html.DropDownList("BooksList")
+    <form id="searchForm" action="/Home/Index" method="post">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-4">
+                    <select id="select-to" class="contacts" placeholder="Szukaj..."></select>
+                </div>
+                <div class="col-md-1">
+                    <a href="#" id="Search" class="btn btn-dark" onclick="submitSearchForm()">Szukaj</a>
+                </div>
+                <!-- Ukryte pole do przechowywania wybranych wartości -->
+                <input type="hidden" id="selectedBooksInput" name="selectedBooks" value="">
+            </div>
         </div>
+    </form>
 
-        <div class="col-md-8">
-            <a href="#" id="Search" class="btn btn-dark">Szukaj</a>
+    @* <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <select id="select-to" class="contacts" placeholder="Szukaj..."></select>
+            </div>
+            <div class="col-md-1">
+                <a href="#" id="Search" class="btn btn-dark">Szukaj</a>
+            </div>
         </div>
     </div>
+ *@
 
 
     <div style="width: 90%; margin: auto;">
@@ -93,52 +88,92 @@
         var $select;
 
         $(document).ready(function () {
-            $select = $('#BooksList').selectize({
+            $select = $('#select-to').selectize({
+                persist: false,
+                maxItems: null,
+                optgroupField: 'title',
                 valueField: 'bookId',
-                labelField: 'title',
-                searchField: ['title', 'authors', 'releaseDate'],
+                labelField: 'title',                
+                searchField: ['title', 'authors', 'isbn', 'releaseDate'],
                 sortField: 'title',
                 onInitialize: function () {
                     loadBooksAJAX();
                 },
+                onChange: function (value) {
+                    loadBooksAJAX();
+                },
                 render: {
+                    
+                    item: function (item, escape) {
+                        return (
+                            "<div>" +
+                            (item.title ? '<span class="name">' + escape(item.title) + "</span>": "") +
+                            "</div>"
+                        );
+                    },
                     option: function (item, escape) {
+
+                        var photoHtml = item.bookPhoto ? '<img src="' + escape(item.bookPhoto) + '" alt="' + escape(item.title) + '" class="searchBookImage" />' : '';
+                        var authorsHtml = item.authors ? '<span class="authors">' + escape(item.authors.join(', ')) + '</span>' : '';
+
+
                         return '<div class="selectDiv">' +
-                            '<span class="mainName">' + escape(item.title) + '</span><br />' +
-                            '<span class="subLabel">Autor: </span>' + '<span class="subValue">' + escape(item.authors) + '</span>' +
-                            '<span class="subLabel">Rok: </span>' + '<span class="subValue">' + escape(item.releaseDate) + '</span>' +
-                            '</div>'
+                            '<span class="mainName">' + photoHtml + '</span>' +
+                            '<span class="subLabel">' + escape(item.title) + '</span>' +
+                            '<span class="subAuthors">' + authorsHtml + '</span>' +
+                            '</div>';
                     }
                 }
-            });
-
-            $('#Search').click(function () {
-                loadBooksAJAX();
-            })
+                //$('#Search').click(function () {
+                //     var selectedValues = $select[0].selectize.getValue();
+                //     console.log(selectedValues);
+                //     // Wywołaj metodę AJAX
+                //     $.ajax({
+                //         url: '/Home/SearchBooks',
+                //         type: 'POST',
+                //         data: { selectedBooks: selectedValues },
+                //         success: function (response) {
+                //         },
+                //         error: function (response) {
+                //             alert('Błąd: ' + response);
+                //         }
+                //     });
+                // });
+            });            
         });
+
+        function submitSearchForm() {
+            var selectedValues = $select[0].selectize.getValue();
+            console.log(selectedValues);
+
+            // Przypisz wartość do ukrytego pola formularza
+            $('#selectedBooksInput').val(selectedValues);
+
+            console.log(selectedBooksInput.selectedValues);
+
+            // Złóż formularz
+            $('#searchForm').submit();
+        }
 
         function loadBooksAJAX() {
             $.ajax({
                 url: '/Home/GetBooks',
                 type: 'POST',
                 success: function (data) {
-                    for (var i = 0; i < data.length; i++)
+                    for (var i = 0; i < data.length; i++) { 
                         $select[0].selectize.addOption(data[i]);
+                        $select[0].selectize.refreshOptions();}
                 },
                 error: function (response) {
                     alert('Błąd: ' + response)
                 }
             });
         }
-
     </script>
 }
 
 
 @section css {
-    <script src="~/lib/bootstrap/dist/css/selectize.bootstrap3.css"></script>
-    @* @Styles.Render("~/Content/selectize.bootstrap3.css") *@
-
     <style type="text/css">
         .selectize-dropdown .active {
             background-color: #428BCA;
@@ -163,12 +198,34 @@
             font-size: 10px;
         }
 
-
         .mainRow {
         }
 
         .selectizeFormGroup {
         }
+
+        .selectize-control.contacts .selectize-input > div .title {
+            opacity: 0.8;
+        }
+
+        .selectize-control.contacts .selectize-input > div .bookPhoto + .title {
+            margin-left: 5px;
+        }
+
+        .selectize-control.contacts .selectize-input > div .title:before {
+            content: "<";
+        }
+
+        .selectize-control.contacts .selectize-input > div .title:after {
+            content: ">";
+        }
+
+        .selectize-control.contacts .selectize-dropdown .caption {
+            font-size: 12px;
+            display: block;
+            color: #a0a0a0;
+        }
+
     </style>
 }
 

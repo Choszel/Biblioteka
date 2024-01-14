@@ -55,13 +55,24 @@
     <title></title>
 </head>
 <body>
-    <div id="out">
-    </div>
-    <br>
-    <br>
-    <br>
-    <button id="but2" style="margin-left: 20 px;" onclick="clearAll()">Opróżnij koszyk</button>
-    <button id="but1" style="margin-left: 20 px;">Złóż zamówienie</button>
+    @if (User.IsInRole("Admin") || User.IsInRole("Employee"))
+    {
+        <h4>Przykro nam ale koszyk nie jest dostępny. Proszę zalogować się na konto czytelnika.</h4>
+        <div>
+            <a asp-action="Index">Powrót</a>
+        </div>
+    }
+    else
+    {
+        <div id="out">
+        </div>
+        <br>
+        <br>
+        <br>
+        <button id="but2" style="margin-left: 20 px;" onclick="clearAll()">Opróżnij koszyk</button>
+        <button id="but1" style="margin-left: 20 px;">Złóż zamówienie</button>
+    }
+    
 
     @* <dialog id="dialog1">
         <h2>Dodaj produkt</h2>

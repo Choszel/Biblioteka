@@ -37,8 +37,26 @@ namespace Biblioteka.Controllers
                 _context.Add(adminSettings);
                 await _context.SaveChangesAsync();               
             }
-            ViewBag.BooksList = new LinkedList<SelectListItem>();
+           
+            ViewBag.BooksList = await _context.Book.ToListAsync();
             var bibContext = _context.Books.Include(b => b.category);
+            return View(await bibContext.ToListAsync());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Index(List<int> selectedBooks)
+        {           
+            var bibContext = _context.Books.Include(b => b.category);
+            var result = bibContext.Where(p => selectedBooks.Contains(p.bookId));
+            return View(await result.ToListAsync());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SearchBooks(List<int> selectedBooks)
+        {
+            var bibContext = _context.Books.Include(b => b.category);
+            var result = bibContext.Where(p => selectedBooks.Contains(p.bookId));
             return View(await bibContext.ToListAsync());
         }
 
