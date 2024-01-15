@@ -17,5 +17,9 @@ namespace Biblioteka.Models
             MaxLength(20, ErrorMessage = "Nazwa nie może zawierać więcej niż 20 znaków"),
             Required(ErrorMessage = "Pole \"Nazwa\" jest wymagane!")]
         public string? tagName { get; set; }
+
+        [ForeignKey("Book"),
+            Display(Name = "Książki")]
+        public List<Book>? books { get; set; }
     }
 }
