@@ -18,8 +18,6 @@ namespace Biblioteka.Context
         public DbSet<Book> Book { get; set; }
         public DbSet<Rental> Rental { get; set; }
         public DbSet<Tag> Tag { get; set; }
-        public DbSet<TagBook> TagBook { get; set; }
-        public DbSet<RentalBook> RentalBook { get; set; }
         public DbSet<Reader> Readers { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<AdminSettings> AdminSettings { get; set; }

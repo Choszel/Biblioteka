@@ -60,6 +60,10 @@ namespace Biblioteka.Models
         public int catId { get; set; }
 
         [ForeignKey("catId")]
-        public virtual Category? category { get; set; }    
+        public virtual Category? category { get; set; }
+
+        [ForeignKey("Rental"),
+            Display(Name = "Wypożyczenia")]
+        public List<Rental> rentals { get; set; }
     }
 }

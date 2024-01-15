@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Biblioteka.Migrations
 {
     /// <inheritdoc />
-    public partial class migracja1 : Migration
+    public partial class asd : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -136,6 +136,19 @@ namespace Biblioteka.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Readers", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tag",
+                columns: table => new
+                {
+                    tagId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    tagName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tag", x => x.tagId);
                 });
 
             migrationBuilder.CreateTable(
@@ -371,6 +384,30 @@ namespace Biblioteka.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BookTag",
+                columns: table => new
+                {
+                    Book = table.Column<int>(type: "int", nullable: false),
+                    Tag = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BookTag", x => new { x.Book, x.Tag });
+                    table.ForeignKey(
+                        name: "FK_BookTag_Book_Tag",
+                        column: x => x.Tag,
+                        principalTable: "Book",
+                        principalColumn: "bookId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BookTag_Tag_Book",
+                        column: x => x.Book,
+                        principalTable: "Tag",
+                        principalColumn: "tagId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RentalBook",
                 columns: table => new
                 {
@@ -392,25 +429,6 @@ namespace Biblioteka.Migrations
                         principalTable: "Rental",
                         principalColumn: "rentalId",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Tag",
-                columns: table => new
-                {
-                    tagId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    tagName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Tag = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tag", x => x.tagId);
-                    table.ForeignKey(
-                        name: "FK_Tag_Book_Tag",
-                        column: x => x.Tag,
-                        principalTable: "Book",
-                        principalColumn: "bookId");
                 });
 
             migrationBuilder.CreateTable(
@@ -491,6 +509,11 @@ namespace Biblioteka.Migrations
                 column: "catId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BookTag_Tag",
+                table: "BookTag",
+                column: "Tag");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Product_UserId",
                 table: "Product",
                 column: "UserId");
@@ -509,11 +532,6 @@ namespace Biblioteka.Migrations
                 name: "IX_RentalBook_rentalId",
                 table: "RentalBook",
                 column: "rentalId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tag_Tag",
-                table: "Tag",
-                column: "Tag");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TagBook_bookId",
@@ -551,6 +569,9 @@ namespace Biblioteka.Migrations
                 name: "AuthorBook");
 
             migrationBuilder.DropTable(
+                name: "BookTag");
+
+            migrationBuilder.DropTable(
                 name: "Employees");
 
             migrationBuilder.DropTable(
@@ -578,10 +599,10 @@ namespace Biblioteka.Migrations
                 name: "Users");
 
             migrationBuilder.DropTable(
-                name: "Tag");
+                name: "Book");
 
             migrationBuilder.DropTable(
-                name: "Book");
+                name: "Tag");
 
             migrationBuilder.DropTable(
                 name: "Category");
