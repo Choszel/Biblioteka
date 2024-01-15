@@ -4,6 +4,7 @@ using Biblioteka.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Biblioteka.Migrations
 {
     [DbContext(typeof(BibContext))]
-    partial class BibContextModelSnapshot : ModelSnapshot
+    [Migration("20240114193711_asdd")]
+    partial class asdd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -377,12 +380,17 @@ namespace Biblioteka.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("tagId"));
 
+                    b.Property<int?>("Tag")
+                        .HasColumnType("int");
+
                     b.Property<string>("tagName")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
                     b.HasKey("tagId");
+
+                    b.HasIndex("Tag");
 
                     b.ToTable("Tag");
                 });
@@ -400,21 +408,6 @@ namespace Biblioteka.Migrations
                     b.HasIndex("tagId");
 
                     b.ToTable("TagBook");
-                });
-
-            modelBuilder.Entity("BookTag", b =>
-                {
-                    b.Property<int>("Book")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Tag")
-                        .HasColumnType("int");
-
-                    b.HasKey("Book", "Tag");
-
-                    b.HasIndex("Tag");
-
-                    b.ToTable("BookTag");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -614,6 +607,13 @@ namespace Biblioteka.Migrations
                     b.Navigation("rental");
                 });
 
+            modelBuilder.Entity("Biblioteka.Models.Tag", b =>
+                {
+                    b.HasOne("Biblioteka.Models.Book", null)
+                        .WithMany("tags")
+                        .HasForeignKey("Tag");
+                });
+
             modelBuilder.Entity("Biblioteka.Models.TagBook", b =>
                 {
                     b.HasOne("Biblioteka.Models.Book", "book")
@@ -631,21 +631,6 @@ namespace Biblioteka.Migrations
                     b.Navigation("book");
 
                     b.Navigation("tag");
-                });
-
-            modelBuilder.Entity("BookTag", b =>
-                {
-                    b.HasOne("Biblioteka.Models.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("Book")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Biblioteka.Models.Book", null)
-                        .WithMany()
-                        .HasForeignKey("Tag")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -697,6 +682,11 @@ namespace Biblioteka.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Biblioteka.Models.Book", b =>
+                {
+                    b.Navigation("tags");
                 });
 
             modelBuilder.Entity("Biblioteka.Models.Rental", b =>

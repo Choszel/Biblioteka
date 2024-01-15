@@ -84,10 +84,6 @@ namespace Biblioteka.Controllers
                     var tag = await _context.Tag.FindAsync(int.Parse(tagId));
                     if (tag != null)
                     {
-                        TagBook tagBook = new TagBook();
-                        tagBook.bookId = book.bookId;
-                        tagBook.tagId = tag.tagId;
-                        //_context.TagBook.Add(tagBook);
                         book.tags.Add(tag);
                     }
                 }
