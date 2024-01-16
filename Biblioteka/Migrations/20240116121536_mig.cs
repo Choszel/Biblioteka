@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Biblioteka.Migrations
 {
     /// <inheritdoc />
-    public partial class migracja1 : Migration
+    public partial class mig : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -136,6 +136,19 @@ namespace Biblioteka.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Readers", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tag",
+                columns: table => new
+                {
+                    tagId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    tagName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tag", x => x.tagId);
                 });
 
             migrationBuilder.CreateTable(
@@ -280,10 +293,7 @@ namespace Biblioteka.Migrations
                     rentalDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     rentalState = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
                     stateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    rentalCity = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    rentalStreet = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
-                    houseNumber = table.Column<decimal>(type: "NUMERIC(3,0)", nullable: true),
-                    zipCode = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: false)
+                    PESEL = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -371,15 +381,42 @@ namespace Biblioteka.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BookTag",
+                columns: table => new
+                {
+                    Book = table.Column<int>(type: "int", nullable: false),
+                    Tag = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BookTag", x => new { x.Book, x.Tag });
+                    table.ForeignKey(
+                        name: "FK_BookTag_Book_Tag",
+                        column: x => x.Tag,
+                        principalTable: "Book",
+                        principalColumn: "bookId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BookTag_Tag_Book",
+                        column: x => x.Book,
+                        principalTable: "Tag",
+                        principalColumn: "tagId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RentalBook",
                 columns: table => new
                 {
+                    rentalBookId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     rentalId = table.Column<int>(type: "int", nullable: false),
                     bookId = table.Column<int>(type: "int", nullable: false),
                     quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
+                    table.PrimaryKey("PK_RentalBook", x => x.rentalBookId);
                     table.ForeignKey(
                         name: "FK_RentalBook_Book_bookId",
                         column: x => x.bookId,
@@ -391,48 +428,6 @@ namespace Biblioteka.Migrations
                         column: x => x.rentalId,
                         principalTable: "Rental",
                         principalColumn: "rentalId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Tag",
-                columns: table => new
-                {
-                    tagId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    tagName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Tag = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tag", x => x.tagId);
-                    table.ForeignKey(
-                        name: "FK_Tag_Book_Tag",
-                        column: x => x.Tag,
-                        principalTable: "Book",
-                        principalColumn: "bookId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TagBook",
-                columns: table => new
-                {
-                    tagId = table.Column<int>(type: "int", nullable: false),
-                    bookId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.ForeignKey(
-                        name: "FK_TagBook_Book_bookId",
-                        column: x => x.bookId,
-                        principalTable: "Book",
-                        principalColumn: "bookId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TagBook_Tag_tagId",
-                        column: x => x.tagId,
-                        principalTable: "Tag",
-                        principalColumn: "tagId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -491,6 +486,11 @@ namespace Biblioteka.Migrations
                 column: "catId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BookTag_Tag",
+                table: "BookTag",
+                column: "Tag");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Product_UserId",
                 table: "Product",
                 column: "UserId");
@@ -509,21 +509,6 @@ namespace Biblioteka.Migrations
                 name: "IX_RentalBook_rentalId",
                 table: "RentalBook",
                 column: "rentalId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tag_Tag",
-                table: "Tag",
-                column: "Tag");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TagBook_bookId",
-                table: "TagBook",
-                column: "bookId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TagBook_tagId",
-                table: "TagBook",
-                column: "tagId");
         }
 
         /// <inheritdoc />
@@ -551,6 +536,9 @@ namespace Biblioteka.Migrations
                 name: "AuthorBook");
 
             migrationBuilder.DropTable(
+                name: "BookTag");
+
+            migrationBuilder.DropTable(
                 name: "Employees");
 
             migrationBuilder.DropTable(
@@ -558,9 +546,6 @@ namespace Biblioteka.Migrations
 
             migrationBuilder.DropTable(
                 name: "RentalBook");
-
-            migrationBuilder.DropTable(
-                name: "TagBook");
 
             migrationBuilder.DropTable(
                 name: "TodoItems");
@@ -575,10 +560,10 @@ namespace Biblioteka.Migrations
                 name: "Authors");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Tag");
 
             migrationBuilder.DropTable(
-                name: "Tag");
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Book");

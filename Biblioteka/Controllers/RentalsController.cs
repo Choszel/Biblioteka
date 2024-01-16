@@ -21,9 +21,8 @@ namespace Biblioteka.Controllers
         }
 
         // GET: Rentals
-        [Authorize]
         public async Task<IActionResult> Index()
-        {           
+        {
             if (User.IsInRole("Admin") || User.IsInRole("Employee"))
             {
                 var bibContext = _context.Rental;
@@ -67,7 +66,7 @@ namespace Biblioteka.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("rentalId,userId,rentalDate,rentalState,stateDate,rentalCity,rentalStreet,houseNumber,zipCode")] Rental rental)
+        public async Task<IActionResult> Create([Bind("rentalId,userId,rentalDate,rentalState,stateDate,PESEL")] Rental rental)
         {
             if (ModelState.IsValid)
             {
@@ -93,13 +92,17 @@ namespace Biblioteka.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Place([Bind("rentalId,userE_mail,rentalDate,rentalState,stateDate,rentalCity,rentalStreet,houseNumber,zipCode")] Rental rental)
+        public async Task<IActionResult> Place([Bind("rentalId,userE_mail,rentalDate,rentalState,stateDate,PESEL")] Rental rental)
         {
+            if (User.IsInRole("Admin") || User.IsInRole("Employee"))
+            {
+                return RedirectToPage("Home");
+            }
             rental.userId = 1;
             rental.rentalState = "Przyjęte";
             rental.rentalDate = DateTime.Now;
             rental.stateDate = DateTime.Now;
-            System.Diagnostics.Debug.WriteLine("\nRental : " + rental.userId + " " + rental.rentalState + " " + rental.rentalDate + " " + rental.stateDate + " " + rental.rentalCity + " " + rental.rentalStreet + "\n");
+            System.Diagnostics.Debug.WriteLine("\nRental : " + rental.userId + " " + rental.rentalState + " " + rental.rentalDate + " " + rental.stateDate + " " + rental.PESEL + "\n");
 
             _context.Add(rental);
             await _context.SaveChangesAsync();
@@ -128,7 +131,7 @@ namespace Biblioteka.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("rentalId,userId,rentalDate,rentalState,stateDate,rentalCity,rentalStreet,houseNumber,zipCode")] Rental rental)
+        public async Task<IActionResult> Edit(int id, [Bind("rentalId,userId,rentalDate,rentalState,stateDate,PESEL")] Rental rental)
         {
             if (id != rental.rentalId)
             {
@@ -192,14 +195,14 @@ namespace Biblioteka.Controllers
             {
                 _context.Rental.Remove(rental);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool RentalExists(int id)
         {
-          return (_context.Rental?.Any(e => e.rentalId == id)).GetValueOrDefault();
+            return (_context.Rental?.Any(e => e.rentalId == id)).GetValueOrDefault();
         }
     }
 }

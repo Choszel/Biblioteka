@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Biblioteka.Models
 {
-    [Keyless]
     public class RentalBook
     {
         public RentalBook(int rentalId, int bookId)
@@ -13,6 +12,12 @@ namespace Biblioteka.Models
             this.rentalId = rentalId;
             this.bookId = bookId;
         }
+
+        [Key,
+            DatabaseGenerated(DatabaseGeneratedOption.Identity),
+            Display(Name = "Id zamówionej książki"),
+            Range(0, 9999999999)]
+        public int rentalBookId { get; set; }
 
         public int rentalId { get; set; }
         public int bookId { get; set; }

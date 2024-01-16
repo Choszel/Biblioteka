@@ -34,28 +34,10 @@ namespace Biblioteka.Models
         public DateTime? stateDate { get; set; }
 
         [BindProperty(SupportsGet = true),
-            DisplayName("Miasto"),
-            MaxLength(30, ErrorMessage = "Miasto nie może zawierać więcej niż 30 znaków"),
-            Required(ErrorMessage = "Pole \"Miasto\" jest wymagane!")]
-        public string? rentalCity { get; set; }
-
-        [BindProperty(SupportsGet = true),
-            DisplayName("Ulica"),
-            MaxLength(40, ErrorMessage = "Ulica nie może zawierać więcej niż 40 znaków"),
-            Required(ErrorMessage = "Pole \"Ulica\" jest wymagane!")]
-        public string? rentalStreet { get; set; }
-
-        [BindProperty(SupportsGet = true),
-            Column(TypeName = "NUMERIC(3)"),
-            Display(Name = "Nr mieszkania"),
-            Range(0, 999, ErrorMessage = "Numer mieszkania nie może być większy niż 999")]
-        public int? houseNumber { get; set; }
-
-        [BindProperty(SupportsGet = true),
-           Required(ErrorMessage = "Pole \"Kod pocztowy\" jest wymagane!"),
-           Display(Name = "Kod pocztowy"),
-           MaxLength(6, ErrorMessage = "Kod pocztowy nie może zawierać więcej niż 6 znaków")]
-        public string? zipCode { get; set; }
+            Display(Name = "PESEL"),
+            Required(ErrorMessage = "Pole \"PESEL\" jest wymagane!"),
+            RegularExpression(@"^\d{11}$", ErrorMessage = "Pole musi zawierać 11 cyfr.")]
+        public string? PESEL { get; set; }
 
         [ForeignKey("userId"),
             Display(Name = "Użytkownik")]
@@ -64,5 +46,7 @@ namespace Biblioteka.Models
         [ForeignKey("Book"),
             Display(Name = "Książki")]        
         public List<Book>? book { get; set; }
+
+        public virtual ICollection<RentalBook>? RentalBook { get; set; }
     }
 }

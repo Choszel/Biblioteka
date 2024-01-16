@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Biblioteka.Migrations
 {
     [DbContext(typeof(BibContext))]
-    [Migration("20240114194238_tagi")]
-    partial class tagi
+    [Migration("20240116121536_mig")]
+    partial class mig
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -116,6 +116,35 @@ namespace Biblioteka.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Biblioteka.Models.AdminSettings", b =>
+                {
+                    b.Property<int>("adminSettingsId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("adminSettingsId"));
+
+                    b.Property<int?>("limitTaken")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("limitTimeTaken")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("limitTimeWaiting")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("limitWaiting")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.HasKey("adminSettingsId");
+
+                    b.ToTable("AdminSettings");
                 });
 
             modelBuilder.Entity("Biblioteka.Models.Author", b =>
@@ -273,6 +302,27 @@ namespace Biblioteka.Migrations
                     b.ToTable("Employees");
                 });
 
+            modelBuilder.Entity("Biblioteka.Models.Product", b =>
+                {
+                    b.Property<int>("productId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("productId"));
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("productId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Product");
+                });
+
             modelBuilder.Entity("Biblioteka.Models.Reader", b =>
                 {
                     b.Property<int>("id")
@@ -311,13 +361,9 @@ namespace Biblioteka.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("rentalId"));
 
-                    b.Property<decimal?>("houseNumber")
-                        .HasColumnType("NUMERIC(3)");
-
-                    b.Property<string>("rentalCity")
+                    b.Property<string>("PESEL")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("rentalDate")
                         .IsRequired()
@@ -328,11 +374,6 @@ namespace Biblioteka.Migrations
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
-                    b.Property<string>("rentalStreet")
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)");
-
                     b.Property<DateTime?>("stateDate")
                         .IsRequired()
                         .HasColumnType("datetime2");
@@ -340,11 +381,6 @@ namespace Biblioteka.Migrations
                     b.Property<int?>("userId")
                         .IsRequired()
                         .HasColumnType("int");
-
-                    b.Property<string>("zipCode")
-                        .IsRequired()
-                        .HasMaxLength(6)
-                        .HasColumnType("nvarchar(6)");
 
                     b.HasKey("rentalId");
 
@@ -355,6 +391,12 @@ namespace Biblioteka.Migrations
 
             modelBuilder.Entity("Biblioteka.Models.RentalBook", b =>
                 {
+                    b.Property<int>("rentalBookId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("rentalBookId"));
+
                     b.Property<int>("bookId")
                         .HasColumnType("int");
 
@@ -364,6 +406,8 @@ namespace Biblioteka.Migrations
 
                     b.Property<int>("rentalId")
                         .HasColumnType("int");
+
+                    b.HasKey("rentalBookId");
 
                     b.HasIndex("bookId");
 
@@ -390,19 +434,36 @@ namespace Biblioteka.Migrations
                     b.ToTable("Tag");
                 });
 
-            modelBuilder.Entity("Biblioteka.Models.TagBook", b =>
+            modelBuilder.Entity("Biblioteka.Models.TodoItem", b =>
                 {
-                    b.Property<int>("bookId")
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("IsComplete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TodoItems");
+                });
+
+            modelBuilder.Entity("Biblioteka.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("tagId")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.HasIndex("bookId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("tagId");
-
-                    b.ToTable("TagBook");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("BookTag", b =>
@@ -587,6 +648,13 @@ namespace Biblioteka.Migrations
                     b.Navigation("category");
                 });
 
+            modelBuilder.Entity("Biblioteka.Models.Product", b =>
+                {
+                    b.HasOne("Biblioteka.Models.User", null)
+                        .WithMany("products")
+                        .HasForeignKey("UserId");
+                });
+
             modelBuilder.Entity("Biblioteka.Models.Rental", b =>
                 {
                     b.HasOne("Biblioteka.Models.Reader", "user")
@@ -601,13 +669,13 @@ namespace Biblioteka.Migrations
             modelBuilder.Entity("Biblioteka.Models.RentalBook", b =>
                 {
                     b.HasOne("Biblioteka.Models.Book", "book")
-                        .WithMany()
+                        .WithMany("RentalBook")
                         .HasForeignKey("bookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Biblioteka.Models.Rental", "rental")
-                        .WithMany()
+                        .WithMany("RentalBook")
                         .HasForeignKey("rentalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -615,25 +683,6 @@ namespace Biblioteka.Migrations
                     b.Navigation("book");
 
                     b.Navigation("rental");
-                });
-
-            modelBuilder.Entity("Biblioteka.Models.TagBook", b =>
-                {
-                    b.HasOne("Biblioteka.Models.Book", "book")
-                        .WithMany()
-                        .HasForeignKey("bookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Biblioteka.Models.Tag", "tag")
-                        .WithMany()
-                        .HasForeignKey("tagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("book");
-
-                    b.Navigation("tag");
                 });
 
             modelBuilder.Entity("BookTag", b =>
@@ -702,9 +751,21 @@ namespace Biblioteka.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Biblioteka.Models.Book", b =>
+                {
+                    b.Navigation("RentalBook");
+                });
+
             modelBuilder.Entity("Biblioteka.Models.Rental", b =>
                 {
+                    b.Navigation("RentalBook");
+
                     b.Navigation("book");
+                });
+
+            modelBuilder.Entity("Biblioteka.Models.User", b =>
+                {
+                    b.Navigation("products");
                 });
 #pragma warning restore 612, 618
         }

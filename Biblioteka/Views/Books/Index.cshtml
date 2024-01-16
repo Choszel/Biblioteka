@@ -41,44 +41,45 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
+        @foreach (var item in Model)
+        {
+            <tr>
                 <td>
                     <img src=@item.bookPhoto style="width: 120px; height: 155px;" />
                 </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ISBN)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.releaseDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.stockLevel)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.bookPhoto)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.category.catName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.bookId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.bookId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.bookId">Delete</a>
-                @if (!User.IsInRole("Admin") && !User.IsInRole("Employee"))
-                {
-                    <button id="toBasket" onclick="addProduct(@item.bookId, @item.stockLevel)">Dodaj do koszyka</button>
-                }
+                <td>
+                    @Html.DisplayFor(modelItem => item.title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ISBN)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.releaseDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.stockLevel)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.bookPhoto)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.category.catName)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.bookId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.bookId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.bookId">Delete</a>
+                    @if (!User.IsInRole("Admin") && !User.IsInRole("Employee"))
+                    {
+                        <button id="toBasket" onclick="addProduct(@item.bookId, @item.stockLevel)">Dodaj do koszyka</button>
+                    }
 
-            </td>
-        </tr>
-}
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 
@@ -170,21 +171,20 @@
             var books = {};
             if (storedBooks) books = JSON.parse(storedBooks);
             var sum = 0;
-      
-            if (storedBooks)
-            {               
+
+            if (storedBooks) {
                 Object.keys(books).forEach(function (key) {
                     sum += books[key];
                 });
 
                 console.log("Sum of values:", sum);
             }
-                       
+
             if (sum >= 6) {
                 form3.reset();
                 dlg3.showModal();
             }
-            else { 
+            else {
                 if (books[bookId] != null) books[bookId] = books[bookId] + 1;
                 else books[bookId] = 1;
 
@@ -199,7 +199,7 @@
 
                 form.reset();
                 dlg.showModal();
-            }           
-        }            
+            }
+        }
     }
 </script>

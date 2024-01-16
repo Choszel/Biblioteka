@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Linq;
 using System.Web.Helpers;
 
 namespace Biblioteka.Controllers
@@ -44,16 +45,19 @@ namespace Biblioteka.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(List<int> selectedBooks)
+        public async Task<IActionResult> Index(string selectedBooks)
         {
-            System.Diagnostics.Debug.WriteLine("\nIlość ksiazek: " + (selectedBooks.Count) + "\n");
+            System.Diagnostics.Debug.WriteLine(selectedBooks);
 
             var bibContext = _context.Books.Include(b => b.category);
-            if (selectedBooks.Count<0) return View(await bibContext.ToListAsync());     
-                                    
-            var result = bibContext.Where(p => selectedBooks.Contains(p.bookId));
+
+            if (string.IsNullOrEmpty(selectedBooks))return View(await bibContext.ToListAsync());
+
+            var selectedBooksList = selectedBooks.Split(',').Select(int.Parse).ToList();
+            var result = bibContext.Where(p => selectedBooksList.Contains(p.bookId));
             return View(await result.ToListAsync());
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -103,3 +107,5 @@ namespace Biblioteka.Controllers
         }
     }
 }
+
+//book, rental, rentalbook

@@ -9,40 +9,35 @@
 
 <h4>Rental</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Place">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="rentalCity" class="control-label"></label>
-                <input asp-for="rentalCity" class="form-control" />
-                <span asp-validation-for="rentalCity" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="rentalStreet" class="control-label"></label>
-                <input asp-for="rentalStreet" class="form-control" />
-                <span asp-validation-for="rentalStreet" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="houseNumber" class="control-label"></label>
-                <input asp-for="houseNumber" class="form-control" />
-                <span asp-validation-for="houseNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="zipCode" class="control-label"></label>
-                <input asp-for="zipCode" class="form-control" />
-                <span asp-validation-for="zipCode" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Złóż zamówienie" class="btn btn-primary" />
-            </div>
-        </form>
+@if (User.IsInRole("Admin") || User.IsInRole("Employee"))
+{
+    <h4>Przykro nam ale koszyk nie jest dostępny. Proszę zalogować się na konto czytelnika.</h4>
+    <div>
+        <a asp-action="Index">Powrót</a>
     </div>
-</div>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Place">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="PESEL" class="control-label"></label>
+                    <input asp-for="PESEL" class="form-control" />
+                    <span asp-validation-for="PESEL" class="text-danger"></span>
+                </div>
+            </form>
+        </div>
+    </div>
 
-<div>
-    <a asp-controller="Home" asp-action="Basket">Cofnij</a>
-</div>
+    <div>
+        <a asp-controller="Home" asp-action="Basket">Cofnij</a>
+    </div>
+
+}
+
+
 
 @section Scripts {
     @{

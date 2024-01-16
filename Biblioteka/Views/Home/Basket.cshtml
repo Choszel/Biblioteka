@@ -149,7 +149,10 @@
         // form.reset();
         // dlg.showModal();
         var storedBooks = localStorage.getItem("books");
-        if (localStorage.length == 1 || storedBooks) {
+        //console.log(localStorage.length.toString() + " storedBooks:" + storedBooks + " sB.length" + storedBooks.length.toString());
+
+        if (localStorage.length == 1 || storedBooks == null || storedBooks.length == 2) {
+            //console.log(localStorage.length.toString() + " " + storedBooks);
             form3.reset();
             dlg3.showModal();
         }

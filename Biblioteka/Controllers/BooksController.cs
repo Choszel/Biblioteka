@@ -66,7 +66,7 @@ namespace Biblioteka.Controllers
             var authors = Request.Form["authors"];
             var tags = Request.Form["tags"];
             System.Diagnostics.Debug.WriteLine("\nIlość authors: " + (authors.Count) + "\n");
-            System.Diagnostics.Debug.WriteLine("\nIlość tagów: " + (tags.Count) + "\n");           
+            System.Diagnostics.Debug.WriteLine("\nIlość tagów: " + (tags.Count) + "\n");
 
             if (ModelState.IsValid)
             {
@@ -200,14 +200,14 @@ namespace Biblioteka.Controllers
             {
                 _context.Books.Remove(book);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool BookExists(int id)
         {
-          return (_context.Books?.Any(e => e.bookId == id)).GetValueOrDefault();
+            return (_context.Books?.Any(e => e.bookId == id)).GetValueOrDefault();
         }
     }
 }

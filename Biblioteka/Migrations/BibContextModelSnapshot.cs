@@ -358,13 +358,9 @@ namespace Biblioteka.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("rentalId"));
 
-                    b.Property<decimal?>("houseNumber")
-                        .HasColumnType("NUMERIC(3)");
-
-                    b.Property<string>("rentalCity")
+                    b.Property<string>("PESEL")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("rentalDate")
                         .IsRequired()
@@ -375,11 +371,6 @@ namespace Biblioteka.Migrations
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
-                    b.Property<string>("rentalStreet")
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)");
-
                     b.Property<DateTime?>("stateDate")
                         .IsRequired()
                         .HasColumnType("datetime2");
@@ -387,11 +378,6 @@ namespace Biblioteka.Migrations
                     b.Property<int?>("userId")
                         .IsRequired()
                         .HasColumnType("int");
-
-                    b.Property<string>("zipCode")
-                        .IsRequired()
-                        .HasMaxLength(6)
-                        .HasColumnType("nvarchar(6)");
 
                     b.HasKey("rentalId");
 
@@ -402,6 +388,12 @@ namespace Biblioteka.Migrations
 
             modelBuilder.Entity("Biblioteka.Models.RentalBook", b =>
                 {
+                    b.Property<int>("rentalBookId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("rentalBookId"));
+
                     b.Property<int>("bookId")
                         .HasColumnType("int");
 
@@ -411,6 +403,8 @@ namespace Biblioteka.Migrations
 
                     b.Property<int>("rentalId")
                         .HasColumnType("int");
+
+                    b.HasKey("rentalBookId");
 
                     b.HasIndex("bookId");
 
@@ -435,36 +429,6 @@ namespace Biblioteka.Migrations
                     b.HasKey("tagId");
 
                     b.ToTable("Tag");
-                });
-
-            modelBuilder.Entity("Biblioteka.Models.TagBook", b =>
-                {
-                    b.Property<int>("bookId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("tagId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("bookId");
-
-                    b.HasIndex("tagId");
-
-                    b.ToTable("TagBook");
-                });
-
-            modelBuilder.Entity("BookTag", b =>
-                {
-                    b.Property<int>("Book")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Tag")
-                        .HasColumnType("int");
-
-                    b.HasKey("Book", "Tag");
-
-                    b.HasIndex("Tag");
-
-                    b.ToTable("BookTag");
                 });
 
             modelBuilder.Entity("Biblioteka.Models.TodoItem", b =>
@@ -497,6 +461,21 @@ namespace Biblioteka.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("BookTag", b =>
+                {
+                    b.Property<int>("Book")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Tag")
+                        .HasColumnType("int");
+
+                    b.HasKey("Book", "Tag");
+
+                    b.HasIndex("Tag");
+
+                    b.ToTable("BookTag");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -687,13 +666,13 @@ namespace Biblioteka.Migrations
             modelBuilder.Entity("Biblioteka.Models.RentalBook", b =>
                 {
                     b.HasOne("Biblioteka.Models.Book", "book")
-                        .WithMany()
+                        .WithMany("RentalBook")
                         .HasForeignKey("bookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Biblioteka.Models.Rental", "rental")
-                        .WithMany()
+                        .WithMany("RentalBook")
                         .HasForeignKey("rentalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -701,25 +680,6 @@ namespace Biblioteka.Migrations
                     b.Navigation("book");
 
                     b.Navigation("rental");
-                });
-
-            modelBuilder.Entity("Biblioteka.Models.TagBook", b =>
-                {
-                    b.HasOne("Biblioteka.Models.Book", "book")
-                        .WithMany()
-                        .HasForeignKey("bookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Biblioteka.Models.Tag", "tag")
-                        .WithMany()
-                        .HasForeignKey("tagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("book");
-
-                    b.Navigation("tag");
                 });
 
             modelBuilder.Entity("BookTag", b =>
@@ -788,8 +748,15 @@ namespace Biblioteka.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Biblioteka.Models.Book", b =>
+                {
+                    b.Navigation("RentalBook");
+                });
+
             modelBuilder.Entity("Biblioteka.Models.Rental", b =>
                 {
+                    b.Navigation("RentalBook");
+
                     b.Navigation("book");
                 });
 
