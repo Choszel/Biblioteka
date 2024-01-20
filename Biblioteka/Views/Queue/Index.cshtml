@@ -1,0 +1,92 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Moje Opinie";
+}
+
+<!DOCTYPE html>
+
+<style>
+    table {
+        padding-top: 50px;
+        border-collapse: collapse;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    thead {
+        color: gray;
+        font-weight: bold;
+        padding: 5px;
+        border-bottom: 1px black solid;
+    }
+
+    tr, td, th {
+        padding: 5px;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        text-align: center;
+    }
+
+    th {
+        font-weight: normal;
+    }
+
+    caption {
+        margin-top: 30px;
+        margin-bottom: 50px;
+        border-top: thin black solid;
+        border-bottom: thin black solid;
+        font-weight: bold;
+        padding: 5px;
+        font-size: 30px;
+        color: dimgray;
+        font-weight: normal;
+    }
+
+    tfoot {
+        border-top: 1.5px black solid;
+    }
+</style>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>ELO</title>
+</head>
+<body>
+    <div class="col-md-4">
+        @* <a id="list"></a> *@
+    </div>
+</body>
+</html>
+
+@section scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/lib/bootstrap/dist/js/selectize.js"></script>
+
+    <script type="text/javascript">
+        var $select;
+
+        $(document).ready(function () {
+            $select = $('#list')
+
+        });       
+
+        function loadBooksAJAX() {
+            $.ajax({
+                url: '/Queue/GetJsonContent',
+                type: 'GET',
+                success: function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        $select[0].add(data[i]);
+                    }
+                },
+                error: function (response) {
+                    alert('Błąd: ' + response)
+                }
+            });
+        }
+    </script>
+}

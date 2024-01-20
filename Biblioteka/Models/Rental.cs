@@ -41,11 +41,7 @@ namespace Biblioteka.Models
 
         [ForeignKey("userId"),
             Display(Name = "Użytkownik")]
-        public virtual Reader user { get; set; }
-
-        [ForeignKey("Book"),
-            Display(Name = "Książki")]        
-        public List<Book>? book { get; set; }
+        public virtual Reader? user { get; set; }
 
         public virtual ICollection<RentalBook>? RentalBook { get; set; }
     }

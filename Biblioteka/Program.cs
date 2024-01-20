@@ -57,6 +57,12 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapControllerRoute(
+//        name: "api",
+//        pattern: "api/{controller}/{action}"); // Dodaj akcjê tutaj
+//});
 
 app.UseAuthorization();
 

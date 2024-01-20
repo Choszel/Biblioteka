@@ -21,16 +21,18 @@ namespace Biblioteka.Controllers
         }
 
         // GET: Rentals
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             if (User.IsInRole("Admin") || User.IsInRole("Employee"))
             {
-                var bibContext = _context.Rental;
+                var bibContext = _context.Rental.Include(r => r.user);
                 return View(await bibContext.ToListAsync());
             }
             else
             {
-                var bibContext = _context.Rental.Include(r => r.user);
+                var user = _context.Readers.FirstOrDefault(r => r.email == User.Identity.Name);
+                var bibContext = _context.Rental.Where(r => r.userId == user.id);
                 return View(await bibContext.ToListAsync());
             }
         }
@@ -55,30 +57,6 @@ namespace Biblioteka.Controllers
         }
 
         // GET: Rentals/Create
-        public IActionResult Create()
-        {
-            ViewData["userId"] = new SelectList(_context.Readers, "id", "email");
-            return View();
-        }
-
-        // POST: Rentals/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("rentalId,userId,rentalDate,rentalState,stateDate,PESEL")] Rental rental)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(rental);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["userId"] = new SelectList(_context.Readers, "id", "email", rental.userId);
-            return View(rental);
-        }
-
-        // GET: Rentals/Create
         [Authorize]
         public IActionResult Place()
         {
@@ -91,18 +69,20 @@ namespace Biblioteka.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
+        [Authorize] 
         public async Task<IActionResult> Place([Bind("rentalId,userE_mail,rentalDate,rentalState,stateDate,PESEL")] Rental rental)
         {
             if (User.IsInRole("Admin") || User.IsInRole("Employee"))
             {
                 return RedirectToPage("Home");
             }
-            rental.userId = 1;
+            var user = _context.Readers.FirstOrDefault(r => r.email == User.Identity.Name);
+            rental.userId = user.id;
             rental.rentalState = "Przyjęte";
             rental.rentalDate = DateTime.Now;
             rental.stateDate = DateTime.Now;
             System.Diagnostics.Debug.WriteLine("\nRental : " + rental.userId + " " + rental.rentalState + " " + rental.rentalDate + " " + rental.stateDate + " " + rental.PESEL + "\n");
+            System.Diagnostics.Debug.WriteLine(User.Identity.Name);
 
             _context.Add(rental);
             await _context.SaveChangesAsync();

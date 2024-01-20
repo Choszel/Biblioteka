@@ -1,5 +1,6 @@
 ﻿using Biblioteka.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,14 +9,24 @@ using System.Linq;
 
 namespace Biblioteka.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class QueueController : Controller
     {
-        private string _filePath = "rentQueue.json"; // ścieżka do pliku rentqueue.json
+        private string _filePath = "../Biblioteka/wwwroot/rentQueue.json"; // ścieżka do pliku rentqueue.json       
 
-        public IActionResult Index()
+        [HttpGet]
+        public IActionResult GetJsonContent()
         {
-            var queues = LoadQueues();
-            return View(queues);
+            try
+            {
+                string jsonData = System.IO.File.ReadAllText(_filePath);
+                return Content(jsonData, "application/json");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Błąd odczytu pliku JSON: {ex.Message}");
+            }
         }
 
         [HttpPost]
@@ -42,6 +53,82 @@ namespace Biblioteka.Controllers
             }
         }
 
+        [HttpPatch("{id}")]
+        public IActionResult UpdateQueue(int id, [FromBody] Queue updatedQueue)
+        {
+            try
+            {
+                var queues = LoadQueues();
+
+                if (queues.ContainsKey(id))
+                {
+                    // Pobierz oryginalną kolejkę
+                    var originalQueue = queues[id];
+
+
+                    if (updatedQueue.Quantity != 0)
+                        originalQueue[0].Quantity = updatedQueue.Quantity;
+
+                    // Zapisz zaktualizowane kolejki
+                    SaveQueues(queues);
+
+                    return Json(new { success = true, message = "Queue updated successfully." });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Queue not found." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteFromQueue(int id)
+        {
+            try
+            {
+                var queues = LoadQueues();
+
+                if (queues.ContainsKey(id))
+                {
+                    // Pobierz oryginalną kolejkę
+                    var queueList = queues[id];
+
+
+                    var itemsToDelete = queueList.Where(item => item.Quantity == 6).ToList();
+
+                    // Usuń znalezione elementy
+                    foreach (var itemToDelete in itemsToDelete)
+                    {
+                        queueList.Remove(itemToDelete);
+                    }
+
+                    // Jeśli lista jest teraz pusta, usuń klucz
+                    if (queueList.Count == 0)
+                    {
+                        queues.Remove(id);
+                    }
+
+                    // Zapisz zaktualizowane kolejki
+                    SaveQueues(queues);
+
+                    return Json(new { success = true, message = "Queue updated successfully." });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Queue not found." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+
         private Dictionary<int, List<Queue>> LoadQueues()
         {
             try
@@ -59,6 +146,6 @@ namespace Biblioteka.Controllers
         {
             var json = JsonConvert.SerializeObject(queues);
             System.IO.File.WriteAllText(_filePath, json);
-        }
+        }       
     }
 }

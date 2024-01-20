@@ -187,9 +187,6 @@ namespace Biblioteka.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("bookId"));
 
-                    b.Property<int?>("Book")
-                        .HasColumnType("int");
-
                     b.Property<long?>("ISBN")
                         .IsRequired()
                         .HasColumnType("bigint");
@@ -219,8 +216,6 @@ namespace Biblioteka.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("bookId");
-
-                    b.HasIndex("Book");
 
                     b.HasIndex("catId");
 
@@ -632,10 +627,6 @@ namespace Biblioteka.Migrations
 
             modelBuilder.Entity("Biblioteka.Models.Book", b =>
                 {
-                    b.HasOne("Biblioteka.Models.Rental", null)
-                        .WithMany("book")
-                        .HasForeignKey("Book");
-
                     b.HasOne("Biblioteka.Models.Category", "category")
                         .WithMany()
                         .HasForeignKey("catId")
@@ -756,8 +747,6 @@ namespace Biblioteka.Migrations
             modelBuilder.Entity("Biblioteka.Models.Rental", b =>
                 {
                     b.Navigation("RentalBook");
-
-                    b.Navigation("book");
                 });
 
             modelBuilder.Entity("Biblioteka.Models.User", b =>

@@ -51,6 +51,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>Zadanie 7</title>
 </head>
 <body>
@@ -59,8 +60,10 @@
     <br>
     <br>
     <br>
-    <button id="but1" style="margin-left: 230px">Dodaj produkt</button>
-    <button id="but2" style="margin-left: 20 px;" onclick="clearAll()">Usuń wszystko</button>
+    <button id="addToQueueButton" style="margin-left: 230px;">Dodaj</button>
+    <button id="updateQueue" style="margin-left: 20px">Edytuj</button>
+    <button id="deleteFromQueue" style="margin-left: 20px;">Usuń</button>
+
     <dialog id="dialog1">
         <h2>Dodaj produkt</h2>
         <hr>
@@ -116,369 +119,110 @@
 </html>
 
 
-<script>
-    var userId = @Html.Raw(Json.Serialize(ViewData["userId"]));
-    const lowermessage = document.getElementById("low");
-    lowermessage.innerHTML = userId;
-
-    var jsonFilePath = '../../opinions.json';
-
-    // fetch(jsonFilePath, {
-    //     method: 'GET',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    // })
-    //     .then(response => {
-    //         if (!response.ok) {
-    //             throw new Error(`Błąd sieci: ${response.status}`);
-    //         }
-    //         return response.json();
-    //     })
-    //     .then(data => {
-    //         if (data && data.users) {
-    //             const user = data.users.find(u => u.userId === parseInt(userId));
-    //             if (user) {
-    //                 modif = parseInt(user.products[0].modif);
-    //             } else {
-    //                 console.error('Użytkownik o podanym userId nie znaleziony.');
-    //             }
-    //         }
-    //     })
-    //     .catch (error => console.error('Błąd:', error));
-
-    let x = 0;
-
-    const out = document.getElementById("out");
-
-    const table = document.createElement("TABLE");
-
-    table.appendChild(addCaption());
-    table.appendChild(addHeader());
-    table.appendChild(addBody());
-    table.appendChild(addFooter());
-
-    colorRow();
-
-    out.appendChild(table);
-
-    const btn = document.getElementById("but1");
-    const form = document.getElementById("form1");
-    const dlg = document.getElementById("dialog1");
-
-    const btn2 = document.getElementById("but2");
-    const form2 = document.getElementById("form2");
-    const dlg2 = document.getElementById("dialog2");
-
-    const form3 = document.getElementById("form3");
-    const dlg3 = document.getElementById("dialog3");
-
-    const form4 = document.getElementById("form4");
-    const dlg4 = document.getElementById("dialog4");
-
-    btn.onclick = () => {
-        form.reset();
-        dlg.showModal();
+@section scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script src="~/lib/bootstrap/dist/js/selectize.js"></script>
 
-    form.onsubmit = (event) => {
-        const mess = document.getElementById("messagedialog");
-        if (form.count.value === "" || !Number.isInteger(Number(form.count.value)) || Number(form.count.value) <= 0) {
-            mess.innerHTML = "Ilość musi być większa od zera";
-            event.preventDefault();
-            dlg.showModal();
-            return;
-        }
-        if (form.price.value === "" || !Number.isInteger(Number(form.price.value)) || Number(form.price.value) <= 0) {
-            mess.innerHTML = "Cena musi być większa od zera";
-            event.preventDefault();
-            dlg.showModal();
-            return;
-        }
-        if(form.name.value === "")
-        {
-            mess.innerHTML = "Proszę podać nazwę";
-            event.preventDefault();
-            dlg.showModal();
-            return;
-        }
-        const newOpinion =
-        {
-            name: form.name.value,
-            count: form.count.value,
-            price: form.price.value
-        };
+    <script type="text/javascript">
 
-        console.log(newOpinion.name);
+        const out = document.getElementById("out");
 
-        fetch(jsonFilePath)
-            .then(response => { 
-                return response.json(); 
-            })
-            .then(data => {
-                const user = data.users.find(u => u.userId === parseInt(userId));                
-                if (user) {
-                    console.log("fetch");
-                    console.log(user);
-                    console.log(user['userId']);
-                    console.log(user['products']);
-                    user['products'].push(newOpinion);
-                    console.log(user['products']);
-                    console.log(user['products'][1].name);
+        // site.js
+        $(document).ready(function () {
+            // Pobierz dane przy ładowaniu strony
+            $.ajax({
+                url: '/api/Queue',
+                type: 'GET',
+                success: function (data) {
+                    console.log('Dane pobrane:', data);
+                    const table = document.createElement("a");
+                    const booksArray = data[1];
 
-                    return fetch(jsonFilePath, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data)
+                    // Iteruj przez tablicę i dostęp do poszczególnych elementów
+                    booksArray.forEach(book => {
+                        table.innerHTML +="BookId:" + book.BookId;
+                        table.innerHTML += "UserId:" + book.UserId;
+                        table.innerHTML += "Quantity:" + book.Quantity;
+                        table.innerHTML += "---";
                     });
+                    
+                    out.appendChild(table);
+                    // Tutaj możesz coś zrobić z pobranymi danymi, np. wyświetlić na stronie
+                },
+                error: function (error) {
+                    console.error('Błąd pobierania danych:', error);
                 }
-                console.log("reject");
-                return Promise.reject(new Error('Nie znaleziono użytkownika'));
-            })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Dodano nową opinię');
-                    location.reload();
-                } else {
-                    console.error('Błąd podczas dodawania nowej opinii: ' + response);
-                }
-            })
-            .then(() => {                
-            })
-            .catch(error => console.error('Błąd:', error));
-    }
+            });
 
-    form.onreset = () => {
-        dlg.close();
-    }
-
-    btn2.onclick = () => {
-        form2.reset();
-        dlg2.showModal();
-    }
-
-    form2.onsubmit = (event) => {
-        event.preventDefault();
-        fetch(jsonFilePath)
-            .then(response => response.json())
-            .then(data => {
-                for (let product of data.products) {                   
-                        fetch(jsonFilePath, {
-                            method: 'DELETE',
-                        })
-                            .then(response => response.json())
-                            .then(data => { })                   
-                }
-            })
-            .then(() => { location.reload(); });
-    }
-
-    form2.onreset = () => {
-        dlg2.close();
-    }
-
-    form3.onsubmit = () => {
-        let name = form3.name.value;
-        let count = form3.count.value;
-        let price = form3.price.value;
-
-        if (count <= 0) {
-            //if(count.length!=0)
-            {
-                lowermessage.innerHTML = "Ilość musi być większa od zera!";
-                return;
-            }
-            // fetch(url + `/${x}`)
-            //     .then(response => response.json())
-            //     .then(data => count = parseFloat(data.count).toFixed(2));
-        }
-        else count = parseFloat(count).toFixed(2);
-        if (price <= 0) {
-            // if(price.length!=0)
-            {
-                lowermessage.innerHTML = "Cena musi być większa od zera!";
-                return;
-            }
-            // fetch(url + `/${x}`)
-            //     .then(response => response.json())
-            //     .then(data => {
-            //         price = parseFloat(data.price).toFixed(2);
-            //     });
-        }
-        else price = parseFloat(price).toFixed(2);
-        if (name.length == 0) {
-            return;
-            // fetch(url + `/${x}`)
-            //     .then(response => response.json())
-            //     .then(data => {
-            //         name = data.name;
-            //     });
-        }
-
-        fetch(jsonFilePath, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(
-                {
-                    name: name,
-                    count: count,
-                    price: price
-                })
-        })
-            .then(response => response.json())
-            .then(data => { });
-       
-        lowermessage.innerHTML = " ";
-    }
-
-    form3.onreset = () => {
-        dlg3.close();
-    }
-
-    form4.onsubmit = () => {
-        fetch(jsonFilePath, {
-            method: 'DELETE',
-        })
-            .then(response => response.json())
-            .then(data => { })      
-    }
-
-    form4.onreset = () => {
-        dlg4.close();
-    }
-
-    function addCaption() {
-        const caption = document.createElement("CAPTION");
-        let today = new Date();
-
-        
-        caption.innerHTML = "PARAGON " + today.getDate() + "-" + (today.getMonth() + 1) + "-" + (today.getFullYear() % 100) + "/";
-                  
-        return caption;
-    }
-
-    function addHeader() {
-        const thead = document.createElement("THEAD");
-        const headerRow = thead.insertRow();
-        const headers = ["LP", "NAZWA", "ILOŚĆ", "CENA", "SUMA"];
-
-        for (let i = 0; i < headers.length; ++i) {
-            let th = document.createElement("TH");
-            if (i == 1) {
-                th.style.textAlign = "left";
-            }
-            if (i == 2) {
-                th.style.textAlign = "right";
-            }
-            th.style.width = "100px";
-            th.innerHTML = headers[i];
-            headerRow.appendChild(th);
-        }
-
-        return thead;
-    }
-
-    function addBody() {
-        const tbody = document.createElement("TBODY");
-        let i = 0;
-        fetch(jsonFilePath)
-            .then(response => response.json())
-            .then(data => {
-                if (data && data.users) {
-                    const user = data.users.find(u => u.userId === parseInt(userId));
-                    if (user) {
-                        for (let product of user.products) {
-                            const headerRow = tbody.insertRow();
-                            if ((table.rows.length - 1) % 2 == 0) headerRow.style = "background-color:whitesmoke;";
-                            let td = document.createElement("TD");
-                            td.innerHTML = i + 1;
-                            headerRow.appendChild(td);
-                            td = document.createElement("TD");
-                            td.style.textAlign = "left";
-                            td.innerHTML = product.name;
-                            headerRow.appendChild(td);
-                            td = document.createElement("TD");
-                            td.style.textAlign = "right";
-                            td.innerHTML = product.count;
-                            headerRow.appendChild(td);
-                            td = document.createElement("TD");
-                            td.innerHTML = (parseFloat(product.price)).toFixed(2) + " zł";
-                            headerRow.appendChild(td);
-                            td = document.createElement("TD");
-                            td.innerHTML = (Math.round(product.price * product.count * 100) / 100).toFixed(2) + " zł";
-                            headerRow.appendChild(td);
-                            const but2 = document.createElement("BUTTON");
-                            but2.innerHTML = "Edytuj";
-                            but2.id = "be" + i;
-                            but2.onclick = function () {
-                                x = product.id;
-                                form3.reset();
-                                dlg3.showModal();
-                            };
-                            const but3 = document.createElement("BUTTON");
-                            but3.innerHTML = "Usuń";
-                            but3.id = "bu" + i;
-                            but3.onclick = function () {
-                                x = product.id;
-                                form4.reset();
-                                dlg4.showModal();
-                            };
-                            but2.style = but3.style = "margin-top: 15px; margin-left: 5px;";
-                            headerRow.appendChild(but2);
-                            headerRow.appendChild(but3);
-                            i++;
-                        }
-                    } else {
-                        console.error('Użytkownik o podanym userId nie został znaleziony.');
+            // Dodaj dane do kolejki po kliknięciu przycisku
+            $('#addToQueueButton').on('click', function () {
+                var queueData = {
+                    BookId: 123, // Dostosuj do swoich potrzeb
+                    UserId: 456, // Dostosuj do swoich potrzeb
+                    Quantity: 1  // Dostosuj do swoich potrzeb
+                };
+                $.ajax({
+                    url: '/api/Queue',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(queueData),
+                    success: function (response) {
+                        console.log('Odpowiedź po dodaniu do kolejki:', response);
+                        // Tutaj możesz coś zrobić po dodaniu do kolejki
+                    },
+                    error: function (error) {
+                        console.error('Błąd przy dodawaniu do kolejki:', error);
                     }
-                }
-            })
+                });
+            });
 
-        return tbody;
-    }
+            $('#updateQueue').on('click', function () {
+                var queueData = {
+                    BookId: 123, // Dostosuj do swoich potrzeb
+                    UserId: 456, // Dostosuj do swoich potrzeb
+                    Quantity: 6  // Dostosuj do swoich potrzeb
+                };
+                console.log('huh');
+                $.ajax({
+                    url: '/api/Queue/' + 123,
+                    type: 'PATCH',
+                    contentType: 'application/json',
+                    data: JSON.stringify(queueData),
+                    success: function (response) {
+                        console.log('Odpowiedź po edytowaniu:', response);
+                    },
+                    error: function (error) {
+                        console.error('Błąd przy edytowaniu:', error);
+                    }
+                });
+            });
 
-    function addFooter() {
-        const tfoot = document.createElement("TFOOT");
-        const footerRow = tfoot.insertRow();
-        let remainingCell = document.createElement("TH");
-        remainingCell.colSpan = 3;
-        footerRow.appendChild(remainingCell);
+            $('#deleteFromQueue').on('click', function () {
+                var idToDelete = 123;
 
-        for (let i = 0; i < 2; ++i) {
-            let th = document.createElement("TH");
-            if (i == 0) th.innerHTML = "RAZEM";
-            else {
-                let sum = 0;
-                fetch(jsonFilePath)
-                    .then(response => response.json())
-                    .then(data => {    
-                        if (data && data.users) {
-                            const user = data.users.find(u => u.userId === parseInt(userId));
-                            if (user) {
-                                for (let product of user.products) {
-                                    sum += (Math.round(parseFloat(product.price) * parseFloat(product.count) * 100) / 100);
-                                }
-                                th.innerHTML = sum.toFixed(2) + " zł";
-                            } else {
-                                console.error('Użytkownik o podanym userId nie został znaleziony.');
-                            }
+                console.log('usuwanie');
+
+                $.ajax({
+                    url: `/api/Queue/${idToDelete}`,
+                    type: 'DELETE',
+                    success: function (data) {
+                        if (data.success) {
+                            console.log(data.message);
+                            // Tutaj możesz zaktualizować interfejs użytkownika lub podjąć inne działania
+                        } else {
+                            console.error(data.message);
                         }
-                    })
-            }
-            footerRow.appendChild(th);
-        }
+                    },
+                    error: function (error) {
+                        console.error(`Error: ${error.statusText}`);
+                    }
+                });
+            });           
+           
+        });
 
-        return tfoot;
-    }
-
-    function colorRow() {
-        for (let i = 0; i < table.rows.length; i++) {
-            if (i % 2 != 0) table.rows[i].style = "background-color:whitesmoke;";
-        }
-    }
 
 </script>
+}
