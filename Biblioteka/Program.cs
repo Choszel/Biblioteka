@@ -125,26 +125,4 @@ using (var scope = app.Services.CreateScope())
     }   
 }
 
-await CreateDatabaseAsync(app.Services);
-
 app.Run();
-
-static async Task CreateDatabaseAsync(IServiceProvider serviceProvider)
-{
-    await using AsyncServiceScope scope = serviceProvider.CreateAsyncScope();
-
-    var dbContext = scope.ServiceProvider.GetRequiredService<BibContext>();
-    await dbContext.Database.EnsureCreatedAsync();
-
-    if (!dbContext.Users.Any())
-    {
-        dbContext.Users.Add(new User
-        {
-            products = new List<Product> { 
-                //new Product(1,1)                
-            },
-        });
-
-        await dbContext.SaveChangesAsync();
-    }
-}

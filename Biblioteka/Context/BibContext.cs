@@ -24,10 +24,6 @@ namespace Biblioteka.Context
         public DbSet<AdminSettings> AdminSettings { get; set; }
 
 
-        public DbSet<User> Users => Set<User>();
-        public DbSet<TodoItem> TodoItems { get; set; } = null!;
-
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
