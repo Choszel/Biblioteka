@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Biblioteka.Context;
 using Biblioteka.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 namespace Biblioteka.Controllers
 {
@@ -32,7 +33,7 @@ namespace Biblioteka.Controllers
             else
             {
                 var user = _context.Readers.FirstOrDefault(r => r.email == User.Identity.Name);
-                var bibContext = _context.Rental.Where(r => r.userId == user.id);
+                var bibContext = _context.Rental.Where(r => r.userId == user.id).Include(r => r.RentalBook).ThenInclude(rb => rb.book);                
                 return View(await bibContext.ToListAsync());
             }
         }
@@ -70,7 +71,7 @@ namespace Biblioteka.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize] 
-        public async Task<IActionResult> Place([Bind("rentalId,userE_mail,rentalDate,rentalState,stateDate,PESEL")] Rental rental)
+        public async Task<IActionResult> Place([Bind("rentalId,userE_mail,rentalDate,rentalState,stateDate,PESEL")] Rental rental, string selectedBooks)
         {
             if (User.IsInRole("Admin") || User.IsInRole("Employee"))
             {
@@ -82,9 +83,26 @@ namespace Biblioteka.Controllers
             rental.rentalDate = DateTime.Now;
             rental.stateDate = DateTime.Now;
             System.Diagnostics.Debug.WriteLine("\nRental : " + rental.userId + " " + rental.rentalState + " " + rental.rentalDate + " " + rental.stateDate + " " + rental.PESEL + "\n");
-            System.Diagnostics.Debug.WriteLine(User.Identity.Name);
+
+            System.Diagnostics.Debug.WriteLine(selectedBooks);
 
             _context.Add(rental);
+            await _context.SaveChangesAsync();
+
+            var selectedBooksList = selectedBooks.Split(';', StringSplitOptions.RemoveEmptyEntries);
+
+            for (int i = 0; i < selectedBooksList.Count(); i++)
+            {
+                System.Diagnostics.Debug.WriteLine(selectedBooksList[i]);
+                var bookData = selectedBooksList[i].Split(',').ToList();
+                for (int j = 0; j < bookData.Count; j++)
+                {
+                    System.Diagnostics.Debug.Write(bookData[j] + " ");
+                }
+                System.Diagnostics.Debug.Write("\n");
+                _context.Add(new RentalBook(rental.rentalId, int.Parse(bookData[0]), int.Parse(bookData[1])));
+            }
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
