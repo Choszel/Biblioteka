@@ -108,6 +108,7 @@ namespace Biblioteka.Controllers
         }
 
         // GET: Rentals/Edit/5
+        [Authorize(Roles = "Employee, Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Rental == null)
@@ -129,6 +130,7 @@ namespace Biblioteka.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Employee, Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("rentalId,userId,rentalDate,rentalState,stateDate,PESEL")] Rental rental)
         {
             if (id != rental.rentalId)

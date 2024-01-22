@@ -9,7 +9,7 @@ namespace Biblioteka.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Display(Name = "Id tagu")]
+        [Display(Name = "Id kategorii")]
         public int catId { get; set; }
 
         [BindProperty(SupportsGet = true),
