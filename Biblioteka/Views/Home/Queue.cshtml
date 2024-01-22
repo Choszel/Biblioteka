@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "_Layout";
-    ViewData["Title"] = "Moje Opinie";
+    ViewData["Title"] = "Kolejka zamówień";
 }
 
 <!DOCTYPE html>
@@ -64,7 +64,7 @@
     <button id="updateQueue" style="margin-left: 20px">Edytuj</button>
     <button id="deleteFromQueue" style="margin-left: 20px;">Usuń</button>
 
-    <dialog id="dialog1">
+    <!--<dialog id="dialog1">
         <h2>Dodaj produkt</h2>
         <hr>
         <p>Podaj dane:</p>
@@ -114,7 +114,7 @@
             </form>
     </dialog>
 
-    <p id="low"></p>
+    <p id="low"></p>-->
 </body>
 </html>
 
@@ -131,37 +131,34 @@
 
         // site.js
         $(document).ready(function () {
-            // Pobierz dane przy ładowaniu strony
             $.ajax({
                 url: '/api/Queue',
                 type: 'GET',
                 success: function (data) {
                     console.log('Dane pobrane:', data);
-                    const table = document.createElement("a");
-                    const booksArray = data[1];
+                    var queueContent = "<table><tr><th>Książka</th><th>Osoby w kolejce</th></tr>";
 
-                    // Iteruj przez tablicę i dostęp do poszczególnych elementów
-                    booksArray.forEach(book => {
-                        table.innerHTML +="BookId:" + book.BookId;
-                        table.innerHTML += "UserId:" + book.UserId;
-                        table.innerHTML += "Quantity:" + book.Quantity;
-                        table.innerHTML += "---";
-                    });
-                    
-                    out.appendChild(table);
-                    // Tutaj możesz coś zrobić z pobranymi danymi, np. wyświetlić na stronie
+                    for (var bookId in data) {
+                        var booksArray = data[bookId];
+                        queueContent += `<tr><td rowspan="${booksArray.length}">${bookId}</td>`;
+                        booksArray.forEach(book => {
+                            queueContent += `<td>Użytkownik:${book.UserId}, ilość: ${book.Quantity}</td></tr>`;
+                        });
+                    }
+
+                    queueContent += "</table>";
+                    out.innerHTML = queueContent;
                 },
                 error: function (error) {
                     console.error('Błąd pobierania danych:', error);
                 }
             });
 
-            // Dodaj dane do kolejki po kliknięciu przycisku
             $('#addToQueueButton').on('click', function () {
                 var queueData = {
-                    BookId: 123, // Dostosuj do swoich potrzeb
-                    UserId: 456, // Dostosuj do swoich potrzeb
-                    Quantity: 1  // Dostosuj do swoich potrzeb
+                    BookId: 123,
+                    UserId: 456,
+                    Quantity: 1
                 };
                 $.ajax({
                     url: '/api/Queue',
@@ -170,7 +167,6 @@
                     data: JSON.stringify(queueData),
                     success: function (response) {
                         console.log('Odpowiedź po dodaniu do kolejki:', response);
-                        // Tutaj możesz coś zrobić po dodaniu do kolejki
                     },
                     error: function (error) {
                         console.error('Błąd przy dodawaniu do kolejki:', error);
@@ -180,13 +176,13 @@
 
             $('#updateQueue').on('click', function () {
                 var queueData = {
-                    BookId: 123, // Dostosuj do swoich potrzeb
-                    UserId: 456, // Dostosuj do swoich potrzeb
-                    Quantity: 6  // Dostosuj do swoich potrzeb
+                    BookId: 123,
+                    UserId: 456,
+                    Quantity: 6
                 };
                 console.log('huh');
                 $.ajax({
-                    url: '/api/Queue/' + 123,
+                    url: '/api/Queue/' + queueData.BookId,
                     type: 'PATCH',
                     contentType: 'application/json',
                     data: JSON.stringify(queueData),
@@ -200,17 +196,20 @@
             });
 
             $('#deleteFromQueue').on('click', function () {
-                var idToDelete = 123;
+                var queueData = {
+                    BookId: 123,
+                    UserId: 123,
+                    Quantity: 6
+                };
 
                 console.log('usuwanie');
 
                 $.ajax({
-                    url: `/api/Queue/${idToDelete}`,
+                    url: `/api/Queue/${queueData.BookId}`,
                     type: 'DELETE',
                     success: function (data) {
                         if (data.success) {
                             console.log(data.message);
-                            // Tutaj możesz zaktualizować interfejs użytkownika lub podjąć inne działania
                         } else {
                             console.error(data.message);
                         }
@@ -219,7 +218,7 @@
                         console.error(`Error: ${error.statusText}`);
                     }
                 });
-            });           
+            });
            
         });
 

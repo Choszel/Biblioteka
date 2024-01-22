@@ -1,4 +1,5 @@
-﻿using Biblioteka.Models;
+﻿using Biblioteka.Context;
+using Biblioteka.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -14,6 +15,12 @@ namespace Biblioteka.Controllers
     public class QueueController : Controller
     {
         private string _filePath = "../Biblioteka/wwwroot/rentQueue.json"; // ścieżka do pliku rentqueue.json       
+        private readonly BibContext _context;
+
+        public QueueController(BibContext context)
+        {
+            _context = context;
+        }
 
         [HttpGet]
         public IActionResult GetJsonContent()
@@ -38,10 +45,10 @@ namespace Biblioteka.Controllers
 
                 if (!queues.ContainsKey(queue.BookId))
                 {
-                    queues[queue.BookId] = new List<Queue>();
+                    queues[queue.BookId] = new List<PseudoQueue>();
                 }
-
-                queues[queue.BookId].Add(queue);
+                PseudoQueue newItem = new(queue.BookId, queue.Quantity);
+                queues[queue.BookId].Add(newItem);
 
                 SaveQueues(queues);
 
@@ -59,7 +66,6 @@ namespace Biblioteka.Controllers
             try
             {
                 var queues = LoadQueues();
-
                 if (queues.ContainsKey(id))
                 {
                     // Pobierz oryginalną kolejkę
@@ -94,25 +100,25 @@ namespace Biblioteka.Controllers
 
                 if (queues.ContainsKey(id))
                 {
-                    // Pobierz oryginalną kolejkę
                     var queueList = queues[id];
 
+                    var user = _context.Readers.FirstOrDefault(r => r.email == User.Identity.Name);
+                    List<PseudoQueue> itemsToDelete = new();
+                    if (user != null)
+                        itemsToDelete = queueList.Where(item => item.UserId == user.id).ToList();
+                    /*else
+                        itemsToDelete = queueList.Where(item => item.UserId == -1).ToList();*/
 
-                    var itemsToDelete = queueList.Where(item => item.Quantity == 6).ToList();
-
-                    // Usuń znalezione elementy
                     foreach (var itemToDelete in itemsToDelete)
                     {
                         queueList.Remove(itemToDelete);
                     }
 
-                    // Jeśli lista jest teraz pusta, usuń klucz
                     if (queueList.Count == 0)
                     {
                         queues.Remove(id);
                     }
 
-                    // Zapisz zaktualizowane kolejki
                     SaveQueues(queues);
 
                     return Json(new { success = true, message = "Queue updated successfully." });
@@ -129,20 +135,20 @@ namespace Biblioteka.Controllers
         }
 
 
-        private Dictionary<int, List<Queue>> LoadQueues()
+        private Dictionary<int, List<PseudoQueue>> LoadQueues()
         {
             try
             {
                 var json = System.IO.File.ReadAllText(_filePath);
-                return JsonConvert.DeserializeObject<Dictionary<int, List<Queue>>>(json) ?? new Dictionary<int, List<Queue>>();
+                return JsonConvert.DeserializeObject<Dictionary<int, List<PseudoQueue>>>(json) ?? new Dictionary<int, List<PseudoQueue>>();
             }
             catch
             {
-                return new Dictionary<int, List<Queue>>();
+                return new Dictionary<int, List<PseudoQueue>>();
             }
         }
 
-        private void SaveQueues(Dictionary<int, List<Queue>> queues)
+        private void SaveQueues(Dictionary<int, List<PseudoQueue>> queues)
         {
             var json = JsonConvert.SerializeObject(queues);
             System.IO.File.WriteAllText(_filePath, json);

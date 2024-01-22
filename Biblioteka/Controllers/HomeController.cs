@@ -1,5 +1,6 @@
 ﻿using Biblioteka.Context;
 using Biblioteka.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -80,7 +81,8 @@ namespace Biblioteka.Controllers
             return View();
         }
 
-        public IActionResult Opinion()
+        //[Authorize]
+        public IActionResult Queue()
         {
             //var user = _context.Readers.FirstOrDefault(r => r.email == User.Identity.Name);
             //ViewData["userId"] = user.id;
