@@ -10,87 +10,87 @@ using Biblioteka.Models;
 
 namespace Biblioteka.Controllers
 {
-    public class EmployeesController : Controller
+    public class ReadersController : Controller
     {
         private readonly BibContext _context;
 
-        public EmployeesController(BibContext context)
+        public ReadersController(BibContext context)
         {
             _context = context;
         }
 
-        // GET: Employees
+        // GET: Readers
         public async Task<IActionResult> Index()
         {
-              return _context.Employees != null ? 
-                          View(await _context.Employees.ToListAsync()) :
-                          Problem("Entity set 'BibContext.Employees'  is null.");
+            return _context.Readers != null ?
+                        View(await _context.Readers.ToListAsync()) :
+                        Problem("Entity set 'BibContext.Readers'  is null.");
         }
 
-        // GET: Employees/Details/5
+        // GET: Readers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Employees == null)
+            if (id == null || _context.Readers == null)
             {
                 return NotFound();
             }
 
-            var employee = await _context.Employees
+            var reader = await _context.Readers
                 .FirstOrDefaultAsync(m => m.id == id);
-            if (employee == null)
+            if (reader == null)
             {
                 return NotFound();
             }
 
-            return View(employee);
+            return View(reader);
         }
 
-        // GET: Employees/Create
+        // GET: Readers/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Employees/Create
+        // POST: Readers/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,name,surname,email,birthDate,pesel,street,houseNumber,town,zipCode,dateOfEmployment")] Employee employee)
+        public async Task<IActionResult> Create([Bind("id,name,surname,email,birthDate")] Reader reader)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(employee);
+                _context.Add(reader);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(employee);
+            return View(reader);
         }
 
-        // GET: Employees/Edit/5
+        // GET: Readers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Employees == null)
+            if (id == null || _context.Readers == null)
             {
                 return NotFound();
             }
 
-            var employee = await _context.Employees.FindAsync(id);
-            if (employee == null)
+            var reader = await _context.Readers.FindAsync(id);
+            if (reader == null)
             {
                 return NotFound();
             }
-            return View(employee);
+            return View(reader);
         }
 
-        // POST: Employees/Edit/5
+        // POST: Readers/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("id,name,surname,email,birthDate,pesel,street,houseNumber,town,zipCode,dateOfEmployment")] Employee employee)
+        public async Task<IActionResult> Edit(int id, [Bind("id,name,surname,email,birthDate")] Reader reader)
         {
-            if (id != employee.id)
+            if (id != reader.id)
             {
                 return NotFound();
             }
@@ -99,12 +99,12 @@ namespace Biblioteka.Controllers
             {
                 try
                 {
-                    _context.Update(employee);
+                    _context.Update(reader);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EmployeeExists(employee.id))
+                    if (!ReaderExists(reader.id))
                     {
                         return NotFound();
                     }
@@ -115,52 +115,52 @@ namespace Biblioteka.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(employee);
+            return View(reader);
         }
 
-        // GET: Employees/Delete/5
+        // GET: Readers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Employees == null)
+            if (id == null || _context.Readers == null)
             {
                 return NotFound();
             }
 
-            var employee = await _context.Employees
+            var reader = await _context.Readers
                 .FirstOrDefaultAsync(m => m.id == id);
-            if (employee == null)
+            if (reader == null)
             {
                 return NotFound();
             }
 
-            return View(employee);
+            return View(reader);
         }
 
-        // POST: Employees/Delete/5
+        // POST: Readers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Employees == null)
+            if (_context.Readers == null)
             {
-                return Problem("Entity set 'BibContext.Employees'  is null.");
+                return Problem("Entity set 'BibContext.Readers'  is null.");
             }
-            var employee = await _context.Employees.FindAsync(id);
-            if (employee != null)
+            var reader = await _context.Readers.FindAsync(id);
+            if (reader != null)
             {
-                _context.Employees.Remove(employee);
-                var userAcc = _context.Users.FirstOrDefault(u => u.UserName == employee.email);
+                _context.Readers.Remove(reader);
+                var userAcc = _context.Users.FirstOrDefault(u => u.UserName == reader.email);
                 if (userAcc != null)
                     _context.Users.Remove(userAcc);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EmployeeExists(int id)
+        private bool ReaderExists(int id)
         {
-          return (_context.Employees?.Any(e => e.id == id)).GetValueOrDefault();
+            return (_context.Readers?.Any(e => e.id == id)).GetValueOrDefault();
         }
     }
 }

@@ -7,10 +7,11 @@ namespace Biblioteka.Models
 {
     public class RentalBook
     {
-        public RentalBook(int rentalId, int bookId)
+        public RentalBook(int rentalId, int bookId, int? quantity)
         {
             this.rentalId = rentalId;
             this.bookId = bookId;
+            this.quantity = quantity;
         }
 
         [Key,

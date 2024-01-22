@@ -59,7 +59,8 @@ namespace Biblioteka.Models
 
         public int catId { get; set; }
 
-        [ForeignKey("catId")]
+        [ForeignKey("catId"),
+            Display(Name = "Kategoria")]
         public virtual Category? category { get; set; }
 
 
