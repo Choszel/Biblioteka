@@ -64,6 +64,8 @@
                 @Html.DisplayFor(modelItem => item.title)<br />
                 @Html.DisplayFor(modelItem => item.category.catName)<br />
                 @Html.DisplayFor(modelItem => item.authors)<br />
+                @* @string.Join(", ", item.authors.Select(rb => rb.name + rb.surname)) *@
+
                 @* @Html.DisplayFor(modelItem => item.rating)<br /> *@
                 @if (User.IsInRole("Admin"))
                 {

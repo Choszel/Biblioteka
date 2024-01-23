@@ -47,7 +47,8 @@ namespace Biblioteka.Controllers
                 {
                     queues[queue.BookId] = new List<PseudoQueue>();
                 }
-                PseudoQueue newItem = new(queue.BookId, queue.Quantity);
+                var user = _context.Readers.FirstOrDefault(r => r.email == User.Identity.Name);
+                PseudoQueue newItem = new(user.id, queue.Quantity);
                 queues[queue.BookId].Add(newItem);
 
                 SaveQueues(queues);
