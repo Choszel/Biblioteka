@@ -18,7 +18,16 @@
         <div class="col-md-9">
             <dl class="row">
                 <dt class="col-sm-3">Autorzy:</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.authors)</dd>
+                <dd class="col-sm-9">
+                    @if (Model.authors != null)
+                    {
+                        @foreach (var author in Model.authors)
+                        {
+                            <a>@author.name  @author.surname</a>
+                            <br />
+                        }
+                    }
+                </dd>
                 <dt class="col-sm-3">Kategoria:</dt>
                 <dd class="col-sm-9">@Html.DisplayFor(model => model.category.catName)</dd>
                 <dt class="col-sm-3">Data wydania:</dt>

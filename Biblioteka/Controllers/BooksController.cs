@@ -24,7 +24,7 @@ namespace Biblioteka.Controllers
         public async Task<IActionResult> Index()
         {
             ViewData["limits"] = await _context.AdminSettings.ToListAsync();
-            var bibContext = _context.Books.Include(b => b.category);
+            var bibContext = _context.Books.Include(b => b.category).Include(b => b.authors);
             return View(await bibContext.ToListAsync());
         }
 
@@ -38,6 +38,7 @@ namespace Biblioteka.Controllers
 
             var book = await _context.Books
                 .Include(b => b.category)
+                .Include(b => b.authors)
                 .FirstOrDefaultAsync(m => m.bookId == id);
             if (book == null)
             {

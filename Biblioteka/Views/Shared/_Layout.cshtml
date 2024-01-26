@@ -46,9 +46,13 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Employees" asp-action="Index">Pracownicy</a>
                             </li>
                         }
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Queue">Kolejka</a>
-                        </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Queue">Kolejka</a>
+                            </li>
+                        }
+                        
                     </ul>
                 </div>
                 <div class="show_main_menu">                   

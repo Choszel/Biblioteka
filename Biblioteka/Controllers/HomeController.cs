@@ -35,7 +35,9 @@ namespace Biblioteka.Controllers
             }
            
             ViewBag.BooksList = await _context.Book.ToListAsync();
-            var bibContext = _context.Books.Include(b => b.category);
+            var bibContext = _context.Books.Include(b => b.category).Include(b => b.authors).Include(b => b.tags);
+            
+            System.Diagnostics.Debug.WriteLine("\n" + bibContext.ToString() + "\n");
             return View(await bibContext.ToListAsync());
         }
 
@@ -44,7 +46,7 @@ namespace Biblioteka.Controllers
         {
             System.Diagnostics.Debug.WriteLine(selectedBooks);
 
-            var bibContext = _context.Books.Include(b => b.category);
+            var bibContext = _context.Books.Include(b => b.category).Include(b => b.authors).Include(b => b.tags);
 
             if (string.IsNullOrEmpty(selectedBooks))return View(await bibContext.ToListAsync());
 
@@ -58,7 +60,7 @@ namespace Biblioteka.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SearchBooks(List<int> selectedBooks)
         {
-            var bibContext = _context.Books.Include(b => b.category);
+            var bibContext = _context.Books.Include(b => b.category).Include(b => b.authors);
             var result = bibContext.Where(p => selectedBooks.Contains(p.bookId));
             return View(await bibContext.ToListAsync());
         }

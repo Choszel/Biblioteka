@@ -63,10 +63,30 @@
                 </a><br />
                 @Html.DisplayFor(modelItem => item.title)<br />
                 @Html.DisplayFor(modelItem => item.category.catName)<br />
-                @Html.DisplayFor(modelItem => item.authors)<br />
+                @if(item.authors!=null)
+                {
+                    @foreach (var author in item.authors)
+                    {
+                        <a>@author.name  @author.surname</a>
+                        <br />
+                    }
+                }
+                @if (item.tags != null)
+                {
+                    @foreach (var tag in item.tags)
+                    {
+                        if(tag == item.tags.Last())
+                        {
+                            <a>@tag.tagName</a>
+                        }
+                        else 
+                        {
+                            <a>@tag.tagName, </a>
+                        }                        
+                    }
+                }
                 @* @string.Join(", ", item.authors.Select(rb => rb.name + rb.surname)) *@
 
-                @* @Html.DisplayFor(modelItem => item.rating)<br /> *@
                 @if (User.IsInRole("Admin"))
                 {
                     <a class="nav-link text-dark" asp-area="" asp-controller="Books" asp-action="Edit" asp-route-id="@item.bookId">Edytuj</a>
@@ -122,22 +142,7 @@
                             '<span class="subAuthors">' + authorsHtml + '</span>' +
                             '</div>';
                     }
-                }
-                //$('#Search').click(function () {
-                //     var selectedValues = $select[0].selectize.getValue();
-                //     console.log(selectedValues);
-                //     // Wywołaj metodę AJAX
-                //     $.ajax({
-                //         url: '/Home/SearchBooks',
-                //         type: 'POST',
-                //         data: { selectedBooks: selectedValues },
-                //         success: function (response) {
-                //         },
-                //         error: function (response) {
-                //             alert('Błąd: ' + response);
-                //         }
-                //     });
-                // });
+                }              
             });            
         });
 
