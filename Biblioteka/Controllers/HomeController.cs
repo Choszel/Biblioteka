@@ -33,7 +33,9 @@ namespace Biblioteka.Controllers
                 _context.Add(adminSettings);
                 await _context.SaveChangesAsync();               
             }
-           
+            var user = _context.Readers.FirstOrDefault(r => r.email == User.Identity.Name);
+            ViewData["userId"] = user == null ? null : user.id;
+
             ViewBag.BooksList = await _context.Book.ToListAsync();
             var bibContext = _context.Books.Include(b => b.category).Include(b => b.authors).Include(b => b.tags);
             
@@ -83,11 +85,11 @@ namespace Biblioteka.Controllers
             return View();
         }
 
-        //[Authorize]
+        [Authorize]
         public IActionResult Queue()
         {
-            //var user = _context.Readers.FirstOrDefault(r => r.email == User.Identity.Name);
-            //ViewData["userId"] = user.id;
+            var user = _context.Readers.FirstOrDefault(r => r.email == User.Identity.Name);
+            ViewData["userId"] = user.id;
             return View();
         }
 

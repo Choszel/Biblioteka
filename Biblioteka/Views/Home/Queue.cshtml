@@ -60,63 +60,29 @@
     <br>
     <br>
     <br>
-    <button id="addToQueueButton" style="margin-left: 230px;">Dodaj</button>
-    <button id="updateQueue" style="margin-left: 20px">Edytuj</button>
-    <button id="deleteFromQueue" style="margin-left: 20px;">Usuń</button>
-
-    <!--<dialog id="dialog1">
-        <h2>Dodaj produkt</h2>
-        <hr>
-        <p>Podaj dane:</p>
-        <form id="form1" method="dialog">
-            <div>
-                <input type="text" name="name" placeholder="Nazwa">
-                <input type="text" name="count" placeholder="Ilość">
-                <input type="text" name="price" placeholder="Cena">
-                <input type="submit" value="Dodaj">
-                <input type="reset" value="Anuluj">
-            </div>
-            <p id="messagedialog"></p>
-        </form>
-    </dialog>
-
-    <dialog id="dialog2">
-        <h4>
-            Czy na pewno chcesz usunąć wszystkie produkty?</h2>
-            <form id="form2" method="dialog">
-                <input type="submit" value="Usuń">
-                <input type="reset" value="Anuluj">
-            </form>
-    </dialog>
-
-    <dialog id="dialog3">
-        <h2>
-            Edytuj produkt</h4>
-            <hr>
-            <p>Podaj dane:</p>
-            <form id="form3">
-                <input type="text" name="name" placeholder="Nazwa">
-                <input type="text" name="count" placeholder="Ilość">
-                <input type="text" name="price" placeholder="Cena">
-                <input type="submit" value="Zapisz">
-                <input type="reset" value="Anuluj">
-            </form>
-    </dialog>
-
-    <dialog id="dialog4">
-        <h2>
-            Usuń produkt</h4>
-            <hr>
-            <p>Czy napewno chcesz usunąć ten produkt?</p>
-            <form id="form4">
-                <input type="submit" value="Usuń">
-                <input type="reset" value="Anuluj">
-            </form>
-    </dialog>
-
-    <p id="low"></p>-->
 </body>
 </html>
+
+<dialog id="dialog1">
+    <p>Proszę podać dane:</p>
+    <form id="form1" method="dialog">
+        <div>
+            <input type="text" name="count" placeholder="Ilość">
+            <input type="submit" value="OK">
+        </div>
+    </form>
+    <p id="messagedialog"></p>
+</dialog>
+
+<dialog id="dialog2">
+    <p>Czy na pewno chcesz zrezygnować?</p>
+    <form id="form2" method="dialog">
+        <div>
+            <input type="submit" value="Tak">
+            <input type="reset" value="Nie">
+        </div>
+    </form>
+</dialog>
 
 
 @section scripts {
@@ -128,6 +94,11 @@
     <script type="text/javascript">
 
         const out = document.getElementById("out");
+        var userId = @Html.Raw(Json.Serialize(ViewData["userId"]));
+        const form = document.getElementById("form1");
+        const dlg = document.getElementById("dialog1");
+        const form2 = document.getElementById("form2");
+        const dlg2 = document.getElementById("dialog2");    
 
         // site.js
         $(document).ready(function () {
@@ -140,9 +111,12 @@
 
                     for (var bookId in data) {
                         var booksArray = data[bookId];
-                        queueContent += `<tr><td rowspan="${booksArray.length}">${bookId}</td>`;
                         booksArray.forEach(book => {
-                            queueContent += `<td>Użytkownik:${book.UserId}, ilość: ${book.Quantity}</td></tr>`;
+                            if (book.UserId == userId) {
+                                queueContent += `<tr><td rowspan="${booksArray.length}">${bookId}</td>`;
+                                queueContent += `<td>Użytkownik:${book.UserId}, ilość: ${book.Quantity} <button id="updateQueue" data-bookid="${bookId}" style="margin-left: 20px">Edytuj</button>
+                                                    <button id="deleteFromQueue" data-bookid="${bookId}" style="margin-left: 20px;">Usuń</button></td></tr>`;
+                            }
                         });
                     }
 
@@ -154,72 +128,84 @@
                 }
             });
 
-            $('#addToQueueButton').on('click', function () {
-                var queueData = {
-                    BookId: 123,
-                    UserId: 456,
-                    Quantity: 1
-                };
-                $.ajax({
-                    url: '/api/Queue',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(queueData),
-                    success: function (response) {
-                        console.log('Odpowiedź po dodaniu do kolejki:', response);
-                    },
-                    error: function (error) {
-                        console.error('Błąd przy dodawaniu do kolejki:', error);
+            $(document).on('click', '#updateQueue', function () {
+                var bookId = $(this).data('bookid');
+                console.log(bookId);
+                form.reset();
+                dlg.showModal();
+
+                form.onsubmit = (event) => {
+                    const mess = document.getElementById("messagedialog");
+                    if (form.count.value === "" || form.count.value < 1 || form.count.value > 6 || form.count.value % 1 > 0) {
+                        mess.innerHTML = "Ilość musi być liczbą całkowitą z przedziału < 1 , 6 >";
+                        event.preventDefault();
+                        dlg.showModal();
                     }
-                });
+                    else {
+                        var queueData = {
+                            BookId: bookId,
+                            UserId: userId,
+                            Quantity: parseInt(form.count.value)
+                        };
+
+                        $.ajax({
+                            url: '/api/Queue/' + queueData.BookId,
+                            type: 'PATCH',
+                            contentType: 'application/json',
+                            data: JSON.stringify(queueData),
+                            success: function (response) {
+                                console.log('Odpowiedź po edytowaniu:', response);
+                                location.reload();
+                            },
+                            error: function (error) {
+                                console.error('Błąd przy edytowaniu:', error);
+                            }
+                        });
+                    }
+                }
+
+                form.onreset = () => {
+                    dlg.close();
+                }
             });
 
-            $('#updateQueue').on('click', function () {
-                var queueData = {
-                    BookId: 123,
-                    UserId: 456,
-                    Quantity: 6
-                };
-                console.log('huh');
-                $.ajax({
-                    url: '/api/Queue/' + queueData.BookId,
-                    type: 'PATCH',
-                    contentType: 'application/json',
-                    data: JSON.stringify(queueData),
-                    success: function (response) {
-                        console.log('Odpowiedź po edytowaniu:', response);
-                    },
-                    error: function (error) {
-                        console.error('Błąd przy edytowaniu:', error);
-                    }
-                });
-            });
+            $(document).on('click', '#deleteFromQueue', function () {         
+                var bookId = $(this).data('bookid');
+                console.log(bookId);
+                form2.reset();
+                dlg2.showModal();
 
-            $('#deleteFromQueue').on('click', function () {
-                var queueData = {
-                    BookId: 123,
-                    UserId: 123,
-                    Quantity: 6
-                };
+                form2.onsubmit = (event) => {
+                    var queueData = {
+                        BookId: bookId,
+                        UserId: userId,
+                        Quantity: 0
+                    };
 
-                console.log('usuwanie');
+                    console.log('usuwanie');
 
-                $.ajax({
-                    url: `/api/Queue/${queueData.BookId}`,
-                    type: 'DELETE',
-                    success: function (data) {
-                        if (data.success) {
-                            console.log(data.message);
-                        } else {
-                            console.error(data.message);
+                    $.ajax({
+                        url: `/api/Queue/${queueData.BookId}`,
+                        type: 'DELETE',
+                        contentType: 'application/json',
+                        data: JSON.stringify(queueData),
+                        success: function (data) {
+                            if (data.success) {
+                                console.log(data.message);
+                            } else {
+                                console.error(data.message);
+                            }
+                        },
+                        error: function (error) {
+                            console.error(`Error: ${error.statusText}`);
                         }
-                    },
-                    error: function (error) {
-                        console.error(`Error: ${error.statusText}`);
-                    }
-                });
+                    });
+                }
+
+                form2.onreset = () => {
+                    dlg2.close();
+                }
             });
-           
         });
 
 

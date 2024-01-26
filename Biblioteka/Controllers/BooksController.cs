@@ -44,6 +44,8 @@ namespace Biblioteka.Controllers
             {
                 return NotFound();
             }
+            var user = _context.Readers.FirstOrDefault(r => r.email == User.Identity.Name);
+            ViewData["userId"] = user == null ? null : user.id;
 
             return View(book);
         }

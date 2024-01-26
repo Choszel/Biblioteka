@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Biblioteka.Controllers
 {
@@ -37,7 +39,7 @@ namespace Biblioteka.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddToQueue([FromBody] Queue queue)
+        public IActionResult AddToQueue([FromBody] Models.Queue queue)
         {
             try
             {
@@ -45,14 +47,30 @@ namespace Biblioteka.Controllers
 
                 if (!queues.ContainsKey(queue.BookId))
                 {
-                    queues[queue.BookId] = new List<PseudoQueue>();
+                    queues[queue.BookId] = new List<PseudoQueue>();                
+                    PseudoQueue newItem = new(queue.UserId, queue.Quantity);
+                    queues[queue.BookId].Add(newItem);
                 }
-                var user = _context.Readers.FirstOrDefault(r => r.email == User.Identity.Name);
-                PseudoQueue newItem = new(user.id, queue.Quantity);
-                queues[queue.BookId].Add(newItem);
-
+                else
+                {
+                    bool found = false;
+                    foreach(var item in queues[queue.BookId])
+                    {
+                        if(item.UserId == queue.UserId)
+                        {
+                            item.Quantity++;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found == false) 
+                    {
+                        PseudoQueue newItem = new(queue.UserId, queue.Quantity);
+                        queues[queue.BookId].Add(newItem);
+                    }
+                }
+              
                 SaveQueues(queues);
-
                 return Json(new { success = true, message = "Product added to the queue successfully." });
             }
             catch (Exception ex)
@@ -62,21 +80,33 @@ namespace Biblioteka.Controllers
         }
 
         [HttpPatch("{id}")]
-        public IActionResult UpdateQueue(int id, [FromBody] Queue updatedQueue)
+        public IActionResult UpdateQueue(int id, [FromBody] Models.Queue updatedQueue)
         {
             try
             {
                 var queues = LoadQueues();
                 if (queues.ContainsKey(id))
                 {
-                    // Pobierz oryginalną kolejkę
                     var originalQueue = queues[id];
 
-
                     if (updatedQueue.Quantity != 0)
-                        originalQueue[0].Quantity = updatedQueue.Quantity;
-
-                    // Zapisz zaktualizowane kolejki
+                    {
+                        bool found = false;
+                        foreach (var item in originalQueue)
+                        {
+                            if (item.UserId == updatedQueue.UserId)
+                            {
+                                item.Quantity = updatedQueue.Quantity;
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (found == false)
+                        {
+                            return Json(new { success = false, message = "Queue not found." });
+                        }
+                    }
+                        
                     SaveQueues(queues);
 
                     return Json(new { success = true, message = "Queue updated successfully." });
@@ -93,7 +123,7 @@ namespace Biblioteka.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteFromQueue(int id)
+        public IActionResult DeleteFromQueue(int id, [FromBody] Models.Queue deleteQueue)
         {
             try
             {
@@ -103,17 +133,8 @@ namespace Biblioteka.Controllers
                 {
                     var queueList = queues[id];
 
-                    var user = _context.Readers.FirstOrDefault(r => r.email == User.Identity.Name);
-                    List<PseudoQueue> itemsToDelete = new();
-                    if (user != null)
-                        itemsToDelete = queueList.Where(item => item.UserId == user.id).ToList();
-                    /*else
-                        itemsToDelete = queueList.Where(item => item.UserId == -1).ToList();*/
-
-                    foreach (var itemToDelete in itemsToDelete)
-                    {
-                        queueList.Remove(itemToDelete);
-                    }
+                    if(deleteQueue!=null)
+                        queueList.Remove(queueList.Where(item => item.UserId == deleteQueue.UserId).FirstOrDefault());                    
 
                     if (queueList.Count == 0)
                     {
