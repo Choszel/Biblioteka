@@ -114,6 +114,7 @@
 </html>
 
 <script>
+    console.log("Skrypt JavaScript został załadowany.");
     var bookList = @Html.Raw(Json.Serialize(ViewData["bookList"]));
     var limits = @Html.Raw(Json.Serialize(ViewData["limits"]));
 

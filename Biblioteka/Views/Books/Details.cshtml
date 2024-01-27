@@ -43,6 +43,9 @@
         <dt>Opis:</dt>
         <dd>@Html.DisplayFor(model => model.description)</dd>
     </div>
+    <div class="col-sm-12">
+        <button id="btnDownloadPdf" data-pd="@Model.fileAsString">Pobierz PDF z skrótem książki</button>
+    </div>
 </div>
 
 <div>
@@ -110,6 +113,8 @@
 
 <script>
     var userId = @Html.Raw(Json.Serialize(ViewData["userId"]));
+    var pdfBytesBase64 = @Html.Raw(Json.Serialize(ViewData["fileAsString"]));
+    var bookTitleForPDF = @Html.Raw(Json.Serialize(ViewData["bookTitle"]));
 
     const form = document.getElementById("form1");
     const dlg = document.getElementById("dialog1");
@@ -122,6 +127,7 @@
     const form5 = document.getElementById("form5");
     const dlg5 = document.getElementById("dialog5");
 
+    const btnDownload = document.getElementById("btnDownloadPdf");
 
     function addProduct(bookId, stockLevel) {
         console.log("\nuserId " + userId + "\n");
@@ -208,5 +214,25 @@
                 dlg.showModal();
             }
         }
+    }
+
+    btnDownload.onclick = () => {
+        console.log(pdfBytesBase64);
+        
+        // Dekodowanie danych base64 do tablicy bajtów
+        var pdfBytes = new Uint8Array(atob(pdfBytesBase64).split('').map(char => char.charCodeAt(0)));
+        console.log(pdfBytes);
+
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = bookTitleForPDF + ".pdf"; // Nazwa pliku do pobrania
+
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        URL.revokeObjectURL(url);
     }
 </script>

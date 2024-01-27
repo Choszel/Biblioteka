@@ -59,6 +59,13 @@ namespace Biblioteka.Models
 
         public int catId { get; set; }
 
+        [BindProperty(SupportsGet = true),
+            Display(Name = "PDF do pobrania"),
+            NotMapped]
+        public IFormFile file { get; set; }
+
+        public string? fileAsString { get; set; }
+
         [ForeignKey("catId"),
             Display(Name = "Kategoria")]
         public virtual Category? category { get; set; }
