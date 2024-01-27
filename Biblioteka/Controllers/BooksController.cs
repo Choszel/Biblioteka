@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Biblioteka.Context;
 using Biblioteka.Models;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.IO.Compression;
 
 namespace Biblioteka.Controllers
 {
@@ -47,6 +48,9 @@ namespace Biblioteka.Controllers
             var user = _context.Readers.FirstOrDefault(r => r.email == User.Identity.Name);
             ViewData["userId"] = user == null ? null : user.id;
 
+            ViewData["fileAsString"] = book.fileAsString;
+            ViewData["bookTitle"] = book.title;
+
             return View(book);
         }
 
@@ -64,12 +68,23 @@ namespace Biblioteka.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("bookId,title,ISBN,description,releaseDate,authors,tags,stockLevel,bookPhoto,catId")] Book book)
+        public async Task<IActionResult> Create([Bind("bookId,title,ISBN,description,releaseDate,authors,tags,stockLevel,bookPhoto,catId,file")] Book book)
         {
             var authors = Request.Form["authors"];
             var tags = Request.Form["tags"];
             System.Diagnostics.Debug.WriteLine("\nIlość authors: " + (authors.Count) + "\n");
             System.Diagnostics.Debug.WriteLine("\nIlość tagów: " + (tags.Count) + "\n");
+
+            if (book.file.Length > 0 && Path.GetExtension(book.file.FileName) == ".pdf")
+            {
+                using (var ms = new MemoryStream())
+                {
+                    book.file.CopyTo(ms);
+                    book.fileAsString = Convert.ToBase64String(ms.ToArray());
+                }
+            }
+            else
+                ModelState.AddModelError("file not pdf", "Plik musi być w formacie PDF!");
 
             if (ModelState.IsValid)
             {
