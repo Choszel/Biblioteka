@@ -107,17 +107,34 @@
                 type: 'GET',
                 success: function (data) {
                     console.log('Dane pobrane:', data);
-                    var queueContent = "<table><tr><th>Książka</th><th>Osoby w kolejce</th></tr>";
+                    if (userId == 0) 
+                        var queueContent = "<table><tr><th>Książka</th><th>Osoby w kolejce</th></tr>";
+                    else
+                        var queueContent = "<table><tr><th>Książka</th><th>Ilość</th></tr>";
 
                     for (var bookId in data) {
                         var booksArray = data[bookId];
-                        booksArray.forEach(book => {
-                            if (book.UserId == userId) {
-                                queueContent += `<tr><td rowspan="${booksArray.length}">${bookId}</td>`;
-                                queueContent += `<td>Użytkownik:${book.UserId}, ilość: ${book.Quantity} <button id="updateQueue" data-bookid="${bookId}" style="margin-left: 20px">Edytuj</button>
-                                                    <button id="deleteFromQueue" data-bookid="${bookId}" style="margin-left: 20px;">Usuń</button></td></tr>`;
+                        if(userId == 0){
+                            queueContent += `<tr><td rowspan="${booksArray.length}">${bookId}</td>`;
+                            booksArray.forEach(book => {
+                                queueContent += `<td>Użytkownik:${book.UserId}, ilość: ${book.Quantity} <button id="updateQueue" data-bookid="${bookId}" style="margin-left: 20px" class="customButton">Edytuj</button><button id="deleteFromQueue" data-bookid="${bookId}" style="margin-left: 20px;" class="customButton">Usuń</button></td></tr>`;
+                            });
+                        }
+                        else{
+                            var size = 0;
+                            booksArray.forEach(book => {
+                                if (book.UserId == userId)
+                                    size++;
+                            });
+                            if(size!=0){
+                                queueContent += `<tr><td rowspan="${size}">${bookId}</td>`;
+                                booksArray.forEach(book => {
+                                    if (book.UserId == userId) {
+                                        queueContent += `<td>ilość: ${book.Quantity} <button id="updateQueue" data-bookid="${bookId}" style="margin-left: 20px" class="customButton">Edytuj</button><button id="deleteFromQueue" data-bookid="${bookId}" style="margin-left: 20px;" class="customButton">Usuń</button></td></tr>`;
+                                    }
+                                });
                             }
-                        });
+                        }
                     }
 
                     queueContent += "</table>";

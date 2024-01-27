@@ -89,7 +89,7 @@ namespace Biblioteka.Controllers
         public IActionResult Queue()
         {
             var user = _context.Readers.FirstOrDefault(r => r.email == User.Identity.Name);
-            ViewData["userId"] = user == null ? null : user.id;
+            ViewData["userId"] = user == null ? 0 : user.id;
             return View();
         }
 

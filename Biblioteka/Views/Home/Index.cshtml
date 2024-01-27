@@ -341,14 +341,15 @@
 @section css {
     <style type="text/css">
         .selectize-dropdown .active {
-            background-color: #08a6d2;
-            color: #FFFFFF;
+            background-image: unset !important;
+            background-color: var(--secondary-light) !important;
+            color: var(--secondary-content);
         }
 
         div.selectDiv {
-            background-color: #045870;
+            background-color: var(--foreground);
             border-bottom: 1px solid #e0e0e0;
-            color: #aaeafc;
+            color: #000;
         }
 
         .mainName {
@@ -391,6 +392,11 @@
             font-size: 12px;
             display: block;
             color: #a0a0a0;
+        }
+
+        div.selectize-input {
+            background-color: whitesmoke !important;
+            color: #342b08 !important;
         }
 
     </style>

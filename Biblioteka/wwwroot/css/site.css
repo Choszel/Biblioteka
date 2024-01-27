@@ -1,24 +1,24 @@
 :root {
-    --primary: #060ba1;
-    --primary-content: #aaadfc;
-    --primary-dark: #040870;
-    --primary-light: #080ed2;
-    --secondary: #06a19c;
-    --secondary-content: #aafcf9;
-    --secondary-dark: #04706c;
-    --secondary-light: #08d2cc;
-    --background: #111122;
-    --foreground: #191a34;
-    --border: #292b56;
-    --copy: #fafafd;
-    --copy-light: #cbcce6;
-    --copy-lighter: #8789c5;
-    --success: #06a106;
-    --warning: #a1a106;
-    --error: #a10606;
-    --success-content: #aafcaa;
-    --warning-content: #000000;
-    --error-content: #fcaaaa;
+    --the-primary: #e56956;
+    --primary-content: #340e08;
+    --primary-dark: #de422a;
+    --primary-light: #ec9082;
+    --secondary: #e5c856;
+    --secondary-content: #342b08;
+    --secondary-dark: #deba2a;
+    --secondary-light: #ecd682;
+    --background: #f4edec;
+    --foreground: #fcfafa;
+    --border: #e7d9d7;
+    --copy: #301f1d;
+    --copy-light: #80534d;
+    --copy-lighter: #a97770;
+    --success: #56e556;
+    --warning: #e5e556;
+    --error: #e55656;
+    --success-content: #083408;
+    --warning-content: #343408;
+    --error-content: #340808;
 }
 
 @media (min-width: 768px) {
@@ -49,7 +49,7 @@ body {
     margin: 1%;
     display: inline-block;
     color: var(--primary-content);
-    background-color: var(--primary-dark);
+    background-color: var(--foreground);
     border-radius: 8px;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -57,7 +57,7 @@ body {
 }
 
 .okienko:hover {
-    background-color: #060ba1;
+    background-color: var(--primary-light);
 }
 
 .okienko > a > img {
@@ -80,7 +80,7 @@ body {
 }
 
 .bars {
-    background-color: #060ba1;
+    background-color: var(--the-primary);
 }
 
 .bars *{
@@ -96,7 +96,7 @@ body {
 }
 
 .customButton {
-    background-color: #6c757d;
+    background-color: #e5c856; /*SECONDARY ALE KURWA JEBANA BOOTSTRAP TO ŒCIEK*/
     color: var(--secondary-content);
     padding: 4px 10px;
     font-size: 16px;
@@ -114,13 +114,13 @@ body {
 }
 
 #out tr:nth-child(even) {
-    background-color: #1b1c32;
-    color: #8b8dc1;
+    background-color: var(--foreground);
+    color: var(--secondary-content);    
 }
 
-#out tbody>tr:nth-child(odd) {
-    background-color: #2d2e53;
-    color: #cdcee4;
+#out tbody > tr:nth-child(odd) {
+    background-color: var(--border);
+    color: var(--secondary-content);
 }
 
 a.customButton{
@@ -132,6 +132,6 @@ a.customButton:hover{
 }
 
 .inputField {
-    background-color: #1b1c32 !important;
-    color: #cdcee4 !important;
+    background-color: whitesmoke !important;
+    color: #342b08 !important;
 }

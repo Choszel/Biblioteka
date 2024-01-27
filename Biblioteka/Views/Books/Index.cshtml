@@ -7,7 +7,7 @@
 <h1>Książki</h1>
 
 <p>
-    <a asp-action="Create" class="customButton">Create New</a>
+    <a asp-action="Create" class="customButton">Dodaj</a>
 </p>
 
 <table class="table">
@@ -63,9 +63,9 @@
                     @Html.DisplayFor(modelItem => item.category.catName)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.bookId" class="customButton">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.bookId" class="customButton">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.bookId" class="customButton">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.bookId" class="customButton">Edytuj</a> |
+                    <a asp-action="Details" asp-route-id="@item.bookId" class="customButton">Detale</a> |
+                    <a asp-action="Delete" asp-route-id="@item.bookId" class="customButton">Usuń</a>
                 </td>
             </tr>
         }

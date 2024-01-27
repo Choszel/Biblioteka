@@ -61,12 +61,12 @@
             <td>
                  @if (User.IsInRole("Admin") || User.IsInRole("Employee"))
                  {
-                        <a asp-action="Edit" asp-route-id="@item.rentalId" class="customButton">Edit</a>                    
+                        <a asp-action="Edit" asp-route-id="@item.rentalId" class="customButton">Edytuj</a>                    
                  }
-                <a asp-action="Details" asp-route-id="@item.rentalId" class="customButton">Details</a>
+                <a asp-action="Details" asp-route-id="@item.rentalId" class="customButton">Detale</a>
                 @if (User.IsInRole("Admin") || User.IsInRole("Employee"))
                 {
-                    <a asp-action="Delete" asp-route-id="@item.rentalId" class="customButton">Delete</a>
+                    <a asp-action="Delete" asp-route-id="@item.rentalId" class="customButton">Usuń</a>
                 }                   
             </td>
         </tr>
