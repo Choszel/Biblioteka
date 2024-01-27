@@ -88,13 +88,13 @@
                 @* @string.Join(", ", item.authors.Select(rb => rb.name + rb.surname)) *@
                 @if (!User.IsInRole("Admin") && !User.IsInRole("Employee"))
                 {
-                    <button id="toBasket" onclick="addProduct(@item.bookId, @item.stockLevel)">Dodaj do koszyka</button>
+                    <button id="toBasket" class="customButton" onclick="addProduct(@item.bookId, @item.stockLevel)">Dodaj do koszyka</button>
                 }
 
                 @if (User.IsInRole("Admin"))
                 {
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Books" asp-action="Edit" asp-route-id="@item.bookId">Edytuj</a>
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Books" asp-action="Delete" asp-route-id="@item.bookId">Usuń</a>
+                    <a class="nav-link" asp-area="" asp-controller="Books" asp-action="Edit" asp-route-id="@item.bookId">Edytuj</a>
+                    <a class="nav-link" asp-area="" asp-controller="Books" asp-action="Delete" asp-route-id="@item.bookId">Usuń</a>
                 }               
             </div>
         }
@@ -341,12 +341,14 @@
 @section css {
     <style type="text/css">
         .selectize-dropdown .active {
-            background-color: #428BCA;
+            background-color: #08a6d2;
             color: #FFFFFF;
         }
 
         div.selectDiv {
+            background-color: #045870;
             border-bottom: 1px solid #e0e0e0;
+            color: #aaeafc;
         }
 
         .mainName {

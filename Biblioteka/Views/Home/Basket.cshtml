@@ -69,8 +69,8 @@
         <br>
         <br>
         <br>
-        <button id="but2" style="margin-left: 20 px;" onclick="clearAll()">Opróżnij koszyk</button>
-        <button id="but1" style="margin-left: 20 px;">Złóż zamówienie</button>
+        <button id="but2" style="margin-left: 20 px;" class="customButton" onclick="clearAll()">Opróżnij koszyk</button>
+        <button id="but1" style="margin-left: 20 px;" class="customButton">Złóż zamówienie</button>
     }
 
     <dialog id="dialog2">
@@ -189,8 +189,6 @@
     table.appendChild(addHeader());
     table.appendChild(addBody());
     table.appendChild(addFooter());
-
-    colorRow();
 
     out.appendChild(table);
 
@@ -319,6 +317,7 @@
                     const but4 = document.createElement("BUTTON");
                     but4.innerHTML = "+";
                     but4.id = "ba" + bookId; //ButtonAdd
+                    but4.classList.add("customButton");
                     but4.onclick = function () {
                         x = obj.bookId;
                         var storedBooks = localStorage.getItem("books");
@@ -359,6 +358,7 @@
                     const but3 = document.createElement("BUTTON");
                     but3.innerHTML = "-";
                     but3.id = "bd" + bookId;
+                    but3.classList.add("customButton");
                     but3.onclick = function () {
                         x = obj.bookId;
                         var storedBooks = localStorage.getItem("books");
@@ -417,11 +417,5 @@
         }
 
         return tfoot;
-    }
-
-    function colorRow() {
-        for (let i = 0; i < table.rows.length; i++) {
-            if (i % 2 != 0) table.rows[i].style = "background-color:whitesmoke;";
-        }
     }
 </script>

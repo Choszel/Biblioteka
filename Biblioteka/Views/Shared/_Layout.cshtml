@@ -10,7 +10,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm box-shadow mb-3 border-bottom bars">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Biblioteka</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -20,36 +20,36 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Books" asp-action="Index">Książki</a>
+                            <a class="nav-link" asp-area="" asp-controller="Books" asp-action="Index">Książki</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Authors" asp-action="Index">Autorzy</a>
+                            <a class="nav-link" asp-area="" asp-controller="Authors" asp-action="Index">Autorzy</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Rentals" asp-action="Index">Wypożyczenia</a>
+                            <a class="nav-link" asp-area="" asp-controller="Rentals" asp-action="Index">Wypożyczenia</a>
                         </li>
                         @if (User.IsInRole("Employee") || User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Categories" asp-action="Index">Kategorie</a>
+                                <a class="nav-link" asp-area="" asp-controller="Categories" asp-action="Index">Kategorie</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Tags" asp-action="Index">Tagi</a>
+                                <a class="nav-link" asp-area="" asp-controller="Tags" asp-action="Index">Tagi</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Readers" asp-action="Index">Czytelnicy</a>
+                                <a class="nav-link" asp-area="" asp-controller="Readers" asp-action="Index">Czytelnicy</a>
                             </li>
                         }
                         @if(User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Employees" asp-action="Index">Pracownicy</a>
+                                <a class="nav-link" asp-area="" asp-controller="Employees" asp-action="Index">Pracownicy</a>
                             </li>
                         }
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Queue">Kolejka</a>
+                                <a class="nav-link" asp-controller="Home" asp-action="Queue">Kolejka</a>
                             </li>
                         }
                         
@@ -67,7 +67,7 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-muted bars">
         <div class="container">
             &copy; 2023 - Biblioteka - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>

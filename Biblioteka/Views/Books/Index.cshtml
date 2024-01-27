@@ -4,10 +4,10 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Książki</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="customButton">Create New</a>
 </p>
 
 <table class="table">
@@ -63,12 +63,9 @@
                     @Html.DisplayFor(modelItem => item.category.catName)
                 </td>
                 <td>
-                    @if (User.IsInRole("Employee") || User.IsInRole("Admin"))
-                    {
-                        <a asp-action="Edit" asp-route-id="@item.bookId">Edit</a> <p>|</p>
-                        <a asp-action="Details" asp-route-id="@item.bookId">Details</a> <p>|</p>
-                        <a asp-action="Delete" asp-route-id="@item.bookId">Delete</a>       
-                    }
+                    <a asp-action="Edit" asp-route-id="@item.bookId" class="customButton">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.bookId" class="customButton">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.bookId" class="customButton">Delete</a>
                 </td>
             </tr>
         }
