@@ -1,5 +1,24 @@
-html {
-  font-size: 14px;
+:root {
+    --primary: #060ba1;
+    --primary-content: #aaadfc;
+    --primary-dark: #040870;
+    --primary-light: #080ed2;
+    --secondary: #06a19c;
+    --secondary-content: #aafcf9;
+    --secondary-dark: #04706c;
+    --secondary-light: #08d2cc;
+    --background: #111122;
+    --foreground: #191a34;
+    --border: #292b56;
+    --copy: #fafafd;
+    --copy-light: #cbcce6;
+    --copy-lighter: #8789c5;
+    --success: #06a106;
+    --warning: #a1a106;
+    --error: #a10606;
+    --success-content: #aafcaa;
+    --warning-content: #000000;
+    --error-content: #fcaaaa;
 }
 
 @media (min-width: 768px) {
@@ -13,31 +32,106 @@ html {
 }
 
 html {
+  font-size: 14px;
   position: relative;
   min-height: 100%;
 }
 
 body {
   margin-bottom: 60px;
+  background-color: var(--background) !important;
+  color: var(--copy) !important;
 }
 
 .okienko {
-    padding: 5px;
+    padding: 10px;
     width: 20%;
     margin: 1%;
     display: inline-block;
-    /*background-color: lightcyan;*/
-    border-radius: 15px;
+    color: var(--primary-content);
+    background-color: var(--primary-dark);
+    border-radius: 8px;
     text-align: center;
-    border: 4px /*outset cyan*/;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.4s ease;
 }
 
-    .okienko > a > img {
-        border-radius: inherit;
-        width: 100%;
-    }
+.okienko:hover {
+    background-color: #060ba1;
+}
+
+.okienko > a > img {
+    border-radius: 8px;
+    width: 100%;
+}
+
+.okienko a {
+    color: var(--secondary);
+    text-decoration: none;
+}
+
+.okienko a:hover {
+    color: var(--secondary-dark);
+}
 
 .searchBookImage {
     width: 85px;
     height: 120px;
+}
+
+.bars {
+    background-color: #060ba1;
+}
+
+.bars *{
+    color: var(--copy) !important;
+}
+
+.bars a:hover {
+    color: var(--copy-light) !important;
+}
+
+.table{
+    color: var(--primary-content) !important;
+}
+
+.customButton {
+    background-color: #6c757d;
+    color: var(--secondary-content);
+    padding: 4px 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.customButton:hover {
+    background-color: var(--secondary-dark);
+}
+
+.customButton:active {
+    background-color: var(--secondary-light);
+}
+
+#out tr:nth-child(even) {
+    background-color: #1b1c32;
+    color: #8b8dc1;
+}
+
+#out tbody>tr:nth-child(odd) {
+    background-color: #2d2e53;
+    color: #cdcee4;
+}
+
+a.customButton{
+    text-decoration: none;
+}
+
+a.customButton:hover{
+    color: inherit;
+}
+
+.inputField {
+    background-color: #1b1c32 !important;
+    color: #cdcee4 !important;
 }

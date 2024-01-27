@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Wypożyczenia</h1>
 
 
 <table class="table">
@@ -61,12 +61,12 @@
             <td>
                  @if (User.IsInRole("Admin") || User.IsInRole("Employee"))
                  {
-                        <a asp-action="Edit" asp-route-id="@item.rentalId">Edit</a>                    
+                        <a asp-action="Edit" asp-route-id="@item.rentalId" class="customButton">Edit</a>                    
                  }
-                <a asp-action="Details" asp-route-id="@item.rentalId">Details</a>
+                <a asp-action="Details" asp-route-id="@item.rentalId" class="customButton">Details</a>
                 @if (User.IsInRole("Admin") || User.IsInRole("Employee"))
                 {
-                    <a asp-action="Delete" asp-route-id="@item.rentalId">Delete</a>
+                    <a asp-action="Delete" asp-route-id="@item.rentalId" class="customButton">Delete</a>
                 }                   
             </td>
         </tr>
