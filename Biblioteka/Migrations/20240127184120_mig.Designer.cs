@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Biblioteka.Migrations
 {
     [DbContext(typeof(BibContext))]
-    [Migration("20240126174525_nazwa")]
-    partial class nazwa
+    [Migration("20240127184120_mig")]
+    partial class mig
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -204,6 +204,9 @@ namespace Biblioteka.Migrations
                         .IsRequired()
                         .HasMaxLength(400)
                         .HasColumnType("nvarchar(400)");
+
+                    b.Property<string>("fileAsString")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("releaseDate")
                         .IsRequired()

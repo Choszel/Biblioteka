@@ -61,7 +61,7 @@ app.UseRouting();
 //{
 //    endpoints.MapControllerRoute(
 //        name: "api",
-//        pattern: "api/{controller}/{action}"); // Dodaj akcjê tutaj
+//        pattern: "api/{controller}/{action}"); // Dodaj akcjï¿½ tutaj
 //});
 
 app.UseAuthorization();
@@ -73,7 +73,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
-//Tworzenie ról i przyk³aowych kont
+//Tworzenie rï¿½l i przykï¿½aowych kont
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
