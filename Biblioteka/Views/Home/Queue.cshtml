@@ -205,8 +205,8 @@
 
                 form.onsubmit = (event) => {
                     const mess = document.getElementById("messagedialog");
-                    if (form.count.value === "" || form.count.value < 1 || form.count.value > 6 || form.count.value % 1 > 0) {
-                        mess.innerHTML = "Ilość musi być liczbą całkowitą z przedziału < 1 , 6 >";
+                    if (form.count.value === "" || form.count.value < 1 || form.count.value > limits[0].limitWaiting || form.count.value % 1 > 0) {
+                        mess.innerHTML = "Ilość musi być liczbą całkowitą z przedziału < 1 , " + limits[0].limitWaiting + " >.";
                         event.preventDefault();
                         dlg.showModal();
                     }
@@ -322,7 +322,7 @@
                     console.log("Sum of values:", sum);
                 }
 
-                if (sum >= 6) {
+                if (sum >= limits[0].limitWaiting) {
                     form5.reset();
                     dlg5.showModal();                   
                 }

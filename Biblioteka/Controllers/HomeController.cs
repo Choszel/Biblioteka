@@ -35,6 +35,7 @@ namespace Biblioteka.Controllers
             }
             var user = _context.Readers.FirstOrDefault(r => r.email == User.Identity.Name);
             ViewData["userId"] = user == null ? null : user.id;
+            ViewData["limits"] = await _context.AdminSettings.ToListAsync();
 
             ViewBag.BooksList = await _context.Book.ToListAsync();
             var bibContext = _context.Books.Include(b => b.category).Include(b => b.authors).Include(b => b.tags);

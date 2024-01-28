@@ -25,6 +25,7 @@
 
 <div class="text-center">
     <h1 class="display-4">Witamy</h1>
+    <br />
 
     <form id="searchForm" action="/Home/Index" method="post">
         <div class="container">
@@ -37,22 +38,19 @@
                 </div>
                 <!-- Ukryte pole do przechowywania wybranych wartości -->
                 <input type="hidden" id="selectedBooksInput" name="selectedBooks" value="">
+                <div class ="col-md-4">
+                    <label for="sortSelect">Sortuj według: </label>
+                    <select id="sortSelect">
+                        <option value="0">Tytuł A-Z</option>
+                        <option value="1">Tytuł Z-A</option>
+                        <option value="2">Najnowsze</option>
+                        <option value="3">Najstarsze</option>                      
+                    </select>
+                </div>
             </div>
         </div>
     </form>
-
-    @* <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-4">
-                <select id="select-to" class="contacts" placeholder="Szukaj..."></select>
-            </div>
-            <div class="col-md-1">
-                <a href="#" id="Search" class="btn btn-dark">Szukaj</a>
-            </div>
-        </div>
-    </div>
- *@
-
+  
 
     <div style="width: 90%; margin: auto;">
         @foreach (var item in Model)
@@ -61,8 +59,8 @@
                 <a href="@Url.Action("Details", "Books", new { id = item.bookId })">
                     <img src="@item.bookPhoto" alt="Book Photo" />
                 </a><br />
-                @Html.DisplayFor(modelItem => item.title)<br />
-                @Html.DisplayFor(modelItem => item.category.catName)<br />
+                <booktitle>@Html.DisplayFor(modelItem => item.title)</booktitle><br />                    
+                <category>@Html.DisplayFor(modelItem => item.category.catName)</category><br />
                 @if(item.authors!=null)
                 {
                     @foreach (var author in item.authors)
@@ -166,6 +164,7 @@
     <script type="text/javascript">
         var $select;
         var userId = @Html.Raw(Json.Serialize(ViewData["userId"]));
+        var limits = @Html.Raw(Json.Serialize(ViewData["limits"]));
 
         const form = document.getElementById("form1");
         const dlg = document.getElementById("dialog1");
@@ -216,7 +215,82 @@
                             '</div>';
                     }
                 }              
-            });            
+            });
+
+            function sortBooks(sortField) {
+                // Get the container holding the book elements
+                var container = $(".okienko");
+
+                // Create an array of book elements
+                var booksArray = container.get();
+
+                console.log("chuj");
+
+                switch(sortField)
+                {
+                    case "0":
+                        booksArray.sort(function (a, b) {
+                            var aValue = $(a).find("booktitle").text();
+                            var bValue = $(b).find("booktitle").text();
+                            console.log(aValue);
+                            console.log(bValue);
+
+                            // Use localeCompare for string comparison
+                            return aValue.localeCompare(bValue);
+                        });
+                        break;
+                    case "1":
+                        booksArray.sort(function (b, a) {
+                            var aValue = $(a).find("booktitle").text();
+                            var bValue = $(b).find("booktitle").text();
+                            console.log(aValue);
+                            console.log(bValue);
+
+                            // Use localeCompare for string comparison
+                            return aValue.localeCompare(bValue);
+                        });
+                        break;
+                    case "2":
+                        booksArray.sort(function (b, a) {
+                            var aValue = $(a).find("booktitle").text();
+                            var bValue = $(b).find("booktitle").text();
+                            console.log(aValue);
+                            console.log(bValue);
+
+                            // Use localeCompare for string comparison
+                            return aValue.localeCompare(bValue);
+                        });
+                        break;
+                    case "3":
+                        booksArray.sort(function (b, a) {
+                            var aValue = $(a).find("booktitle").text();
+                            var bValue = $(b).find("booktitle").text();
+                            console.log(aValue);
+                            console.log(bValue);
+
+                            // Use localeCompare for string comparison
+                            return aValue.localeCompare(bValue);
+                        });
+                        break;
+                }
+                console.log("w to");
+
+
+                // Empty the container
+                container.empty();
+
+                // Append sorted books to the container
+                container.append(booksArray);
+
+                // You may need to refresh any plugins or event handlers after sorting
+                // For example, if you have specific event handlers or plugins for your book elements, reinitialize them here
+            }
+
+            // Event handler for sorting when the select changes
+            $("#sortSelect").change(function () {
+                var selectedSortField = $(this).val();
+                sortBooks(selectedSortField);
+            });
         });
 
         function submitSearchForm() {
@@ -371,7 +445,7 @@
                                 console.log("Sum of values:", sum);
                             }
 
-                            if (sum >= 6) {
+                        if (sum >= limits[0].limitWaiting) {
                                 form5.reset();
                                 dlg5.showModal();
                             }
@@ -396,7 +470,9 @@
                     error: function (error) {
                         console.error('Błąd pobierania danych:', error);
                     }
-                });                            
+                });
+
+            
         }        
     </script>
 }
