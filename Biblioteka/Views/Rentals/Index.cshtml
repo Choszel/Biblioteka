@@ -56,10 +56,13 @@
                 </td>
             }
             <td>
+                @if (item.RentalBook!=null)
+                {
                     @string.Join(", ", item.RentalBook.Select(rb => rb.book.title))
+                }                 
             </td>
             <td>
-                 @if (User.IsInRole("Admin") || User.IsInRole("Employee"))
+                    @if (User.IsInRole("Admin") || User.IsInRole("Employee") && !(item.rentalState.Equals("Anulowane") || item.rentalState.Equals("Zwrócone")))
                  {
                         <a asp-action="Edit" asp-route-id="@item.rentalId" class="customButton">Edytuj</a>                    
                  }

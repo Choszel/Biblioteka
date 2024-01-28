@@ -9,6 +9,8 @@ namespace Biblioteka.Models
 {
     public class Book
     {
+        private int rentalBookId;
+
         [Key,
             DatabaseGenerated(DatabaseGeneratedOption.Identity),
             Display(Name = "Id książki"),

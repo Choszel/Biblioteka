@@ -21,6 +21,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.limitTimeWaiting)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.penaltyPayment)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -38,6 +41,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.limitTimeWaiting)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.penaltyPayment)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.adminSettingsId">Edytuj</a>

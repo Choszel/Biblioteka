@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Biblioteka.Context;
+using Biblioteka.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Biblioteka.Context;
-using Biblioteka.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 namespace Biblioteka.Controllers
 {
@@ -27,13 +22,13 @@ namespace Biblioteka.Controllers
         {
             if (User.IsInRole("Admin") || User.IsInRole("Employee"))
             {
-                var bibContext = _context.Rental.Include(r => r.user);
+                var bibContext = _context.Rental.Include(r => r.user).Include(r => r.RentalBook).ThenInclude(rb => rb.book);
                 return View(await bibContext.ToListAsync());
             }
             else
             {
                 var user = _context.Readers.FirstOrDefault(r => r.email == User.Identity.Name);
-                var bibContext = _context.Rental.Where(r => r.userId == user.id).Include(r => r.RentalBook).ThenInclude(rb => rb.book);                
+                var bibContext = _context.Rental.Where(r => r.userId == user.id).Include(r => r.RentalBook).ThenInclude(rb => rb.book);
                 return View(await bibContext.ToListAsync());
             }
         }
@@ -70,7 +65,7 @@ namespace Biblioteka.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize] 
+        [Authorize]
         public async Task<IActionResult> Place([Bind("rentalId,userE_mail,rentalDate,rentalState,stateDate,PESEL")] Rental rental, string selectedBooks)
         {
             if (User.IsInRole("Admin") || User.IsInRole("Employee"))
@@ -101,6 +96,9 @@ namespace Biblioteka.Controllers
                 }
                 System.Diagnostics.Debug.Write("\n");
                 _context.Add(new RentalBook(rental.rentalId, int.Parse(bookData[0]), int.Parse(bookData[1])));
+                var book = _context.Book.Find(int.Parse(bookData[0]));
+                book.stockLevel -= int.Parse(bookData[1]);
+                _context.Update(book);
             }
 
             await _context.SaveChangesAsync();
@@ -121,7 +119,8 @@ namespace Biblioteka.Controllers
             {
                 return NotFound();
             }
-            ViewData["userId"] = new SelectList(_context.Readers, "id", "email", rental.userId);
+            if (rental.rentalState.Equals("Anulowane") || rental.rentalState.Equals("Zwrócone")) return NotFound();
+
             return View(rental);
         }
 
@@ -138,29 +137,39 @@ namespace Biblioteka.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            var realRental = await _context.Rental
+                .Include(r => r.RentalBook)
+                .ThenInclude(rb => rb.book)
+                .FirstOrDefaultAsync(r => r.rentalId == id);
+
+
+            if (realRental != null)
             {
-                try
+                realRental.rentalState = rental.rentalState;
+                realRental.stateDate = DateTime.Now;
+
+                _context.Entry(realRental).State = EntityState.Modified;
+
+                if (realRental.rentalState.Equals("Zwrócone") || realRental.rentalState.Equals("Anulowane"))
                 {
-                    _context.Update(rental);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!RentalExists(rental.rentalId))
+                    foreach (RentalBook entry in realRental.RentalBook)
                     {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
+                        var book = _context.Book.Find(entry.bookId);
+                        book.stockLevel += entry.quantity;
+                        _context.Update(book);
                     }
                 }
+
+                await _context.SaveChangesAsync();
+
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["userId"] = new SelectList(_context.Readers, "id", "email", rental.userId);
-            return View(rental);
+
+            return NotFound();
         }
+
+
 
         // GET: Rentals/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -190,10 +199,25 @@ namespace Biblioteka.Controllers
             {
                 return Problem("Entity set 'BibContext.Rental'  is null.");
             }
-            var rental = await _context.Rental.FindAsync(id);
+
+            var rental = await _context.Rental
+                .Include(r => r.RentalBook)
+                .ThenInclude(rb => rb.book)
+                .FirstOrDefaultAsync(r => r.rentalId == id);
+
             if (rental != null)
             {
                 _context.Rental.Remove(rental);
+                if (!(rental.rentalState.Equals("Zwrócone") || rental.rentalState.Equals("Anulowane")))
+                {
+                    foreach (RentalBook entry in rental.RentalBook)
+                    {
+                        var book = _context.Book.Find(entry.bookId);
+                        book.stockLevel += entry.quantity;
+                        _context.Update(book);
+                    }
+                }
+
             }
 
             await _context.SaveChangesAsync();

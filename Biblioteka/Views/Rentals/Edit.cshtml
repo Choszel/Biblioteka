@@ -12,32 +12,24 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="rentalId" />
-            <div class="form-group">
-                <label asp-for="userId" class="control-label"></label>
-                <select asp-for="userId" class="form-control" asp-items="ViewBag.userId"></select>
-                <span asp-validation-for="userId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="rentalDate" class="control-label"></label>
-                <input asp-for="rentalDate" class="form-control" />
-                <span asp-validation-for="rentalDate" class="text-danger"></span>
-            </div>
+            <input type="hidden" asp-for="rentalId" />                      
             <div class="form-group">
                 <label asp-for="rentalState" class="control-label"></label>
-                <input asp-for="rentalState" class="form-control" />
-                <span asp-validation-for="rentalState" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="stateDate" class="control-label"></label>
-                <input asp-for="stateDate" class="form-control" />
-                <span asp-validation-for="stateDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PESEL" class="control-label"></label>
-                <input asp-for="PESEL" class="form-control" />
-                <span asp-validation-for="PESEL" class="text-danger"></span>
-            </div>
+                <select asp-for="rentalState">
+                    <option value="Przyjęte">Przyjęte</option>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Employee"))
+                    {
+                        <option value="W trakcie">W trakcie</option>
+                        <option value="Do odbioru">Do odbioru</option>
+                        <option value="Odebrane">Odebrane</option>
+                        <option value="Zwrócone">Zwrócone</option>
+                    }                  
+                    @if(Model.rentalDate == Model.stateDate)
+                    {
+                        <option value="Anulowane">Anulowane</option>
+                    }
+                </select>
+            </div>                        
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

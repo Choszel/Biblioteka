@@ -55,6 +55,10 @@
     <title>Zadanie 7</title>
 </head>
 <body>
+    <br />
+    <h2>UWAGA! Kolejkę trzeba odnawiać! Po trzech dniach bez odnowienia jesteś usuwany (-a) z kolejki.</h2> @* error kolor przynaujmniej na uwaga, jak będzie źle wyglądać*@
+    <br />
+    <br />
     <div id="out">
     </div>
     <br>
@@ -84,6 +88,28 @@
     </form>
 </dialog>
 
+<dialog id="dialog4">
+    <p>
+        Produkt został dodany do koszyka.
+    </p>
+    <form id="form4" method="dialog">
+        <div>
+            <input type="submit" value="OK">
+        </div>
+    </form>
+</dialog>
+
+<dialog id="dialog5">
+    <p>
+        Przykro nam ale masz za dużo książek w koszyku.
+    </p>
+    <form id="form5" method="dialog">
+        <div>
+            <input type="submit" value="OK">
+        </div>
+    </form>
+</dialog>
+
 
 @section scripts {
     @{
@@ -93,12 +119,15 @@
 
     <script type="text/javascript">
 
+        var bookList = @Html.Raw(Json.Serialize(ViewData["bookList"]));
+        var limits = @Html.Raw(Json.Serialize(ViewData["limits"]));
+
         const out = document.getElementById("out");
         var userId = @Html.Raw(Json.Serialize(ViewData["userId"]));
         const form = document.getElementById("form1");
         const dlg = document.getElementById("dialog1");
         const form2 = document.getElementById("form2");
-        const dlg2 = document.getElementById("dialog2");    
+        const dlg2 = document.getElementById("dialog2");
 
         // site.js
         $(document).ready(function () {
@@ -107,30 +136,53 @@
                 type: 'GET',
                 success: function (data) {
                     console.log('Dane pobrane:', data);
-                    if (userId == 0) 
+                    if (userId == 0)
                         var queueContent = "<table><tr><th>Książka</th><th>Osoby w kolejce</th></tr>";
                     else
                         var queueContent = "<table><tr><th>Książka</th><th>Ilość</th></tr>";
 
                     for (var bookId in data) {
                         var booksArray = data[bookId];
-                        if(userId == 0){
+                        if (userId == 0) {
                             queueContent += `<tr><td rowspan="${booksArray.length}">${bookId}</td>`;
                             booksArray.forEach(book => {
-                                queueContent += `<td>Użytkownik:${book.UserId}, ilość: ${book.Quantity} <button id="updateQueue" data-bookid="${bookId}" style="margin-left: 20px" class="customButton">Edytuj</button><button id="deleteFromQueue" data-bookid="${bookId}" style="margin-left: 20px;" class="customButton">Usuń</button></td></tr>`;
+                                queueContent += `<td>Użytkownik:${book.UserId}, ilość: ${book.Quantity}, data: ${book.Date}, <button id="updateQueue" data-bookid="${bookId}" style="margin-left: 20px" class="customButton">Edytuj</button><button id="deleteFromQueue" data-bookid="${bookId}" style="margin-left: 20px;" class="customButton">Usuń</button></td></tr>`;
                             });
                         }
-                        else{
+                        else {
                             var size = 0;
                             booksArray.forEach(book => {
                                 if (book.UserId == userId)
                                     size++;
                             });
-                            if(size!=0){
-                                queueContent += `<tr><td rowspan="${size}">${bookId}</td>`;
+                            if (size != 0) {
+                                queueContent += `<tr><td rowspan="${size}"></td>`;
+
+                                let obj = new Object();
+                                for (const element of bookList) {
+                                    if (element.bookId == bookId) {
+                                        obj = element;
+                                        break;
+                                    }
+                                    else;
+                                }
+
+                                if (obj == null) { 
+                                    queueContent += "Książka została usunięta.";
+                                    break;
+                                }
+
+                                var quantityQueue = 0;
                                 booksArray.forEach(book => {
+                                    quantityQueue = quantityQueue + book.Quantity;
                                     if (book.UserId == userId) {
-                                        queueContent += `<td>ilość: ${book.Quantity} <button id="updateQueue" data-bookid="${bookId}" style="margin-left: 20px" class="customButton">Edytuj</button><button id="deleteFromQueue" data-bookid="${bookId}" style="margin-left: 20px;" class="customButton">Usuń</button></td></tr>`;
+                                        if (obj.stockLevel >= quantityQueue) {
+                                            queueContent += `<td><img id="book_image" data-bookid="${bookId}" src=${obj.bookPhoto} style="width: 85px; height: 120px;">   ${obj.title}   ${book.Quantity}   ${book.Date} <button id="updateQueue" data-bookid="${bookId}" style="margin-left: 20px" class="customButton">Edytuj</button><button id="deleteFromQueue" data-bookid="${bookId}" style="margin-left: 20px;" class="customButton">Usuń</button><button id="rentQueue" data-bookid="${bookId}" data-bookquantity="${book.Quantity}" style="margin-left: 20px" class="customButton">Dodaj do koszyka</button></td></tr>`;
+                                        }
+                                        else {                                       
+                                            queueContent += `<td><img id="book_image" data-bookid="${bookId}" src=${obj.bookPhoto} style="width: 85px; height: 120px;">   ${obj.title}   ${book.Quantity}   ${book.Date} <button id="updateQueue" data-bookid="${bookId}" style="margin-left: 20px" class="customButton">Edytuj</button><button id="deleteFromQueue" data-bookid="${bookId}" style="margin-left: 20px;" class="customButton">Usuń</button><button id="extendQueue" data-bookid="${bookId}" data-bookquantity="${book.Quantity}" style="margin-left: 20px" class="customButton">Przedłuż</button></td></tr>`;
+                                        }
+                                        console.log("quantityQueue " + quantityQueue + "\nobj.stockLevel " + obj.stockLevel)
                                     }
                                 });
                             }
@@ -186,7 +238,7 @@
                 }
             });
 
-            $(document).on('click', '#deleteFromQueue', function () {         
+            $(document).on('click', '#deleteFromQueue', function () {
                 var bookId = $(this).data('bookid');
                 console.log(bookId);
                 form2.reset();
@@ -223,8 +275,122 @@
                     dlg2.close();
                 }
             });
+
+            $(document).on('click', '#extendQueue', function () {
+                var bookId = $(this).data('bookid');
+                var bookQuantity = $(this).data('bookquantity');
+                console.log(bookId);
+
+                var queueData = {
+                    BookId: bookId,
+                    UserId: userId,
+                    Quantity: parseInt(bookQuantity)
+                };
+
+                $.ajax({
+                    url: '/api/Queue/' + queueData.BookId,
+                    type: 'PATCH',
+                    contentType: 'application/json',
+                    data: JSON.stringify(queueData),
+                    success: function (response) {
+                        console.log('Odpowiedź po edytowaniu:', response);
+                        location.reload();
+                    },
+                    error: function (error) {
+                        console.error('Błąd przy edytowaniu:', error);
+                    }
+                });
+            });
+
+            $(document).on('click', '#rentQueue', function () {
+                var bookId = $(this).data('bookid');
+                var bookQuantity = $(this).data('bookquantity');
+                console.log(bookId);
+
+                const form5 = document.getElementById("form5");
+                const dlg5 = document.getElementById("dialog5");
+                var storedBooks = localStorage.getItem("books");
+                var books = {};
+                if (storedBooks) books = JSON.parse(storedBooks);
+                var sum = 0;
+
+                if (storedBooks) {
+                    Object.keys(books).forEach(function (key) {
+                        sum += books[key];
+                    });
+
+                    console.log("Sum of values:", sum);
+                }
+
+                if (sum >= 6) {
+                    form5.reset();
+                    dlg5.showModal();                   
+                }
+
+                form5.onsubmit = () => {
+                    return;
+                }
+                
+                    var queueData = {
+                        BookId: bookId,
+                        UserId: userId,
+                        Quantity: 0
+                    };
+
+                    console.log('usuwanie');
+
+                    $.ajax({
+                        url: `/api/Queue/${queueData.BookId}`,
+                        type: 'DELETE',
+                        contentType: 'application/json',
+                        data: JSON.stringify(queueData),
+                        success: function (data) {
+                            if (data.success) {
+                                console.log(data.message);
+                            } else {
+                                console.error(data.message);
+                            }
+                        },
+                        error: function (error) {
+                            console.error(`Error: ${error.statusText}`);
+                        }
+                    });
+
+                    const form4 = document.getElementById("form4");
+                    const dlg4 = document.getElementById("dialog4");
+                                     
+                                      
+                        if (books[bookId] != null) books[bookId] = books[bookId] + bookQuantity;
+                        else books[bookId] = bookQuantity;
+
+                        localStorage.setItem("books", JSON.stringify(books));
+
+                        let modif = (localStorage.getItem(-1).modif) + 1;
+                        localStorage.setItem((-1).toString(),
+                            JSON.stringify(
+                                {
+                                    modif: modif
+                                }
+                            )
+                        );
+
+                        form4.reset();
+                        dlg4.showModal();
+
+                    form4.onsubmit = () => {
+                        location.reload();
+                    }
+
+                   
+            });
+
+            $(document).on('click', '#book_image', function () {
+                var bookId = $(this).data('bookid');
+
+                window.location.href = "/Books/Details/"+bookId;
+            });
         });
 
 
-</script>
+    </script>
 }

@@ -52,7 +52,7 @@ namespace Biblioteka.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("adminSettingsId,limitTaken,limitWaiting,limitTimeTaken,limitTimeWaiting")] AdminSettings adminSettings)
+        public async Task<IActionResult> Edit(int id, [Bind("adminSettingsId,limitTaken,limitWaiting,limitTimeTaken,limitTimeWaiting,penaltyPayment")] AdminSettings adminSettings)
         {
             if (id != adminSettings.adminSettingsId)
             {
@@ -78,6 +78,20 @@ namespace Biblioteka.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                foreach (var modelStateKey in ModelState.Keys)
+                {
+                    var modelStateVal = ModelState[modelStateKey];
+                    if (modelStateVal.Errors.Count > 0)
+                    {
+                        foreach (var error in modelStateVal.Errors)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"{modelStateKey}: {error.ErrorMessage}");
+                        }
+                    }
+                }
             }
             return View(adminSettings);
         }

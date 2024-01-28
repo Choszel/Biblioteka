@@ -41,35 +41,39 @@ namespace Biblioteka.Controllers
         [HttpPost]
         public IActionResult AddToQueue([FromBody] Models.Queue queue)
         {
+            System.Diagnostics.Debug.WriteLine("\nDATA" + DateTime.Now.Date.ToShortDateString() + "\n");
+
             try
             {
                 var queues = LoadQueues();
 
                 if (!queues.ContainsKey(queue.BookId))
                 {
-                    queues[queue.BookId] = new List<PseudoQueue>();                
+                    queues[queue.BookId] = new List<PseudoQueue>();
                     PseudoQueue newItem = new(queue.UserId, queue.Quantity);
                     queues[queue.BookId].Add(newItem);
                 }
                 else
                 {
                     bool found = false;
-                    foreach(var item in queues[queue.BookId])
+                    foreach (var item in queues[queue.BookId])
                     {
-                        if(item.UserId == queue.UserId)
+                        if (item.UserId == queue.UserId)
                         {
                             item.Quantity++;
                             found = true;
                             break;
                         }
                     }
-                    if (found == false) 
+                    if (found == false)
                     {
                         PseudoQueue newItem = new(queue.UserId, queue.Quantity);
                         queues[queue.BookId].Add(newItem);
                     }
                 }
               
+                queue.Date = DateTime.Now.Date.ToShortDateString();
+
                 SaveQueues(queues);
                 return Json(new { success = true, message = "Product added to the queue successfully." });
             }
@@ -97,6 +101,7 @@ namespace Biblioteka.Controllers
                             if (item.UserId == updatedQueue.UserId)
                             {
                                 item.Quantity = updatedQueue.Quantity;
+                                item.Date = DateTime.Now.Date.ToShortDateString();
                                 found = true;
                                 break;
                             }
@@ -106,7 +111,7 @@ namespace Biblioteka.Controllers
                             return Json(new { success = false, message = "Queue not found." });
                         }
                     }
-                        
+
                     SaveQueues(queues);
 
                     return Json(new { success = true, message = "Queue updated successfully." });
@@ -133,8 +138,8 @@ namespace Biblioteka.Controllers
                 {
                     var queueList = queues[id];
 
-                    if(deleteQueue!=null)
-                        queueList.Remove(queueList.Where(item => item.UserId == deleteQueue.UserId).FirstOrDefault());                    
+                    if (deleteQueue != null)
+                        queueList.Remove(queueList.Where(item => item.UserId == deleteQueue.UserId).FirstOrDefault());
 
                     if (queueList.Count == 0)
                     {
@@ -174,6 +179,6 @@ namespace Biblioteka.Controllers
         {
             var json = JsonConvert.SerializeObject(queues);
             System.IO.File.WriteAllText(_filePath, json);
-        }       
+        }
     }
 }

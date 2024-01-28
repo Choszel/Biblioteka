@@ -39,7 +39,6 @@ namespace Biblioteka.Controllers
             ViewBag.BooksList = await _context.Book.ToListAsync();
             var bibContext = _context.Books.Include(b => b.category).Include(b => b.authors).Include(b => b.tags);
             
-            System.Diagnostics.Debug.WriteLine("\n" + bibContext.ToString() + "\n");
             return View(await bibContext.ToListAsync());
         }
 
@@ -86,10 +85,12 @@ namespace Biblioteka.Controllers
         }
 
         [Authorize]
-        public IActionResult Queue()
+        public async Task<IActionResult> QueueAsync()
         {
             var user = _context.Readers.FirstOrDefault(r => r.email == User.Identity.Name);
             ViewData["userId"] = user == null ? 0 : user.id;
+            ViewData["BookList"] = await _context.Book.ToListAsync();
+            ViewData["limits"] = await _context.AdminSettings.ToListAsync();
             return View();
         }
 

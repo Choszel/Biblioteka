@@ -102,8 +102,17 @@
     </dialog>
 
     <dialog id="dialog5">
-        <p>Przykro nam, można jednocześnie wypożyczyć max. 6 książek</p>
+        <p>Przykro nam, ale osiągnięto limit książek.</p>
         <form id="form5" method="dialog">
+            <div>
+                <input type="submit" value="OK">
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="dialog6">
+        <p>Przykro nam, nie mamy takiej ilości danej książki na stanie</p>
+        <form id="form6" method="dialog">
             <div>
                 <input type="submit" value="OK">
             </div>
@@ -341,17 +350,95 @@
                         }
                         else
                         {
-                            books[obj.bookId] = books[obj.bookId] + 1;
-                            localStorage.setItem("books", JSON.stringify(books));
+                            $.ajax({
+                                url: '/api/Queue',
+                                type: 'GET',
+                                success: function (data) {
+                                    console.log('Dane pobrane:', data);
 
-                            const indexnegative = JSON.parse(localStorage.getItem(-1));
-                            let modif = indexnegative.modif + 1;
-                            localStorage.setItem((-1).toString(),
-                                JSON.stringify(
+                                    var stockLevel = obj.stockLevel;
+                                    for (var bookQueue in data) {
+                                        if (bookQueue != obj.bookId) continue;
+                                        else {
+                                            var booksArray = data[bookQueue];
+                                            console.log('booksArray ', booksArray);
+                                            var currentDate = new Date();
+                                            booksArray.forEach(book => {
+                                                console.log('quantity ', book.Quantity + "\ndate " + book.Date);
+
+                                                var dateParts = book.Date.split(".");
+                                                var bookDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
+
+                                                // Obliczanie różnicy w dniach między datami
+                                                var timeDiff = currentDate - bookDate;
+                                                var daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+                                                // Usuwanie rekordu, jeśli różnica dni jest większa niż 2 dni
+                                                if (daysDiff > 3) {
+                                                    console.log('Usuwanie rekordu: ', book);
+
+                                                    var queueData = {
+                                                        BookId: bookQueue,
+                                                        UserId: book.UserId,
+                                                        Quantity: 0
+                                                    };
+
+                                                    $.ajax({
+                                                        url: `/api/Queue/${queueData.BookId}`,
+                                                        type: 'DELETE',
+                                                        contentType: 'application/json',
+                                                        data: JSON.stringify(queueData),
+                                                        success: function (data) {
+                                                            if (data.success) {
+                                                                console.log(data.message);
+                                                            } else {
+                                                                console.error(data.message);
+                                                            }
+                                                        },
+                                                        error: function (error) {
+                                                            console.error(`Error: ${error.statusText}`);
+                                                        }
+                                                    });
+                                                }
+                                                else {
+                                                    stockLevel = stockLevel - parseInt(book.Quantity);
+                                                }
+                                            });
+                                        }
+                                        //bookQueue to id książki w queue
+                                    }
+                                    console.log('stockLevel', stockLevel);
+                                    stockLevel = stockLevel - parseInt(books[obj.bookId]);
+                                    console.log('stockLevel', stockLevel);
+
+                                    if(stockLevel>0)
                                     {
-                                        modif: modif
-                                    }));
-                            location.reload();
+                                        books[obj.bookId] = books[obj.bookId] + 1;
+                                        localStorage.setItem("books", JSON.stringify(books));
+
+                                        const indexnegative = JSON.parse(localStorage.getItem(-1));
+                                        let modif = indexnegative.modif + 1;
+                                        localStorage.setItem((-1).toString(),
+                                            JSON.stringify(
+                                                {
+                                                    modif: modif
+                                                }));
+                                        location.reload();
+                                    }
+                                    else
+                                    {
+                                        const form6 = document.getElementById("form6");
+                                        const dlg6 = document.getElementById("dialog6");
+
+                                        form6.reset();
+                                        dlg6.showModal();
+
+                                        form6.onsubmit = () => {
+                                            dlg6.close();
+                                        }                                        
+                                    }
+                                }
+                            });                            
                         }                      
                     };                 
 
