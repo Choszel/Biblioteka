@@ -37,7 +37,7 @@ namespace Biblioteka.Models
         public int? limitTimeWaiting { get; set; }
 
         [BindProperty(SupportsGet = true),
-            Required,
+            //Required,
             Display(Name = "Kara pieniężna"),
             Range(0, 10, ErrorMessage = "Limit musi być większy od 0 i mniejszy od 10 PLN")]
         public decimal? penaltyPayment { get; set; }

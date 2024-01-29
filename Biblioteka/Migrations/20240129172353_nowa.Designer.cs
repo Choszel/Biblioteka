@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Biblioteka.Migrations
 {
     [DbContext(typeof(BibContext))]
-    [Migration("20240127151309_pdfbytesAsString")]
-    partial class pdfbytesAsString
+    [Migration("20240129172353_nowa")]
+    partial class nowa
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -141,6 +141,10 @@ namespace Biblioteka.Migrations
                     b.Property<int?>("limitWaiting")
                         .IsRequired()
                         .HasColumnType("int");
+
+                    b.Property<decimal?>("penaltyPayment")
+                        .IsRequired()
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("adminSettingsId");
 

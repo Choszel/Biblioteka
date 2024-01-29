@@ -140,7 +140,6 @@ namespace Biblioteka.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("penaltyPayment")
-                        .IsRequired()
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("adminSettingsId");
