@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Biblioteka.Context;
 using Biblioteka.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace Biblioteka.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ReadersController : Controller
     {
         private readonly BibContext _context;

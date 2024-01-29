@@ -5,7 +5,7 @@
 namespace Biblioteka.Migrations
 {
     /// <inheritdoc />
-    public partial class mig3 : Migration
+    public partial class pnaltyPaymentNotNull : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -14,21 +14,23 @@ namespace Biblioteka.Migrations
                 name: "penaltyPayment",
                 table: "AdminSettings",
                 type: "decimal(18,2)",
-                nullable: false,
-                oldClrType: typeof(float),
-                oldType: "real");
+                nullable: true,
+                oldClrType: typeof(decimal),
+                oldType: "decimal(18,2)");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<float>(
+            migrationBuilder.AlterColumn<decimal>(
                 name: "penaltyPayment",
                 table: "AdminSettings",
-                type: "real",
+                type: "decimal(18,2)",
                 nullable: false,
+                defaultValue: 0m,
                 oldClrType: typeof(decimal),
-                oldType: "decimal(18,2)");
+                oldType: "decimal(18,2)",
+                oldNullable: true);
         }
     }
 }

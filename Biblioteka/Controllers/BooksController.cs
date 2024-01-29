@@ -9,6 +9,8 @@ using Biblioteka.Context;
 using Biblioteka.Models;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.IO.Compression;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace Biblioteka.Controllers
 {
@@ -55,6 +57,7 @@ namespace Biblioteka.Controllers
         }
 
         // GET: Books/Create
+        [Authorize(Roles = "Employee, Admin")]
         public IActionResult Create()
         {
             ViewBag.AuthorList = new MultiSelectList(_context.Authors, "id", "name");
@@ -131,6 +134,7 @@ namespace Biblioteka.Controllers
         }
 
         // GET: Books/Edit/5
+        [Authorize(Roles = "Employee, Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Books == null)
@@ -188,6 +192,7 @@ namespace Biblioteka.Controllers
         }
 
         // GET: Books/Delete/5
+        [Authorize(Roles = "Employee, Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Books == null)

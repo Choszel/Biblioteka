@@ -34,7 +34,7 @@
                 <dd class="col-sm-9">@Html.DisplayFor(model => model.releaseDate)</dd>
                 @if (!User.IsInRole("Admin") && !User.IsInRole("Employee"))
                 {
-                    <button id="toBasket" onclick="addProduct(@Model.bookId, @Model.stockLevel)" class="customButton">Dodaj do koszyka</button>
+                    <button id="toBasket" onclick="addProduct(@Model.bookId, @Model.stockLevel)">Dodaj do koszyka</button>
                 }
             </dl>
         </div>
@@ -44,10 +44,16 @@
         <dd>@Html.DisplayFor(model => model.description)</dd>
     </div>
     <div class="col-sm-12">
-        <button id="btnDownloadPdf" data-pd="@Model.fileAsString" class="customButton">Pobierz PDF z skrótem książki</button> |
-        <a asp-action="Edit" asp-route-id="@Model?.bookId" class="customButton">Edytuj</a> |
-        <a asp-action="Index" class="customButton">Wróć do listy książek</a>
+        <button id="btnDownloadPdf" class="customButton" data-pd="@Model.fileAsString">Pobierz PDF z skrótem książki</button>
     </div>
+</div>
+
+<div>
+    @if (User.IsInRole("Employee") || User.IsInRole("Admin"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.bookId">Edit</a> <p>|</p>
+    }
+    <a asp-action="Index">Back to List</a>
 </div>
 
 <dialog id="dialog2">
