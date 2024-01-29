@@ -85,6 +85,33 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-4">
+                    <label for="sortSelect">Filtruj: </label><br>
+                    <input type="checkbox" id="year2021" name="year2021" value="yeay1">
+                    <label for="year2021"> 2021</label>
+                    <input type="checkbox" id="year2022" name="year2022" value="year2">
+                    <label for="year2022"> 2022</label>
+                    <input type="checkbox" id="year2023" name="year2023" value="year3">
+                    <label for="year2023"> 2023</label>
+                    <input type="checkbox" id="year2024" name="year2024" value="year4">
+                    <label for="year2024"> 2024</label><br>
+                    @if(ViewData["categories"]!=null)
+                    {
+                        var i = 0;
+                        @foreach(var element in ViewData["categories"] as IList<Category>)
+                        {
+                            @if(i!=0 && i%4==0)
+                            {
+                                <br>
+                            }
+                            <input type="checkbox" id="cat @i" name="cat @i" value="category @i">
+                            <label for="cat @i"> @element.catName</label>
+                            i = i + 1;                            
+                        }
+                        <br>
+                    }
+                   
+                </div>
+                <div class="col-md-4">
                     <select id="select-to" class="contacts" placeholder="Szukaj..."></select>
                 </div>
                 <div class="col-md-1">
@@ -92,7 +119,7 @@
                 </div>
                 <!-- Ukryte pole do przechowywania wybranych wartości -->
                 <input type="hidden" id="selectedBooksInput" name="selectedBooks" value="">
-                <div class ="col-md-4">
+                <div class ="col-md-3">
                     <label for="sortSelect">Sortuj według: </label>
                     <select id="sortSelect">
                         <option value="0">Tytuł A-Z</option>

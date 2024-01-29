@@ -52,7 +52,7 @@ namespace Biblioteka.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("adminSettingsId,limitTaken,limitWaiting,limitTimeTaken,limitTimeWaiting,penaltyPayment")] AdminSettings adminSettings)
+        public async Task<IActionResult> Edit(int id, [Bind("adminSettingsId,limitTaken,limitWaiting,limitTimeTaken,limitTimeWaiting")] AdminSettings adminSettings)
         {
             if (id != adminSettings.adminSettingsId)
             {
