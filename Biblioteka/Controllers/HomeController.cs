@@ -36,6 +36,7 @@ namespace Biblioteka.Controllers
             var user = _context.Readers.FirstOrDefault(r => r.email == User.Identity.Name);
             ViewData["userId"] = user == null ? null : user.id;
             ViewData["limits"] = await _context.AdminSettings.ToListAsync();
+            ViewData["categories"] = await _context.Category.ToListAsync();
 
             ViewBag.BooksList = await _context.Book.ToListAsync();
             var bibContext = _context.Books.Include(b => b.category).Include(b => b.authors).Include(b => b.tags).OrderBy(b => b.bookId);
@@ -49,6 +50,11 @@ namespace Biblioteka.Controllers
             System.Diagnostics.Debug.WriteLine(selectedBooks);
 
             var bibContext = _context.Books.Include(b => b.category).Include(b => b.authors).Include(b => b.tags);
+
+            var user = _context.Readers.FirstOrDefault(r => r.email == User.Identity.Name);
+            ViewData["userId"] = user == null ? null : user.id;
+            ViewData["limits"] = await _context.AdminSettings.ToListAsync();
+            ViewData["categories"] = await _context.Category.ToListAsync();
 
             if (string.IsNullOrEmpty(selectedBooks))return View(await bibContext.ToListAsync());
 

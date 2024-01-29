@@ -34,13 +34,6 @@ namespace Biblioteka.Models
             Required,
             Display(Name = "Limit CZASOWY książek oczekujących na odbiór (ilość tygodni)"),
             Range(0, 48, ErrorMessage = "Limit musi być większy od 0 i mniejszy od 48")]
-        public int? limitTimeWaiting { get; set; }
-
-        [BindProperty(SupportsGet = true),
-            //Required,
-            Display(Name = "Kara pieniężna"),
-            Range(0, 10, ErrorMessage = "Limit musi być większy od 0 i mniejszy od 10 PLN")]
-        public decimal? penaltyPayment { get; set; }
-
+        public int? limitTimeWaiting { get; set; }   
     }
 }
