@@ -64,7 +64,7 @@ namespace Biblioteka.Models
         [BindProperty(SupportsGet = true),
             Display(Name = "PDF do pobrania"),
             NotMapped]
-        public IFormFile file { get; set; }
+        public IFormFile? file { get; set; }
 
         public string? fileAsString { get; set; }
 

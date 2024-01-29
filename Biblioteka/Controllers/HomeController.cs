@@ -38,7 +38,7 @@ namespace Biblioteka.Controllers
             ViewData["limits"] = await _context.AdminSettings.ToListAsync();
 
             ViewBag.BooksList = await _context.Book.ToListAsync();
-            var bibContext = _context.Books.Include(b => b.category).Include(b => b.authors).Include(b => b.tags);
+            var bibContext = _context.Books.Include(b => b.category).Include(b => b.authors).Include(b => b.tags).OrderBy(b => b.bookId);
             
             return View(await bibContext.ToListAsync());
         }

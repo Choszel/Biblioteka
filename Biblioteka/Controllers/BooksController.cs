@@ -181,6 +181,8 @@ namespace Biblioteka.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.AuthorList = new MultiSelectList(_context.Authors, "id", "name", book.authors);
+            ViewBag.TagList = new MultiSelectList(_context.Tag, "tagId", "tagName", book.tags);
             ViewData["catId"] = new SelectList(_context.Set<Category>(), "catId", "catName", book.catId);
             return View(book);
         }

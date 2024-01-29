@@ -12,6 +12,10 @@
     <!-- Selectize CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.bootstrap2.css">
 
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 
@@ -21,10 +25,61 @@
 
     <!-- Selectize JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
 </head>
 
+
 <div class="text-center">
+
     <h1 class="display-4">Witamy</h1>
+    <br />
+
+    <div class="swiper">
+        <!-- Additional required wrapper -->
+        <div class="swiper-wrapper">
+            @if (Model != null && Model.Count() > 0)
+            {
+                foreach (var item in Model.TakeLast(3))  // Pobranie 3 ostatnich elementów
+                {
+                    <div class="swiper-slide">
+                        <div class="col-md-4">
+                            <a href="@Url.Action("Details", "Books", new { id = item.bookId })">
+                                <img src="@item.bookPhoto" alt="Book Photo" />
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <div>@Html.DisplayFor(modelItem => item.title)</div>
+                            <div>@Html.DisplayFor(modelItem => item.category.catName)</div>
+                            <div>
+                                @if (item.authors != null)
+                                {
+                                    @foreach (var author in item.authors)
+                                    {
+                                        <a>@author.name  @author.surname</a>
+                                        <br />
+                                    }
+                                }
+                            </div>
+                        </div >
+                        <!-- Możesz dodać więcej informacji o książce tutaj -->
+                    </div>
+                }
+            }
+        </div>
+        <!-- If we need pagination -->
+        <div class="swiper-pagination"></div>
+
+        <!-- If we need navigation buttons -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+
+        <!-- If we need scrollbar -->
+        <div class="swiper-scrollbar"></div>
+    </div>
+
+    <br />
+    <br />
     <br />
 
     <form id="searchForm" action="/Home/Index" method="post">
@@ -98,6 +153,10 @@
         }
     </div>
 </div>
+<br />
+<br />
+<br />
+<br />
 
 <dialog id="dialog2">
     <p>Przykro nam, ale danej książki nie ma na stanie.
@@ -155,6 +214,7 @@
     </form>
 </dialog>
 
+
 @section scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
@@ -162,6 +222,30 @@
     <script src="~/lib/bootstrap/dist/js/selectize.js"></script>
 
     <script type="text/javascript">
+
+        const swiper = new Swiper('.swiper', {
+            // Optional parameters
+            //direction: 'vertical',
+            //loop: true,
+
+            // If we need pagination
+            pagination: {
+                el: '.swiper-pagination',
+            },
+
+            // Navigation arrows
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+
+            // And if we need scrollbar
+            scrollbar: {
+                el: '.swiper-scrollbar',
+            },
+        });
+
+
         var $select;
         var userId = @Html.Raw(Json.Serialize(ViewData["userId"]));
         var limits = @Html.Raw(Json.Serialize(ViewData["limits"]));

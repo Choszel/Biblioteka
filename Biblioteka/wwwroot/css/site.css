@@ -32,15 +32,17 @@
 }
 
 html {
-  font-size: 14px;
-  position: relative;
-  min-height: 100%;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
+    overflow: auto;
 }
 
 body {
   margin-bottom: 60px;
   background-color: var(--background) !important;
   color: var(--copy) !important;
+  overflow: auto;
 }
 
 .okienko {
@@ -135,3 +137,25 @@ a.customButton:hover{
     background-color: whitesmoke !important;
     color: #342b08 !important;
 }
+
+.swiper {
+    height: 400px;
+    .swiper-slide{
+        background: var(--primary-light);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 40px
+    }
+    .swiper-button-prev {
+        color: var(--secondary-light);
+    }
+    .swiper-button-next {
+        color: var(--secondary-light);
+    }
+
+}
+.swiper-pagination-bullet.swiper-pagination-bullet-active {
+    background: var(--secondary-light);
+}
+
