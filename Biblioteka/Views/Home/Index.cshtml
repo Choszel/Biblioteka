@@ -85,14 +85,14 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-4">
-                    <label for="sortSelect">Filtruj: </label><br>
-                    <input type="checkbox" id="year2021" name="year2021" value="yeay1">
+                    <label for="checkbox">Filtruj: </label><br>
+                    <input type="checkbox" id="year1" name="year2021" value="2021" class="checkboxFilter">
                     <label for="year2021"> 2021</label>
-                    <input type="checkbox" id="year2022" name="year2022" value="year2">
+                    <input type="checkbox" id="year2" name="year2022" value="2022" class="checkboxFilter">
                     <label for="year2022"> 2022</label>
-                    <input type="checkbox" id="year2023" name="year2023" value="year3">
+                    <input type="checkbox" id="year3" name="year2023" value="2023" class="checkboxFilter">
                     <label for="year2023"> 2023</label>
-                    <input type="checkbox" id="year2024" name="year2024" value="year4">
+                    <input type="checkbox" id="year4" name="year2024" value="2024" class="checkboxFilter">
                     <label for="year2024"> 2024</label><br>
                     @if(ViewData["categories"]!=null)
                     {
@@ -103,12 +103,13 @@
                             {
                                 <br>
                             }
-                            <input type="checkbox" id="cat @i" name="cat @i" value="category @i">
+                            <input type="checkbox" id="@element.catName" name="cat @i" value="@element.catName" class="checkboxFilter">
                             <label for="cat @i"> @element.catName</label>
                             i = i + 1;                            
                         }
                         <br>
                     }
+                    <button type="button" class="customButton" onclick="filterElements()">Filtruj</button>
                    
                 </div>
                 <div class="col-md-4">
@@ -399,7 +400,6 @@
                 container.append(booksArray);
             }
 
-
             // Event handler for sorting when the select changes
             $("#sortSelect").change(function () {
                 var selectedSortField = $(this).val();
@@ -407,7 +407,7 @@
             });
 
             const indexnegative = JSON.parse(localStorage.getItem(-1));
-            sortBooks(indexnegative.modif.toString());
+            sortBooks(indexnegative.modif.toString());           
         });
 
         function submitSearchForm() {
@@ -590,8 +590,48 @@
                 });
 
             
-        }        
-    </script>
+        }
+
+        function filterElements() {
+            var container = $(".okienko").parent();
+            var booksArray = $(".okienko").toArray();
+            booksArray.forEach(book => { $(book).show(); });
+
+            var selectedValues = $(".checkboxFilter:checked").map(function () {
+                return $(this).val();
+            }).get();
+
+            console.log(selectedValues);
+
+            booksArray.forEach(book => {
+                var yearValue = $(book).find(".releaseDatehidden").text();
+                var categoryValue = $(book).find(".category").text().trim();
+                // console.log(yearValue);
+                // console.log(categoryValue);
+                // console.log(selectedValues.length);
+
+                if ((selectedValues.length > 0) && !(
+                    (selectedValues.includes("2021") && yearValue.includes(2021)) ||
+                    (selectedValues.includes("2022") && yearValue.includes(2022)) ||
+                    (selectedValues.includes("2023") && yearValue.includes(2023)) ||
+                    (selectedValues.includes("2024") && yearValue.includes(2024)) ||
+                    (selectedValues.includes(categoryValue)))
+                ) {
+                    $(book).hide();
+                    // console.log("2021 " + !(selectedValues.includes("2021")) && yearValue.includes(2021));
+                    // console.log("2022 " + !(selectedValues.includes("2022")) && yearValue.includes(2022));
+                    // console.log("2023 " + !(selectedValues.includes("2023")) && yearValue.includes(2023));
+                    // console.log("2024 " + !(selectedValues.includes("2024")) && yearValue.includes(2024));
+                    // console.log("cat " + !(selectedValues.includes(categoryValue)));
+                    // console.log("długość " + selectedValues.length > 0);
+                }
+            });
+
+            container.empty();
+            container.append(booksArray);
+        }
+
+        </script>
 }
 
 

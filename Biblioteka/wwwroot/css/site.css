@@ -176,3 +176,8 @@ a.customButton:hover{
     display: none;
 }
 
+.checkboxFilter {
+    color: var(--secondary-light);
+    background-color: var(--secondary-light);
+}
+
