@@ -181,3 +181,11 @@ a.customButton:hover{
     background-color: var(--secondary-light);
 }
 
+ul > a.nav-link {
+    color: var(--the-primary) !important;
+}
+
+a.active {
+    color: white !important;
+    background-color: var(--the-primary) !important;
+}
