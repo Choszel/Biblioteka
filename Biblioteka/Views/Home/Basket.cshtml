@@ -179,19 +179,7 @@
     // }
 
     let index = localStorage.length - 1;
-    let modif;
-    if (JSON.parse(localStorage.getItem(-1)) != null) {
-        const indexnegative = JSON.parse(localStorage.getItem(-1));
-        modif = indexnegative.modif;
-    }
-    else {
-        modif = 0;
-        localStorage.setItem((-1).toString(),
-            JSON.stringify(
-                {
-                    modif: modif
-                }));
-    }
+    
     let x = 0;
 
     table.appendChild(addCaption());
@@ -214,14 +202,7 @@
         dlg2.showModal();
     }
 
-    form2.onsubmit = () => {
-        modif = 0;
-        localStorage.clear();
-        localStorage.setItem((-1).toString(),
-            JSON.stringify(
-                {
-                    modif: modif
-                }));
+    form2.onsubmit = () => {        
         location.reload();
     }
 
@@ -230,14 +211,7 @@
     }
 
     form4.onsubmit = () => {
-        removeProduct();
-
-        modif++;
-        localStorage.setItem((-1).toString(),
-            JSON.stringify(
-                {
-                    modif: modif
-                }));
+        removeProduct();      
     }
 
     form4.onreset = () => {
@@ -415,14 +389,7 @@
                                     {
                                         books[obj.bookId] = books[obj.bookId] + 1;
                                         localStorage.setItem("books", JSON.stringify(books));
-
-                                        const indexnegative = JSON.parse(localStorage.getItem(-1));
-                                        let modif = indexnegative.modif + 1;
-                                        localStorage.setItem((-1).toString(),
-                                            JSON.stringify(
-                                                {
-                                                    modif: modif
-                                                }));
+                                       
                                         location.reload();
                                     }
                                     else
@@ -459,14 +426,7 @@
                         else {
                             books[obj.bookId] = books[obj.bookId] - 1;
                             localStorage.setItem("books", JSON.stringify(books));
-                        
-                            const indexnegative = JSON.parse(localStorage.getItem(-1));
-                            let modif = indexnegative.modif + 1;
-                            localStorage.setItem((-1).toString(),
-                                JSON.stringify(
-                                    {
-                                        modif: modif
-                                    }));
+                                                   
                             location.reload();
                             }                        
                     };

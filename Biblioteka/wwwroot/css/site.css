@@ -153,9 +153,26 @@ a.customButton:hover{
     .swiper-button-next {
         color: var(--secondary-light);
     }
+    .bookTitle{
+        font-size: 35px;
+        text-align: left;
+    }
+    .catName {
+        font-size: 25px;
+        text-align: left;
+    }
+    .bookAuthors {
+        font-size: 25px;
+        text-align: left;
+    }
+
 
 }
 .swiper-pagination-bullet.swiper-pagination-bullet-active {
     background: var(--secondary-light);
+}
+
+.releaseDatehidden{
+    display: none;
 }
 

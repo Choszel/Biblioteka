@@ -49,9 +49,9 @@
                             </a>
                         </div>
                         <div class="col-md-4">
-                            <div>@Html.DisplayFor(modelItem => item.title)</div>
-                            <div>@Html.DisplayFor(modelItem => item.category.catName)</div>
-                            <div>
+                            <div class="bookTitle">@Html.DisplayFor(modelItem => item.title)</div>
+                            <div class="catName">@Html.DisplayFor(modelItem => item.category.catName)</div>
+                            <div class="bookAuthors">
                                 @if (item.authors != null)
                                 {
                                     @foreach (var author in item.authors)
@@ -62,7 +62,6 @@
                                 }
                             </div>
                         </div >
-                        <!-- Możesz dodać więcej informacji o książce tutaj -->
                     </div>
                 }
             }
@@ -104,8 +103,7 @@
                 </div>
             </div>
         </div>
-    </form>
-  
+    </form>  
 
     <div style="width: 90%; margin: auto;">
         @foreach (var item in Model)
@@ -114,8 +112,9 @@
                 <a href="@Url.Action("Details", "Books", new { id = item.bookId })">
                     <img src="@item.bookPhoto" alt="Book Photo" />
                 </a><br />
-                <booktitle>@Html.DisplayFor(modelItem => item.title)</booktitle><br />                    
-                <category>@Html.DisplayFor(modelItem => item.category.catName)</category><br />
+                <span class="booktitle">@Html.DisplayFor(modelItem => item.title)</span>
+                <span class="category">@Html.DisplayFor(modelItem => item.category.catName)</span><br />
+                <span class="releaseDatehidden">@Html.DisplayFor(modelItem => item.releaseDate)</span>
                 @if(item.authors!=null)
                 {
                     @foreach (var author in item.authors)
@@ -245,6 +244,14 @@
             },
         });
 
+        if (JSON.parse(localStorage.getItem(-1)) == null) {
+            let modif = 0;
+            localStorage.setItem((-1).toString(),
+                JSON.stringify(
+                    {
+                        modif: modif
+                    }));
+        }      
 
         var $select;
         var userId = @Html.Raw(Json.Serialize(ViewData["userId"]));
@@ -270,7 +277,7 @@
                 valueField: 'bookId',
                 labelField: 'title',                
                 searchField: ['title', 'authors', 'isbn', 'releaseDate'],
-                sortField: 'title',
+                sortField: 'title',                
                 onInitialize: function () {
                     loadBooksAJAX();
                 },
@@ -302,79 +309,78 @@
             });
 
             function sortBooks(sortField) {
-                // Get the container holding the book elements
-                var container = $(".okienko");
+                var container = $(".okienko").parent();
+                var booksArray = $(".okienko").toArray();
 
-                // Create an array of book elements
-                var booksArray = container.get();
+                booksArray.sort(function (a, b) {
+                    var aValue;
+                    var bValue;
 
-                console.log("chuj");
+                    if (sortField === "0") {
+                        const indexnegative = JSON.parse(localStorage.getItem(-1));
+                        let modif = 0;
+                        localStorage.setItem((-1).toString(),
+                            JSON.stringify(
+                                {
+                                    modif: modif
+                                }));
+                        aValue = $(a).find(".booktitle").text();
+                        bValue = $(b).find(".booktitle").text();
+                        // Sortowanie rosnące
+                        return aValue.localeCompare(bValue);
+                    } else if (sortField === "1") {
+                        const indexnegative = JSON.parse(localStorage.getItem(-1));
+                        let modif = 1;
+                        localStorage.setItem((-1).toString(),
+                            JSON.stringify(
+                                {
+                                    modif: modif
+                                }));
+                        aValue = $(a).find(".booktitle").text();
+                        bValue = $(b).find(".booktitle").text();
+                        // Sortowanie malejące
+                        return bValue.localeCompare(aValue);
+                    } else if (sortField === "2") {
+                        const indexnegative = JSON.parse(localStorage.getItem(-1));
+                        let modif = 2;
+                        localStorage.setItem((-1).toString(),
+                            JSON.stringify(
+                                {
+                                    modif: modif
+                                }));
+                        aValue = $(a).find(".releaseDatehidden").text();
+                        bValue = $(b).find(".releaseDatehidden").text();
+                        return bValue.localeCompare(aValue);
+                    }else if(sortField === "3"){
+                        const indexnegative = JSON.parse(localStorage.getItem(-1));
+                        let modif = 3;
+                        localStorage.setItem((-1).toString(),
+                            JSON.stringify(
+                                {
+                                    modif: modif
+                                }));
+                        aValue = $(a).find(".releaseDatehidden").text();
+                        bValue = $(b).find(".releaseDatehidden").text();
+                        return aValue.localeCompare(bValue);
+                    }
+                    
+                   
+                    return 0;
+                });
 
-                switch(sortField)
-                {
-                    case "0":
-                        booksArray.sort(function (a, b) {
-                            var aValue = $(a).find("booktitle").text();
-                            var bValue = $(b).find("booktitle").text();
-                            console.log(aValue);
-                            console.log(bValue);
-
-                            // Use localeCompare for string comparison
-                            return aValue.localeCompare(bValue);
-                        });
-                        break;
-                    case "1":
-                        booksArray.sort(function (b, a) {
-                            var aValue = $(a).find("booktitle").text();
-                            var bValue = $(b).find("booktitle").text();
-                            console.log(aValue);
-                            console.log(bValue);
-
-                            // Use localeCompare for string comparison
-                            return aValue.localeCompare(bValue);
-                        });
-                        break;
-                    case "2":
-                        booksArray.sort(function (b, a) {
-                            var aValue = $(a).find("booktitle").text();
-                            var bValue = $(b).find("booktitle").text();
-                            console.log(aValue);
-                            console.log(bValue);
-
-                            // Use localeCompare for string comparison
-                            return aValue.localeCompare(bValue);
-                        });
-                        break;
-                    case "3":
-                        booksArray.sort(function (b, a) {
-                            var aValue = $(a).find("booktitle").text();
-                            var bValue = $(b).find("booktitle").text();
-                            console.log(aValue);
-                            console.log(bValue);
-
-                            // Use localeCompare for string comparison
-                            return aValue.localeCompare(bValue);
-                        });
-                        break;
-                }
-                console.log("w to");
-
-
-                // Empty the container
                 container.empty();
-
-                // Append sorted books to the container
                 container.append(booksArray);
-
-                // You may need to refresh any plugins or event handlers after sorting
-                // For example, if you have specific event handlers or plugins for your book elements, reinitialize them here
             }
+
 
             // Event handler for sorting when the select changes
             $("#sortSelect").change(function () {
                 var selectedSortField = $(this).val();
                 sortBooks(selectedSortField);
             });
+
+            const indexnegative = JSON.parse(localStorage.getItem(-1));
+            sortBooks(indexnegative.modif.toString());
         });
 
         function submitSearchForm() {
