@@ -36,14 +36,14 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Tags" asp-action="Index">Tagi</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Readers" asp-action="Index">Czytelnicy</a>
-                            </li>
                         }
                         @if(User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Employees" asp-action="Index">Pracownicy</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Readers" asp-action="Index">Czytelnicy</a>
                             </li>
                         }
                         @if (User.Identity.IsAuthenticated)
