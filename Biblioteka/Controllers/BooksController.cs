@@ -77,17 +77,18 @@ namespace Biblioteka.Controllers
             var tags = Request.Form["tags"];
             System.Diagnostics.Debug.WriteLine("\nIlość authors: " + (authors.Count) + "\n");
             System.Diagnostics.Debug.WriteLine("\nIlość tagów: " + (tags.Count) + "\n");
-
-            if (book.file.Length > 0 && Path.GetExtension(book.file.FileName) == ".pdf")
-            {
-                using (var ms = new MemoryStream())
+            
+            if (book.file != null)
+                if (book.file.Length > 0 && Path.GetExtension(book.file.FileName) == ".pdf")
                 {
-                    book.file.CopyTo(ms);
-                    book.fileAsString = Convert.ToBase64String(ms.ToArray());
+                    using (var ms = new MemoryStream())
+                    {
+                        book.file.CopyTo(ms);
+                        book.fileAsString = Convert.ToBase64String(ms.ToArray());
+                    }
                 }
-            }
-            else
-                ModelState.AddModelError("file not pdf", "Plik musi być w formacie PDF!");
+                else
+                    ModelState.AddModelError("file not pdf", "Plik musi być w formacie PDF!");
 
             if (ModelState.IsValid)
             {
