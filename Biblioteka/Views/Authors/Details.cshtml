@@ -4,10 +4,9 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>Informacje o autorze</h1>
 
 <div>
-    <h4>Author</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -44,7 +43,7 @@
             @Html.DisplayNameFor(model => model.authorPhoto)
         </dt>
         <dd>
-            <img src=@Model.authorPhoto style="width: 100px; height: 120px;" />
+            <img src=@Model.authorPhoto style="width: 100px; height: 120px; border-radius: 8px; object-fit: cover;" />
         </dd>
     </dl>
 </div>
