@@ -43,6 +43,7 @@ namespace Biblioteka.Controllers
 
             var rental = await _context.Rental
                 .Include(r => r.user)
+                .Include(r => r.RentalBook).ThenInclude(rb => rb.book)
                 .FirstOrDefaultAsync(m => m.rentalId == id);
             if (rental == null)
             {
