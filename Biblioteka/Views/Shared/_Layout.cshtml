@@ -28,7 +28,7 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Rentals" asp-action="Index">Wypożyczenia</a>
                         </li>
-                        @if (User.IsInRole("Employee") || User.IsInRole("Admin"))
+                        @if (User.IsInRole("Employee"))
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Categories" asp-action="Index">Kategorie</a>

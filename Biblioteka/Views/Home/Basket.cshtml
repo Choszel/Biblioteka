@@ -202,7 +202,14 @@
         dlg2.showModal();
     }
 
-    form2.onsubmit = () => {        
+    form2.onsubmit = () => {
+        const modif = JSON.parse(localStorage.getItem(-1));
+        localStorage.clear();
+        localStorage.setItem((-1).toString(),
+            JSON.stringify(
+                {
+                    modif: modif
+                }));
         location.reload();
     }
 

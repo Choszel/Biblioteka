@@ -98,7 +98,7 @@ body {
 }
 
 .customButton {
-    background-color: #e5c856; /*SECONDARY ALE KURWA JEBANA BOOTSTRAP TO ŒCIEK*/
+    background-color: #e5c856; 
     color: var(--secondary-content);
     padding: 4px 10px;
     font-size: 16px;

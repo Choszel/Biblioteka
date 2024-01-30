@@ -114,6 +114,14 @@ namespace Biblioteka.Controllers
             }
             base.Dispose(disposing);
         }
+
+        [Authorize(Roles = "Admin")]
+        public ActionResult AdminPanel()
+        {
+            System.Diagnostics.Debug.WriteLine("AdminPanel");
+
+            return View();
+        }
     }
 }
 

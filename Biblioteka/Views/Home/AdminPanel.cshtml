@@ -1,0 +1,83 @@
+﻿@{
+    Layout = "_Layout";
+    ViewBag.Title = "AdminPanel";
+}
+
+<h2>Panel Administratora</h2>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/phosphor-icons"></script>
+    <link rel="stylesheet" href="~/css/AdminStyle.css">
+    <title>Vertical Tabs</title>
+</head>
+<body>
+    <adminPanel>
+        <div class="container">
+            <div class="wrapper">
+                <ul class="indicator">
+                    <li class="active" data-target="#home"><i class="ph-house"></i> Strona główna</li>
+                    <li data-target="#categories"><i class="ph ph-bookmarks-simple"></i> Kategorie</li>
+                    <li data-target="#tags"><i class="ph ph-tag"></i> Tagi</li>
+                    <li data-target="#readers"><i class="ph-user-circle"></i> Czytelnicy</li>
+                    <li data-target="#rentals"><i class="ph ph-handbag"></i> Zamówienia</li>
+                </ul>
+                <ul class="content">
+                    <li class="active" id="home">
+                        <h1>Strona główna</h1>
+                        <a class="nav-link" asp-area="" asp-controller="Employees" asp-action="Index">Zarządzaj pracownikami</a>
+                        <br />
+                        <a class="nav-link" id="register" asp-area="Identity" asp-page="/Account/EmployeeRegister">Zarejestruj nowego pracownika</a>
+                    </li>                    
+                    <li id="categories">
+                        <h1>Kategorie</h1>
+                        <a class="nav-link" asp-area="" asp-controller="Categories" asp-action="Index">Zarządzaj kategoriami</a>
+                        <br />
+                        <a class="nav-link" asp-area="" asp-controller="Categories" asp-action="Create">Dodaj nową kategorię</a>
+                    </li>
+                    <li id="tags">
+                        <h1>Tagi</h1>
+                        <a class="nav-link" asp-area="" asp-controller="Tags" asp-action="Index">Zarządzaj tagami</a>
+                        <br />
+                        <a class="nav-link" asp-area="" asp-controller="Tags" asp-action="Create">Dodaj nowy tag</a>
+                    </li>
+                    <li id="readers">
+                        <h1>Czytelnicy</h1>
+                        <a class="nav-link" asp-area="" asp-controller="Readers" asp-action="Index">Zarządzaj czytelnikami</a>
+                    </li>
+                    <li id="rentals">
+                        <h1>Zamówienia</h1>
+                        <a class="nav-link" asp-area="" asp-controller="Rentals" asp-action="Index">Zarządzaj zamówieniami</a>
+                    </li>                   
+                </ul>
+            </div>
+        </div>
+    </adminPanel>
+</body>
+</html>
+
+
+<script>
+    const allIndicator = document.querySelectorAll('.indicator li');
+    const allContent = document.querySelectorAll('.content li');
+
+    allIndicator.forEach(item => {
+        item.addEventListener('click', function () {
+            const content = document.querySelector(this.dataset.target);
+
+            allIndicator.forEach(i => {
+                i.classList.remove('active');
+            })
+
+            allContent.forEach(i => {
+                i.classList.remove('active');
+            })
+
+            content.classList.add('active');
+            this.classList.add('active');
+        })
+    })
+</script>

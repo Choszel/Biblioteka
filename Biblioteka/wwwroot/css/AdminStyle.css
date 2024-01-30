@@ -1,0 +1,127 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /*font-family: 'Poppins', sans-serif;*/
+}
+
+li {
+    list-style: none;
+}
+
+:root {
+    --the-primary: #e56956;
+    --primary-content: #340e08;
+    --primary-dark: #de422a;
+    --primary-light: #ec9082;
+    --secondary: #e5c856;
+    --secondary-content: #342b08;
+    --secondary-dark: #deba2a;
+    --secondary-light: #ecd682;
+    --background: #f4edec;
+    --foreground: #fcfafa;
+    --border: #e7d9d7;
+    --copy: #301f1d;
+    --copy-light: #80534d;
+    --copy-lighter: #a97770;
+    --success: #56e556;
+    --warning: #e5e556;
+    --error: #e55656;
+    --success-content: #083408;
+    --warning-content: #343408;
+    --error-content: #340808;
+}
+
+body > adminPanel {
+    background: var(--light);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+}
+
+.adminPanel .container {
+    max-width: 600px;
+    width: 100%;
+    background: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .05);
+}
+
+.wrapper {
+    display: flex;
+}
+
+.adminPanel .indicator {
+    padding: 1.5rem 0;
+    border-right: 1px solid var(--grey);
+}
+
+.indicator li {
+    display: flex;
+    align-items: center;
+    grid-gap: .5rem;
+    padding: 10px 2rem;
+    cursor: pointer;
+    font-size: .875rem;
+    color: var(--black);
+    border-right: 3px solid transparent;
+}
+
+    .indicator li i {
+        font-size: 1rem;
+    }
+
+    .indicator li:hover {
+        background: var(--secondary-light);
+    }
+
+    .indicator li.active {
+        border-right-color: var(--primary-dark);
+        color: var(--primary-content);
+        background: var(--primary-light);
+    }
+
+.adminPanel .content {
+    padding: 1.5rem 2rem;
+}
+
+.content li {
+    display: none;
+}
+
+    .content li.active {
+        display: block;
+    }
+
+    .content li h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--black);
+        margin-bottom: .75rem;
+    }
+
+    .content li p {
+        margin-bottom: .5rem;
+        color: var(--dark-grey);
+        font-size: .875rem;
+    }
+
+.nav-link {
+    padding: 1.5rem 0;
+    color: var(--primary-dark)   
+}
+
+
+@media screen and (max-width: 576px) {
+    .wrapper {
+        flex-direction: column;
+    }
+
+    .indicator {
+        border-right: none;
+    }
+}
