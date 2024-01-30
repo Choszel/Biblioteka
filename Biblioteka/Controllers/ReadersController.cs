@@ -48,28 +48,6 @@ namespace Biblioteka.Controllers
             return View(reader);
         }
 
-        // GET: Readers/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Readers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,name,surname,email,birthDate")] Reader reader)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(reader);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(reader);
-        }
-
         // GET: Readers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
