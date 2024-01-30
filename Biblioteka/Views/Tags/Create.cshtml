@@ -17,15 +17,13 @@
                 <input asp-for="tagName" class="form-control" />
                 <span asp-validation-for="tagName" class="text-danger"></span>
             </div>
+            <br />
             <div class="form-group">
-                <input type="submit "value="Dodaj" class="customButton btn btn-primary" />
+                <input type="submit" value="Dodaj" class="customButton btn btn-primary" />
+                <a asp-action="Index" class="customButton">Powrót do listy</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index" class="customButton">Powrót do listy</a>
 </div>
 
 @section Scripts {

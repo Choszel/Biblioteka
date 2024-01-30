@@ -173,8 +173,8 @@
 
                 @if (User.IsInRole("Admin"))
                 {
-                    <a class="nav-link" asp-area="" asp-controller="Books" asp-action="Edit" asp-route-id="@item.bookId">Edytuj</a>
-                    <a class="nav-link" asp-area="" asp-controller="Books" asp-action="Delete" asp-route-id="@item.bookId">Usuń</a>
+                    <a class="nav-link customButton" asp-area="" asp-controller="Books" asp-action="Edit" asp-route-id="@item.bookId">Edytuj</a>
+                    <a class="nav-link customButton" asp-area="" asp-controller="Books" asp-action="Delete" asp-route-id="@item.bookId">Usuń</a>
                 }               
             </div>
         }
