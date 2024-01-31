@@ -35,7 +35,7 @@ function addProduct(bookId, stockLevel) {
 
                         // Usuwanie rekordu, jeśli różnica dni jest większa niż 2
                         if (daysDiff > 3) {
-                            deleteBookFromQueue(bookId, stockLevel)
+                            deleteBookFromQueue(bookQueue, book)
                         }
                         else {
                             stockLevel = stockLevel - parseInt(book.Quantity);
@@ -50,40 +50,7 @@ function addProduct(bookId, stockLevel) {
                 form3.reset();
                 dlg3.showModal();
 
-                form3.onsubmit = () => {
-                    var data = {
-                        bookId: parseInt(bookId),
-                        userId: parseInt(userId),
-                        quantity: 1 // Załóżmy, że dodajemy jedną pozycję do kolejki
-                    };
-                    console.log(data);
-                    fetch('/api/Queue', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(data)
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error(`HTTP error! Status: ${response.status}`);
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            console.log(data);
-                            if (data.success) {
-                                dlg3.close();
-                                form4.reset();
-                                dlg4.showModal();
-                            } else {
-                                console.error(data.message);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Fetch Error:', error);
-                        });
-                }
+                form3.onsubmit = addUserToQueue(bookId);
 
                 form3.onreset = () => {
                     dlg3.close();
@@ -111,20 +78,7 @@ function addProduct(bookId, stockLevel) {
                     dlg5.showModal();
                 }
                 else {
-                    if (books[bookId] != null) books[bookId] = books[bookId] + 1;
-                    else books[bookId] = 1;
-
-                    localStorage.setItem("books", JSON.stringify(books));
-
-                    let modif = (localStorage.getItem(-1).modif) + 1;
-                    localStorage.setItem((-1).toString(),
-                        JSON.stringify(
-                            {
-                                modif: modif
-                            }));
-
-                    form.reset();
-                    dlg.showModal();
+                    addBookToBasket(books, bookId)
                 }
             }
         },
@@ -134,7 +88,7 @@ function addProduct(bookId, stockLevel) {
     });
 }
 
-function deleteBookFromQueue(bookId, stockLevel) {
+function deleteBookFromQueue(bookQueue, book) {
     console.log('Usuwanie rekordu: ', book);
 
     var queueData = {
@@ -158,5 +112,58 @@ function deleteBookFromQueue(bookId, stockLevel) {
         error: function (error) {
             console.error(`Error: ${error.statusText}`);
         }
+    });
+}
+
+function addBookToBasket(books, bookId) {
+    if (books[bookId] != null) books[bookId] = books[bookId] + 1;
+    else books[bookId] = 1;
+
+    localStorage.setItem("books", JSON.stringify(books));
+
+    let modif = (localStorage.getItem(-1).modif) + 1;
+    localStorage.setItem((-1).toString(),
+        JSON.stringify(
+            {
+                modif: modif
+            }));
+
+    form.reset();
+    dlg.showModal();
+}
+
+function addUserToQueue(bookId) {
+    console.log(bookId)
+    var data = {
+        bookId: parseInt(bookId),
+        userId: parseInt(userId),
+        quantity: 1 // Załóżmy, że dodajemy jedną pozycję do kolejki
+    };
+    console.log(data);
+    fetch('/api/Queue', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data);
+        if (data.success) {
+            dlg3.close();
+            form4.reset();
+            dlg4.showModal();
+        } else {
+            console.error(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Fetch Error:', error);
     });
 }
